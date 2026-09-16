@@ -238,7 +238,7 @@ export const PROJETS_DEFAUT: Projet[] = [
     stack: ["HTML", "CSS", "JavaScript", "Vercel Functions", "Upstash Redis", "Resend"],
     url_live: "https://atout-travaux.vercel.app",
     url_depot: null,
-    image_couverture: null,
+    image_couverture: "/realisations/atout-travaux.webp",
     images: [],
     prix_min: 1500,
     prix_max: 3000,
@@ -252,21 +252,22 @@ export const PROJETS_DEFAUT: Projet[] = [
   },
   {
     id: idFactice("projet", 2),
-    slug: "ferme-de-vallauris",
-    titre: "La Ferme de Vallauris",
-    client_nom: "La Ferme de Vallauris",
+    slug: "campagne-vallauris",
+    titre: "Campagne Vallauris",
+    client_nom: "Campagne Vallauris",
     secteur: "Hébergement touristique",
     resume:
-      "Site vitrine et panel d'administration pour un hébergement : réservations, galerie photo et emails de confirmation.",
+      "Site et moteur de réservation en direct pour des chambres d'hôtes et un gîte familial, à Vaumeilh près de Sisteron.",
     probleme:
-      "Les réservations passaient par les plateformes, qui prennent leur commission et s'intercalent entre l'hébergeur et ses clients.",
+      "Les réservations passaient par les plateformes, qui prennent leur commission et s'intercalent entre les hôtes et leurs voyageurs. Une ancienne ferme restaurée dans les Alpes-de-Haute-Provence méritait mieux qu'une fiche standardisée parmi des milliers.",
     solution:
-      "Un site de réservation en direct, avec calendrier de disponibilités, envoi de photos depuis le back-office et emails de confirmation automatiques. Le propriétaire gère tout lui-même, sans intermédiaire.",
-    resultat: "Les réservations en direct ne passent plus par une commission.",
+      "Un site de réservation en direct : calendrier de disponibilités, espace « Mon compte » pour les voyageurs, galerie alimentée depuis le back-office, emails de confirmation automatiques et contact WhatsApp. Les hôtes gèrent tout eux-mêmes, sans intermédiaire.",
+    resultat:
+      "Les réservations en direct ne passent plus par une commission, et le domaine a enfin un site à la hauteur du lieu.",
     stack: ["HTML", "JavaScript", "Vercel KV", "Vercel Blob", "Nodemailer", "Resend"],
-    url_live: null,
+    url_live: "https://www.campagne-vallauris.fr",
     url_depot: null,
-    image_couverture: null,
+    image_couverture: "/realisations/campagne-vallauris.webp",
     images: [],
     prix_min: 2000,
     prix_max: 4000,
@@ -293,7 +294,9 @@ export const PROJETS_DEFAUT: Projet[] = [
     resultat:
       "Une liste courte de sites candidats, avec le détail du score et les limites de la méthode affichées franchement.",
     stack: ["Next.js", "React", "TypeScript", "Supabase", "visx", "Tailwind CSS"],
-    url_live: "https://socle-ashen.vercel.app",
+    // Le déploiement a été retiré (l'ancienne adresse renvoie une 404). Mieux
+    // vaut pas de lien qu'un lien mort sur une page de portfolio.
+    url_live: null,
     url_depot: null,
     image_couverture: null,
     images: [],

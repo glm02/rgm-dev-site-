@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { ArrowRight } from "lucide-react";
 
+import { LogoTechno, TECHNOS } from "@/components/commun/logos-technos";
 import { Surligne } from "@/components/commun/surligne";
 import { ToileMaillage } from "@/components/commun/toile-maillage";
 import { Marquee } from "@/components/marquee";
@@ -13,20 +14,6 @@ const PREUVES = [
   { valeur: "À vous", libelle: "le code, le dépôt, l'hébergement" },
 ];
 
-const TECHNOS = [
-  "Next.js",
-  "React",
-  "TypeScript",
-  "Supabase",
-  "PostgreSQL",
-  "Tailwind CSS",
-  "n8n",
-  "Vercel",
-  "Node.js",
-  "Python",
-  "Stripe",
-  "Resend",
-];
 
 /**
  * Le hero.
@@ -127,16 +114,17 @@ export function Hero() {
       </div>
 
       {/* La bande des technos. Défilement continu, donc `linear` : une
-          accélération sur un mouvement sans fin se lirait comme un à-coup. */}
+          accélération sur un mouvement sans fin se lirait comme un à-coup.
+          Elle s'arrête au survol, pour qu'on puisse lire un logo qui intrigue. */}
       <div className="relative border-t border-border bg-secondary/30 py-4">
-        <Marquee duration={52} pauseOnHover fade fadeAmount={14}>
+        <Marquee duration={62} pauseOnHover fade fadeAmount={14}>
           {TECHNOS.map((techno) => (
-            <span
-              key={techno}
-              className="mx-6 text-[13px] font-medium tracking-wide text-muted-foreground/80"
-            >
-              {techno}
-            </span>
+            <LogoTechno
+              key={techno.icone.title}
+              icone={techno.icone}
+              nom={techno.nom}
+              className="mx-6"
+            />
           ))}
         </Marquee>
       </div>

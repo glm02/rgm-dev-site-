@@ -1,3 +1,4 @@
+import Image from "next/image";
 import Link from "next/link";
 import { ArrowUpRight } from "lucide-react";
 
@@ -17,6 +18,9 @@ import { cn } from "@/lib/utils";
  * dans une carte en `rounded-2xl` avec `p-1.5`. Un rayon intérieur égal au
  * rayon extérieur donne cet écart visuel qu'on remarque sans savoir nommer.
  */
+/** Une capture servie depuis `public/`, par opposition à une URL distante. */
+const locale = (source: string) => source.startsWith("/");
+
 export function CarteProjet({
   projet,
   priorite = false,
@@ -46,16 +50,30 @@ export function CarteProjet({
         )}
       >
         {projet.image_couverture ? (
-          // eslint-disable-next-line @next/next/no-img-element -- les captures
-          // sont hébergées sur Supabase Storage, dont le domaine n'est pas
-          // encore connu : `next/image` exige une liste blanche à la
-          // configuration. À rebasculer dès que le bucket existe.
-          <img
-            src={projet.image_couverture}
-            alt={`Aperçu du site ${projet.titre}`}
-            loading={priorite ? "eager" : "lazy"}
-            className="size-full object-cover transition-[scale] duration-300 ease-out group-hover:scale-[1.02]"
-          />
+          locale(projet.image_couverture) ? (
+            <Image
+              src={projet.image_couverture}
+              alt={`Aperçu du site ${projet.titre}`}
+              fill
+              // La vignette fait au plus un tiers de la grille sur grand écran,
+              // la moitié sur tablette, toute la largeur sur mobile. Sans cette
+              // indication, Next sert l'image pleine taille à tout le monde.
+              sizes="(min-width: 1024px) 33vw, (min-width: 768px) 50vw, 100vw"
+              priority={priorite}
+              className="object-cover object-top transition-[scale] duration-300 ease-out group-hover:scale-[1.02]"
+            />
+          ) : (
+            // eslint-disable-next-line @next/next/no-img-element -- image
+            // distante : une fois le bucket Supabase Storage créé, son domaine
+            // ira dans `images.remotePatterns` et cette branche disparaîtra.
+            // En attendant, `next/image` refuserait un hôte non déclaré.
+            <img
+              src={projet.image_couverture}
+              alt={`Aperçu du site ${projet.titre}`}
+              loading={priorite ? "eager" : "lazy"}
+              className="size-full object-cover object-top transition-[scale] duration-300 ease-out group-hover:scale-[1.02]"
+            />
+          )
         ) : (
           <PlaceholderProjet titre={projet.titre} />
         )}

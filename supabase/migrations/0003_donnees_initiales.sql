@@ -144,12 +144,16 @@ from services where slug = 'maintenance-supervision';
 -- ---------------------------------------------------------------------------
 -- Réalisations
 -- ---------------------------------------------------------------------------
--- Les captures d'écran restent à produire (colonne `image_couverture`).
+-- Les captures d'écran sont des vraies : elles ont été prises sur les sites en
+-- production et vivent dans `public/realisations/`. Socle n'en a pas, son
+-- déploiement ayant été retiré.
+--
 -- Les fourchettes de prix sont indicatives, à corriger d'après les vrais devis.
 
 insert into projets (
   slug, titre, client_nom, secteur, resume, probleme, solution, resultat,
-  stack, url_live, prix_min, prix_max, duree_jours, en_vedette, publie, ordre
+  stack, url_live, image_couverture, prix_min, prix_max, duree_jours,
+  en_vedette, publie, ordre
 ) values
 (
   'atout-travaux',
@@ -162,19 +166,21 @@ insert into projets (
   'Le site se charge quasi instantanément et chaque métier a sa page indexée. Les demandes de devis arrivent désormais par le site.',
   array['HTML', 'CSS', 'JavaScript', 'Vercel Functions', 'Upstash Redis', 'Resend'],
   'https://atout-travaux.vercel.app',
+  '/realisations/atout-travaux.webp',
   1500, 3000, 25, true, true, 1
 ),
 (
-  'ferme-de-vallauris',
-  'La Ferme de Vallauris',
-  'La Ferme de Vallauris',
+  'campagne-vallauris',
+  'Campagne Vallauris',
+  'Campagne Vallauris',
   'Hébergement touristique',
-  'Site vitrine et panel d''administration pour un hébergement : réservations, galerie photo et emails de confirmation.',
-  'Les réservations passaient par les plateformes, qui prennent leur commission et s''intercalent entre l''hébergeur et ses clients.',
-  'Un site de réservation en direct, avec calendrier de disponibilités, envoi de photos depuis le back-office et emails de confirmation automatiques. Le propriétaire gère tout lui-même, sans intermédiaire.',
-  'Les réservations en direct ne passent plus par une commission.',
+  'Site et moteur de réservation en direct pour des chambres d''hôtes et un gîte familial, à Vaumeilh près de Sisteron.',
+  'Les réservations passaient par les plateformes, qui prennent leur commission et s''intercalent entre les hôtes et leurs voyageurs. Une ancienne ferme restaurée dans les Alpes-de-Haute-Provence méritait mieux qu''une fiche standardisée parmi des milliers.',
+  'Un site de réservation en direct : calendrier de disponibilités, espace « Mon compte » pour les voyageurs, galerie alimentée depuis le back-office, emails de confirmation automatiques et contact WhatsApp. Les hôtes gèrent tout eux-mêmes, sans intermédiaire.',
+  'Les réservations en direct ne passent plus par une commission, et le domaine a enfin un site à la hauteur du lieu.',
   array['HTML', 'JavaScript', 'Vercel KV', 'Vercel Blob', 'Nodemailer', 'Resend'],
-  null,
+  'https://www.campagne-vallauris.fr',
+  '/realisations/campagne-vallauris.webp',
   2000, 4000, 30, true, true, 2
 ),
 (
@@ -187,7 +193,9 @@ insert into projets (
   'Croisement de quatre jeux de données publiques, calcul de la distance de chaque friche industrielle au poste 225 kV le plus proche, et score explicite sur quatre critères pondérés. Carte choroplèthe par département et classement filtrable de près de 3 000 sites.',
   'Une liste courte de sites candidats, avec le détail du score et les limites de la méthode affichées franchement.',
   array['Next.js', 'React', 'TypeScript', 'Supabase', 'visx', 'Tailwind CSS'],
-  'https://socle-ashen.vercel.app',
+  -- Le déploiement a été retiré : mieux vaut pas de lien qu'un lien mort.
+  null,
+  null,
   null, null, 40, true, true, 3
 ),
 (
@@ -200,6 +208,7 @@ insert into projets (
   null,
   null,
   array['HTML', 'CSS', 'JavaScript'],
+  null,
   null,
   null, null, null, false, false, 4
 );
