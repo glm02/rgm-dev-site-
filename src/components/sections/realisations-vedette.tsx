@@ -14,7 +14,11 @@ export async function RealisationsVedette() {
   if (projets.length === 0) return null;
 
   return (
-    <section className="border-y border-border bg-secondary/30 py-20 sm:py-28">
+    {/* Ni filet ni aplat opaque : la nappe 3D passe derrière toute la page
+        d'accueil, et une bordure pleine la coupait net comme une image
+        tronquée. Un voile très léger suffit à marquer le changement de
+        section. */}
+    <section className="bg-linear-to-b from-transparent via-secondary/40 to-transparent py-20 sm:py-28">
       <div className="conteneur">
         <TitreSection
           surtitre="Réalisations"

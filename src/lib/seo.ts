@@ -45,15 +45,15 @@ export function metadonnees({
       description,
       siteName: SITE.nom,
       locale: "fr_FR",
-      images: image ? [{ url: image }] : undefined,
+      images: [{ url: image ?? "/images/og-banner.jpg" }],
       publishedTime: article?.publieLe ?? undefined,
       tags: article?.tags,
     },
     twitter: {
-      card: image ? "summary_large_image" : "summary",
+      card: "summary_large_image",
       title: titreComplet,
       description,
-      images: image ? [image] : undefined,
+      images: [image ?? "/images/og-banner.jpg"],
     },
   };
 }
@@ -78,7 +78,7 @@ export function jsonLdEntreprise(note: { moyenne: number; nombre: number } | nul
     description: SITE.promesse,
     url: SITE.url,
     email: SITE.email,
-    image: `${SITE.url}/opengraph-image`,
+    image: `${SITE.url}/images/og-banner.jpg`,
     priceRange: "€€",
     address: {
       "@type": "PostalAddress",

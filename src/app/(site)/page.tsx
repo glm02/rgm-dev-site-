@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 
 import { ToileMaillage } from "@/components/commun/toile-maillage";
+import { APropos } from "@/components/sections/a-propos";
 import { AppelAction } from "@/components/sections/appel-action";
 import { ApercuTarifs } from "@/components/sections/apercu-tarifs";
 import { AvisSection } from "@/components/sections/avis-section";
@@ -22,7 +23,7 @@ export const metadata: Metadata = metadonnees({
  *
  * L'ordre des sections suit la question que se pose le visiteur, dans l'ordre
  * où il se la pose : qu'est-ce que c'est → qu'est-ce que vous faites → est-ce
- * que vous savez le faire → comment ça se passe → combien ça coûte → est-ce
+ * que vous savez le faire → qui est derrière → comment ça se passe → combien ça coûte → est-ce
  * que d'autres ont été contents → on y va.
  *
  * La nappe de points est posée ici, en fond **fixe de toute la page** et non
@@ -39,6 +40,7 @@ export default function Accueil() {
       <Hero />
       <Services />
       <RealisationsVedette />
+      <APropos />
       <Demarche />
       <ApercuTarifs />
       <AvisSection />

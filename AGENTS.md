@@ -60,7 +60,7 @@ Contenu de départ, tiré des dépôts existants de Rafael :
 | Projet | Ce que c'est | Stack | Note |
 |---|---|---|---|
 | **Atout Travaux** | Site + demandes de devis pour un artisan (ramonage, chauffage, clim, plomberie, tubage) à La Ciotat | HTML statique, fonctions Vercel, Upstash, Resend | SEO local, c'est l'essentiel de sa valeur |
-| **La Ferme de Vallauris** | Site vitrine + panel admin pour un hébergement | HTML/JS, Vercel KV + Blob, Resend | Réservations, galerie photo, emails |
+| **Campagne Vallauris** | Site + réservation en direct pour des chambres d'hôtes à Vaumeilh (campagne-vallauris.fr) | HTML/JS, Vercel KV + Blob, Resend | Réservations, galerie photo, emails |
 | **Socle** | Cartographie du foncier raccordable en France pour data centers | Next.js, Supabase, visx | Projet data, montre le niveau technique |
 | **Boréal** | Site événementiel | — | à compléter |
 

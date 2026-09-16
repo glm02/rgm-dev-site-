@@ -12,13 +12,14 @@
 -- Services
 -- ---------------------------------------------------------------------------
 
-insert into services (slug, titre, accroche, description, icone, ordre, seo_titre, seo_description) values
+insert into services (slug, titre, accroche, description, icone, image, ordre, seo_titre, seo_description) values
 (
   'sites-web',
   'Création de sites web',
   'Un site rapide, trouvable sur Google, et que vous pouvez modifier vous-même.',
   'Site vitrine, e-commerce, application métier ou refonte. Je conçois, je développe et je mets en ligne — puis je vous laisse un back-office pour que vous ne dépendiez de personne au quotidien. Rendu serveur, temps de chargement mesurés, référencement local travaillé dès la structure des pages.',
   'layout-template',
+  '/images/creation-sites-web.jpg',
   1,
   'Création de site web à Lyon — développeur freelance',
   'Développeur freelance à Lyon : sites vitrines, e-commerce et applications métier. Site rapide, référencé, avec back-office. Devis sous 48 h.'
@@ -29,6 +30,7 @@ insert into services (slug, titre, accroche, description, icone, ordre, seo_titr
   'Les tâches qui vous prennent des heures chaque semaine peuvent disparaître.',
   'Je repère les tâches longues et répétitives de votre entreprise — relances, devis, saisie, reporting, tri des mails, réponses clients — et je les automatise avec des agents IA et des workflows n8n branchés sur vos outils existants. On commence par un audit : ce qui prend du temps, combien, et ce qui est automatisable pour de vrai.',
   'bot',
+  '/images/automatisation-ia.jpg',
   2,
   'Automatisation IA pour entreprises à Lyon',
   'Agents IA et workflows n8n pour automatiser les tâches répétitives de votre entreprise. Audit, mise en place et suivi. Freelance à Lyon.'
@@ -39,6 +41,7 @@ insert into services (slug, titre, accroche, description, icone, ordre, seo_titr
   'Votre site est surveillé. Si quelque chose casse, je le sais avant vous.',
   'Contrôle automatique de la disponibilité, du temps de réponse et du certificat TLS. Alerte immédiate en cas de problème, mises à jour de sécurité, sauvegardes, petites évolutions incluses. Un forfait mensuel, sans engagement long.',
   'activity',
+  '/images/supervision.jpg',
   3,
   'Maintenance de site web à Lyon',
   'Supervision 24/7, mises à jour de sécurité, sauvegardes et évolutions. Forfait mensuel sans engagement.'

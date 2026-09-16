@@ -46,6 +46,12 @@ export const metadata: Metadata = {
     siteName: SITE.nom,
     title: `${SITE.nom} — ${SITE.slogan}`,
     description: SITE.promesse,
+    // L'aperçu affiché quand le lien est partagé (LinkedIn, WhatsApp, Slack).
+    images: [{ url: "/images/og-banner.jpg", width: 1376, height: 768, alt: SITE.slogan }],
+  },
+  twitter: {
+    card: "summary_large_image",
+    images: ["/images/og-banner.jpg"],
   },
   robots: {
     index: true,

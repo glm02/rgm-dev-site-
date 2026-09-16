@@ -197,8 +197,8 @@ export function ToileMaillage({
             // Le plafond n'est pas cosmétique : au premier plan, la correction
             // donnait des pastilles de 20 px qui mangeaient le sous-titre. La
             // nappe doit rester un fond.
-            float taille = (2.1 + aAlea * 1.2) * uEchelle * (6.2 / vDistance);
-            gl_PointSize = clamp(taille, 0.8, 4.4 * uEchelle);
+            float taille = (2.7 + aAlea * 1.5) * uEchelle * (6.2 / vDistance);
+            gl_PointSize = clamp(taille, 1.0, 5.6 * uEchelle);
             gl_Position = projectionMatrix * vuePos;
           }
         `,
@@ -225,11 +225,11 @@ export function ToileMaillage({
             // Le tout premier plan s'efface aussi. Sans ça, les points les plus
             // proches sont à la fois les plus gros et les plus opaques : ils
             // passent devant le texte au lieu de rester derrière.
-            float proche = 1.0 - smoothstep(4.6, 2.2, vDistance);
+            float proche = 1.0 - smoothstep(3.4, 1.6, vDistance);
 
             float alpha = bord
-                        * (0.14 + vIntensite * 0.42)
-                        * (1.0 - lointain * 0.72)
+                        * (0.30 + vIntensite * 0.62)
+                        * (1.0 - lointain * 0.55)
                         * proche
                         * uOpacite;
 
@@ -394,7 +394,7 @@ export function ToileMaillage({
         // blanc, les points restent en périphérie. En fond de page, c'est ce
         // qui permet à la nappe d'être partout sans jamais gêner une lecture.
         fixe
-          ? "[mask-image:radial-gradient(58%_62%_at_50%_50%,transparent_0%,transparent_46%,black_96%,black_100%)]"
+          ? "[mask-image:radial-gradient(40%_46%_at_50%_48%,rgba(0,0,0,0.18)_0%,rgba(0,0,0,0.35)_40%,black_100%)]"
           : [
               // En section, il faut en plus éteindre le bas : sans ça la nappe
               // se coupait net sur la bande suivante, comme une image tronquée.

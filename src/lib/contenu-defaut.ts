@@ -29,6 +29,7 @@ export const SERVICES_DEFAUT: Service[] = [
     description:
       "Site vitrine, e-commerce, application métier ou refonte. Je conçois, je développe et je mets en ligne — puis je vous laisse un back-office pour que vous ne dépendiez de personne au quotidien. Rendu serveur, temps de chargement mesurés, référencement local travaillé dès la structure des pages.",
     icone: "layout-template",
+    image: "/images/creation-sites-web.jpg",
     ordre: 1,
     actif: true,
     seo_titre: "Création de site web à Lyon — développeur freelance",
@@ -44,6 +45,7 @@ export const SERVICES_DEFAUT: Service[] = [
     description:
       "Je repère les tâches longues et répétitives de votre entreprise — relances, devis, saisie, reporting, tri des mails, réponses clients — et je les automatise avec des agents IA et des workflows n8n branchés sur vos outils existants. On commence par un audit : ce qui prend du temps, combien, et ce qui est automatisable pour de vrai.",
     icone: "bot",
+    image: "/images/automatisation-ia.jpg",
     ordre: 2,
     actif: true,
     seo_titre: "Automatisation IA pour entreprises à Lyon",
@@ -59,6 +61,7 @@ export const SERVICES_DEFAUT: Service[] = [
     description:
       "Contrôle automatique de la disponibilité, du temps de réponse et du certificat TLS. Alerte immédiate en cas de problème, mises à jour de sécurité, sauvegardes, petites évolutions incluses. Un forfait mensuel, sans engagement long.",
     icone: "activity",
+    image: "/images/supervision.jpg",
     ordre: 3,
     actif: true,
     seo_titre: "Maintenance de site web à Lyon",

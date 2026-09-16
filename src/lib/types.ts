@@ -58,6 +58,8 @@ export type Service = {
   accroche: string;
   description: string | null;
   icone: string | null;
+  /** Illustration du service, chemin sous `public/` ou URL. */
+  image: string | null;
   ordre: number;
   actif: boolean;
   seo_titre: string | null;

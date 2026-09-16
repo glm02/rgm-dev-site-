@@ -1,3 +1,4 @@
+import Image from "next/image";
 import Link from "next/link";
 import { Activity, ArrowRight, Bot, LayoutTemplate, Sparkles } from "lucide-react";
 import type { LucideIcon } from "lucide-react";
@@ -41,50 +42,69 @@ export async function Services() {
               as="article"
               delai={index * 70}
               className={cn(
-                "group relative flex flex-col rounded-2xl border border-border bg-card p-6 sm:p-7",
+                // Rayons concentriques : la carte en `rounded-2xl` avec `p-1.5`
+                // enveloppe une illustration en `rounded-xl`.
+                "group relative flex flex-col rounded-2xl border border-border bg-card p-1.5",
                 "transition-[border-color,box-shadow,translate] duration-200 ease-out",
                 "hover:-translate-y-0.5 hover:border-bleu-200 dark:hover:border-bleu-800",
                 "hover:shadow-[0_1px_2px_oklch(0_0_0/0.04),0_12px_32px_-16px_oklch(0_0_0/0.18)]",
               )}
             >
-              <span
-                className={cn(
-                  "grid size-11 place-items-center rounded-xl",
-                  "bg-bleu-50 text-bleu-600 dark:bg-bleu-900/40 dark:text-bleu-300",
-                  "transition-[background-color,color] duration-200 ease-out",
-                  "group-hover:bg-primary group-hover:text-primary-foreground",
-                )}
-              >
-                <Icone className="size-5.5" strokeWidth={1.75} aria-hidden="true" />
-              </span>
-
-              <h3 className="mt-5 text-xl font-semibold">{service.titre}</h3>
-
-              <p className="mt-2.5 text-[15px] leading-relaxed text-muted-foreground">
-                {service.accroche}
-              </p>
-
-              {service.description && (
-                <p className="mt-3.5 flex-1 text-sm leading-relaxed text-muted-foreground">
-                  {service.description}
-                </p>
+              {service.image && (
+                <div className="relative aspect-[16/9] overflow-hidden rounded-xl bg-secondary outline outline-black/10 dark:outline-white/10">
+                  <Image
+                    src={service.image}
+                    alt=""
+                    fill
+                    sizes="(min-width: 768px) 33vw, 100vw"
+                    className="object-cover transition-[scale] duration-500 ease-out group-hover:scale-[1.03]"
+                  />
+                </div>
               )}
 
-              <Link
-                href={`/services/${service.slug}`}
-                className={cn(
-                  "mt-6 inline-flex w-fit items-center gap-1.5 rounded-lg text-sm font-medium",
-                  "text-bleu-700 outline-none dark:text-bleu-300",
-                  "after:absolute after:inset-0 after:rounded-2xl after:content-['']",
+              <div className="flex flex-1 flex-col p-5 sm:p-6">
+                <span
+                  className={cn(
+                    "grid size-11 place-items-center rounded-xl",
+                    "bg-bleu-50 text-bleu-600 dark:bg-bleu-900/40 dark:text-bleu-300",
+                    "transition-[background-color,color] duration-200 ease-out",
+                    "group-hover:bg-primary group-hover:text-primary-foreground",
+                    // L'icône chevauche le bas de l'illustration : elle rattache
+                    // visuellement l'image au texte au lieu de les empiler.
+                    service.image && "relative z-10 -mt-11 ring-4 ring-card",
+                  )}
+                >
+                  <Icone className="size-5.5" strokeWidth={1.75} aria-hidden="true" />
+                </span>
+
+                <h3 className="mt-5 text-xl font-semibold">{service.titre}</h3>
+
+                <p className="mt-2.5 text-[15px] leading-relaxed text-muted-foreground">
+                  {service.accroche}
+                </p>
+
+                {service.description && (
+                  <p className="mt-3.5 flex-1 text-sm leading-relaxed text-muted-foreground">
+                    {service.description}
+                  </p>
                 )}
-              >
-                En savoir plus
-                <ArrowRight
-                  className="size-4 transition-[translate] duration-150 ease-out group-hover:translate-x-0.5"
-                  strokeWidth={2}
-                  aria-hidden="true"
-                />
-              </Link>
+
+                <Link
+                  href={`/services/${service.slug}`}
+                  className={cn(
+                    "mt-6 inline-flex w-fit items-center gap-1.5 rounded-lg text-sm font-medium",
+                    "text-bleu-700 outline-none dark:text-bleu-300",
+                    "after:absolute after:inset-0 after:rounded-2xl after:content-['']",
+                  )}
+                >
+                  En savoir plus
+                  <ArrowRight
+                    className="size-4 transition-[translate] duration-150 ease-out group-hover:translate-x-0.5"
+                    strokeWidth={2}
+                    aria-hidden="true"
+                  />
+                </Link>
+              </div>
             </Apparait>
           );
         })}

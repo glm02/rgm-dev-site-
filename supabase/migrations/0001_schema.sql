@@ -87,6 +87,7 @@ create table services (
   accroche    text not null,
   description text,
   icone       text,
+  image       text,
   ordre       int not null default 0,
   actif       boolean not null default true,
   seo_titre       text,
