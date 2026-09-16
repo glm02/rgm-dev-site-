@@ -7,13 +7,20 @@ import { cn } from "@/lib/utils";
 /**
  * Surligne un fragment de titre au feutre bleu.
  *
- * Reprend la technique de `HighlightedText` de Spell UI — un fond qui glisse
- * derrière le texte — mais en bleu translucide plutôt qu'en `mix-blend-difference`
- * noir et blanc, qui donnait un rendu inversé incompatible avec la charte.
+ * Reprend l'idée de `HighlightedText` de Spell UI — un fond qui balaie le texte
+ * — mais en bleu translucide plutôt qu'en `mix-blend-difference` noir et blanc,
+ * qui donnait un rendu inversé incompatible avec la charte.
  *
- * Le texte reste dans le DOM et lisible dès le premier rendu : seul le fond
- * s'anime. C'est ce qui permet de l'utiliser sur un `<h1>` sans retarder
- * l'affichage du plus grand élément de la page.
+ * **Le fond est porté par le texte lui-même**, pas par un calque en position
+ * absolue. Une première version utilisait un `<span>` absolu à l'intérieur d'un
+ * `inline-block` : sur mobile, le fragment devenait insécable et « automatisations
+ * IA » débordait de l'écran. Ici le surlignage est un dégradé en arrière-plan
+ * dont on anime la largeur, et `box-decoration-break: clone` en redonne un à
+ * chaque ligne — le titre peut donc se couper où il veut.
+ *
+ * Le texte est lisible dès le premier rendu : seul le fond s'anime. C'est ce
+ * qui permet de l'utiliser sur un `<h1>` sans retarder l'affichage du plus
+ * grand élément de la page.
  */
 export function Surligne({
   children,
@@ -26,19 +33,22 @@ export function Surligne({
   className?: string;
 }) {
   return (
-    <span className={cn("relative inline-block isolate", className)}>
-      <motion.span
-        aria-hidden="true"
-        className={cn(
-          "absolute inset-x-[-0.12em] bottom-[0.02em] top-[0.12em] -z-10 origin-left rounded-[0.18em]",
-          "bg-bleu-100 dark:bg-bleu-800/60",
-        )}
-        initial={{ scaleX: 0 }}
-        whileInView={{ scaleX: 1 }}
-        viewport={{ once: true, margin: "-10%" }}
-        transition={{ type: "spring", duration: 0.55, bounce: 0, delay: delai }}
-      />
-      <span className="text-bleu-700 dark:text-bleu-200">{children}</span>
-    </span>
+    <motion.span
+      className={cn(
+        "text-bleu-700 dark:text-bleu-200",
+        "[box-decoration-break:clone] [-webkit-box-decoration-break:clone]",
+        "rounded-[0.14em] px-[0.08em]",
+        "bg-[linear-gradient(var(--surligne),var(--surligne))] bg-no-repeat",
+        "[--surligne:var(--bleu-100)] dark:[--surligne:color-mix(in_oklch,var(--bleu-700)_55%,transparent)]",
+        className,
+      )}
+      style={{ backgroundPosition: "left center" }}
+      initial={{ backgroundSize: "0% 88%" }}
+      whileInView={{ backgroundSize: "100% 88%" }}
+      viewport={{ once: true, margin: "-8%" }}
+      transition={{ duration: 0.62, ease: [0.22, 1, 0.36, 1], delay: delai }}
+    >
+      {children}
+    </motion.span>
   );
 }

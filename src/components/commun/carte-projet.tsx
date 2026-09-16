@@ -30,7 +30,9 @@ export function CarteProjet({
   return (
     <article
       className={cn(
-        "group relative flex flex-col overflow-hidden rounded-2xl border border-border bg-card p-1.5",
+        // `h-full` : sans lui, une carte sans budget est plus courte que ses
+        // voisines et la rangée part de travers.
+        "group relative flex h-full flex-col overflow-hidden rounded-2xl border border-border bg-card p-1.5",
         "transition-[border-color,box-shadow,translate] duration-200 ease-out",
         "hover:-translate-y-0.5 hover:border-bleu-200 dark:hover:border-bleu-800",
         "hover:shadow-[0_1px_2px_oklch(0_0_0/0.04),0_12px_32px_-16px_oklch(0_0_0/0.18)]",
@@ -88,8 +90,10 @@ export function CarteProjet({
           {projet.resume}
         </p>
 
-        <div className="mt-4 flex flex-wrap gap-1.5">
-          {projet.stack.slice(0, 4).map((techno) => (
+        {/* Trois briques et un compteur : quatre remplissaient la ligne et
+            rejetaient le « +2 » sur une ligne à lui tout seul. */}
+        <div className="mt-4 mb-5 flex flex-wrap items-center gap-1.5">
+          {projet.stack.slice(0, 3).map((techno) => (
             <span
               key={techno}
               className="rounded-md bg-secondary px-2 py-1 text-xs font-medium text-secondary-foreground"
@@ -97,19 +101,26 @@ export function CarteProjet({
               {techno}
             </span>
           ))}
-          {projet.stack.length > 4 && (
-            <span className="rounded-md px-2 py-1 text-xs font-medium text-muted-foreground">
-              +{projet.stack.length - 4}
+          {projet.stack.length > 3 && (
+            <span className="text-xs font-medium text-muted-foreground">
+              +{projet.stack.length - 3}
             </span>
           )}
         </div>
 
-        {prix && (
-          <p className="mt-5 border-t border-border pt-4 text-sm text-muted-foreground">
-            Budget du projet{" "}
-            <span className="font-semibold text-foreground">{prix}</span>
-          </p>
-        )}
+        {/* `mt-auto` colle cette ligne au bas de la carte : les budgets
+            s'alignent d'une carte à l'autre au lieu de flotter après un
+            résumé plus ou moins long. */}
+        <p className="mt-auto border-t border-border pt-4 text-sm text-muted-foreground">
+          {prix ? (
+            <>
+              Budget du projet{" "}
+              <span className="font-semibold text-foreground">{prix}</span>
+            </>
+          ) : (
+            <span className="text-muted-foreground">Projet interne</span>
+          )}
+        </p>
       </div>
     </article>
   );

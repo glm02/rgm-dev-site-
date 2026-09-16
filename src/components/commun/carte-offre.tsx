@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { Check } from "lucide-react";
+import { ArrowRight, Check } from "lucide-react";
 
 import { fourchette } from "@/lib/format";
 import type { Offre } from "@/lib/types";
@@ -8,57 +8,109 @@ import { cn } from "@/lib/utils";
 /**
  * Une offre tarifaire.
  *
- * L'offre « en vedette » est marquée par la bordure bleue **et** par une
- * étiquette : la couleur seule ne suffirait pas, ni pour un daltonien, ni en
- * impression, ni sur une capture d'écran.
+ * L'offre en vedette bascule sur fond bleu plein plutôt que de se contenter
+ * d'une bordure : dans une rangée de trois, une bordure colorée se remarque à
+ * peine, un aplat décide du regard. Elle porte **aussi** une étiquette écrite —
+ * la couleur seule ne suffit ni pour un daltonien, ni en impression, ni sur une
+ * capture d'écran.
  */
-export function CarteOffre({ offre }: { offre: Offre }) {
+export function CarteOffre({
+  offre,
+  vedette: vedetteForcee,
+}: {
+  offre: Offre;
+  /**
+   * Force la mise en avant, indépendamment de `offre.en_vedette`.
+   *
+   * L'accueil ne montre qu'une offre par métier : il doit pouvoir décider
+   * laquelle des trois passe en bleu, sans que deux cartes se disputent le
+   * regard parce que la base en a marqué deux.
+   */
+  vedette?: boolean;
+}) {
+  const vedette = vedetteForcee ?? offre.en_vedette;
+
   return (
     <div
       className={cn(
-        "relative flex flex-col rounded-2xl border bg-card p-6 sm:p-7",
+        "relative flex h-full flex-col rounded-2xl border p-6 sm:p-7",
         "transition-[border-color,box-shadow,translate] duration-200 ease-out",
-        "hover:-translate-y-0.5",
-        offre.en_vedette
-          ? "border-bleu-300 shadow-[0_1px_2px_oklch(0_0_0/0.04),0_16px_40px_-20px_var(--bleu-600)] dark:border-bleu-700"
-          : "border-border hover:border-bleu-200 dark:hover:border-bleu-800",
+        "hover:-translate-y-1",
+        vedette
+          ? [
+              "border-bleu-700 bg-bleu-600 text-white",
+              "shadow-[0_2px_4px_oklch(0_0_0/0.08),0_24px_56px_-24px_var(--bleu-600)]",
+              "dark:border-bleu-400 dark:bg-bleu-600",
+            ]
+          : [
+              "border-border bg-card",
+              "hover:border-bleu-200 hover:shadow-[0_1px_2px_oklch(0_0_0/0.04),0_16px_40px_-22px_oklch(0_0_0/0.22)]",
+              "dark:hover:border-bleu-800",
+            ],
       )}
     >
-      {offre.en_vedette && (
-        <span className="absolute -top-3 left-6 rounded-full bg-primary px-3 py-1 text-xs font-semibold text-primary-foreground">
+      {vedette && (
+        <span className="absolute -top-3 left-6 rounded-full bg-foreground px-3 py-1 text-xs font-semibold text-background">
           Le plus demandé
         </span>
       )}
 
-      <h3 className="text-xl font-semibold">{offre.nom}</h3>
+      <h3 className={cn("text-xl font-semibold", vedette && "text-white")}>
+        {offre.nom}
+      </h3>
 
       {offre.description && (
-        <p className="mt-2 text-sm leading-relaxed text-muted-foreground">
+        <p
+          className={cn(
+            "mt-2 text-sm leading-relaxed",
+            vedette ? "text-bleu-50/85" : "text-muted-foreground",
+          )}
+        >
           {offre.description}
         </p>
       )}
 
-      <p className="mt-6 flex items-baseline gap-1.5">
-        {/* Chiffres tabulaires : sans ça, deux prix superposés dans une grille
-            ne s'alignent pas verticalement. */}
-        <span className="text-3xl font-semibold tracking-tight tabular-nums">
-          {fourchette(offre)}
-        </span>
+      {/* Chiffres tabulaires : sans eux, deux prix superposés dans une grille
+          ne s'alignent pas verticalement. */}
+      <p
+        className={cn(
+          "mt-7 text-[1.75rem] leading-none font-semibold tracking-tight tabular-nums",
+          vedette && "text-white",
+        )}
+      >
+        {fourchette(offre)}
       </p>
 
-      <p className="mt-1.5 text-sm text-muted-foreground">
+      <p
+        className={cn(
+          "mt-2 text-sm",
+          vedette ? "text-bleu-50/75" : "text-muted-foreground",
+        )}
+      >
         HT{offre.delai ? ` · ${offre.delai}` : ""}
       </p>
 
-      <ul className="mt-6 flex-1 space-y-3">
+      <div
+        className={cn(
+          "my-6 h-px",
+          vedette ? "bg-white/20" : "bg-border",
+        )}
+      />
+
+      <ul className="flex-1 space-y-3">
         {offre.inclus.map((ligne) => (
           <li key={ligne} className="flex gap-2.5 text-sm">
             <Check
-              className="mt-0.5 size-4 shrink-0 text-bleu-600 dark:text-bleu-400"
+              className={cn(
+                "mt-0.5 size-4 shrink-0",
+                vedette ? "text-white" : "text-bleu-600 dark:text-bleu-400",
+              )}
               strokeWidth={2.25}
               aria-hidden="true"
             />
-            <span className="leading-relaxed">{ligne}</span>
+            <span className={cn("leading-relaxed", vedette && "text-bleu-50/95")}>
+              {ligne}
+            </span>
           </li>
         ))}
       </ul>
@@ -66,14 +118,19 @@ export function CarteOffre({ offre }: { offre: Offre }) {
       <Link
         href={`/contact?offre=${encodeURIComponent(offre.nom)}`}
         className={cn(
-          "mt-7 inline-flex h-11 items-center justify-center rounded-xl text-sm font-medium",
+          "group mt-7 inline-flex h-11 items-center justify-center gap-1.5 rounded-xl text-sm font-medium",
           "transition-[background-color,border-color,scale] duration-150 ease-out active:scale-96",
-          offre.en_vedette
-            ? "bg-primary text-primary-foreground hover:bg-bleu-700 dark:hover:bg-bleu-400"
-            : "border border-border bg-background text-foreground hover:bg-secondary",
+          vedette
+            ? "bg-white text-bleu-700 hover:bg-bleu-50"
+            : "border border-border bg-background hover:bg-secondary",
         )}
       >
         Demander un devis
+        <ArrowRight
+          className="size-4 transition-[translate] duration-150 ease-out group-hover:translate-x-0.5"
+          strokeWidth={2}
+          aria-hidden="true"
+        />
       </Link>
     </div>
   );
