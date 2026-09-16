@@ -1,0 +1,16 @@
+# Le dépôt est construit sur Vercel, donc sous Linux. On normalise les fins de
+# ligne en LF dans git, quelle que soit la machine qui écrit — sinon chaque
+# aller-retour Windows / Vercel produit des diffs entiers sans changement réel.
+* text=auto eol=lf
+
+# Binaires : ne jamais y toucher.
+*.png binary
+*.jpg binary
+*.jpeg binary
+*.gif binary
+*.webp binary
+*.avif binary
+*.ico binary
+*.woff binary
+*.woff2 binary
+*.pdf binary
