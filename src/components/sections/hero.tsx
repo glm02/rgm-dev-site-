@@ -3,7 +3,6 @@ import { ArrowRight } from "lucide-react";
 
 import { LogoTechno, TECHNOS } from "@/components/commun/logos-technos";
 import { Surligne } from "@/components/commun/surligne";
-import { ToileMaillage } from "@/components/commun/toile-maillage";
 import { Marquee } from "@/components/marquee";
 import { SITE } from "@/lib/site";
 import { cn } from "@/lib/utils";
@@ -31,10 +30,9 @@ const PREUVES = [
 export function Hero() {
   return (
     <section className="relative isolate overflow-hidden">
-      {/* La scène 3D, puis le halo par-dessus. Le halo n'est pas décoratif : il
-          éclaircit le centre et c'est lui qui garde le titre lisible quelle que
-          soit la position de la houle. */}
-      <ToileMaillage className="-z-20" />
+      {/* La nappe 3D n'est plus ici : elle est posée en fond fixe de toute la
+          page d'accueil (voir `(site)/page.tsx`). Reste le halo, qui éclaircit
+          le centre et garde le titre lisible quelle que soit la houle. */}
       <div
         aria-hidden="true"
         className="halo-bleu pointer-events-none absolute inset-x-0 top-0 -z-10 h-[620px]"

@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 
+import { ToileMaillage } from "@/components/commun/toile-maillage";
 import { AppelAction } from "@/components/sections/appel-action";
 import { ApercuTarifs } from "@/components/sections/apercu-tarifs";
 import { AvisSection } from "@/components/sections/avis-section";
@@ -23,10 +24,18 @@ export const metadata: Metadata = metadonnees({
  * où il se la pose : qu'est-ce que c'est → qu'est-ce que vous faites → est-ce
  * que vous savez le faire → comment ça se passe → combien ça coûte → est-ce
  * que d'autres ont été contents → on y va.
+ *
+ * La nappe de points est posée ici, en fond **fixe de toute la page** et non
+ * dans le hero : elle accompagne la lecture d'un bout à l'autre, et la houle
+ * glisse au rythme du défilement. Le masque radial garde le centre de la
+ * fenêtre dégagé, donc le texte reste lisible partout — c'est ce qui permet de
+ * la laisser présente sans qu'elle devienne du papier peint.
  */
 export default function Accueil() {
   return (
     <>
+      <ToileMaillage fixe />
+
       <Hero />
       <Services />
       <RealisationsVedette />

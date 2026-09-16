@@ -26,7 +26,20 @@ import { cn } from "@/lib/utils";
  * - **Tout est en shader.** Déplacer 8 000 points depuis JavaScript à chaque
  *   image ferait tomber le fil principal ; le GPU le fait sans y penser.
  */
-export function ToileMaillage({ className }: { className?: string }) {
+export function ToileMaillage({
+  className,
+  fixe = false,
+}: {
+  className?: string;
+  /**
+   * Fond fixe sur toute la page plutôt que calé dans une section.
+   *
+   * La toile reste alors accrochée à la fenêtre : le trou central du masque ne
+   * bouge pas, le texte reste lisible quel que soit l'endroit où l'on se
+   * trouve, et la houle continue de vivre pendant qu'on défile.
+   */
+  fixe?: boolean;
+}) {
   const conteneur = React.useRef<HTMLDivElement>(null);
   const [pret, setPret] = React.useState(false);
 
@@ -87,8 +100,11 @@ export function ToileMaillage({ className }: { className?: string }) {
       camera.lookAt(0, -0.5, -0.5);
 
       // --- La nappe de points -----------------------------------------------
-      const COLONNES = 132;
-      const RANGEES = 76;
+      // Moins dense sur petit écran : un téléphone n'a pas la place d'afficher
+      // la différence, mais il en paierait le prix en GPU et en batterie.
+      const petitEcran = window.innerWidth < 640;
+      const COLONNES = petitEcran ? 82 : 132;
+      const RANGEES = petitEcran ? 48 : 76;
       const LARGEUR = 17;
       const PROFONDEUR = 11;
 
@@ -118,6 +134,7 @@ export function ToileMaillage({ className }: { className?: string }) {
 
       const uniforms = {
         uTemps: { value: 0 },
+        uDefilement: { value: 0 },
         uPointeur: { value: new THREE.Vector2(0, 0) },
         uForcePointeur: { value: 0 },
         uCouleur: { value: new THREE.Color(couleur) },
@@ -134,6 +151,7 @@ export function ToileMaillage({ className }: { className?: string }) {
         blending: THREE.NormalBlending,
         vertexShader: /* glsl */ `
           uniform float uTemps;
+          uniform float uDefilement;
           uniform vec2  uPointeur;
           uniform float uForcePointeur;
           uniform float uEchelle;
@@ -145,6 +163,11 @@ export function ToileMaillage({ className }: { className?: string }) {
 
           void main() {
             vec3 pos = position;
+
+            // Le défilement fait glisser la nappe vers l'observateur. C'est ce
+            // qui relie le fond au geste de lecture : sans ça, une toile fixe
+            // sur toute la page donne l'impression d'un papier peint.
+            pos.z = mod(pos.z + uDefilement + ${(PROFONDEUR / 2).toFixed(4)}, ${PROFONDEUR.toFixed(4)}) - ${(PROFONDEUR / 2).toFixed(4)};
 
             // Deux houles croisées de périodes différentes : leur somme ne se
             // répète pas à l'œil, là où une seule sinusoïde se lit tout de suite.
@@ -218,6 +241,20 @@ export function ToileMaillage({ className }: { className?: string }) {
       const nappe = new THREE.Points(geometrie, materiau);
       scene.add(nappe);
 
+      // --- Défilement --------------------------------------------------------
+      let cibleDefilement = 0;
+      const surDefilement = () => {
+        // Une page entière ne vaut qu'une fraction de la profondeur de la
+        // nappe : sinon le fond file plus vite que le contenu et donne le
+        // tournis.
+        cibleDefilement = (window.scrollY / window.innerHeight) * 1.6;
+      };
+
+      if (fixe) {
+        surDefilement();
+        window.addEventListener("scroll", surDefilement, { passive: true });
+      }
+
       // --- Pointeur ----------------------------------------------------------
       const ciblePointeur = new THREE.Vector2(0, 0);
       let cibleForce = 0;
@@ -279,6 +316,11 @@ export function ToileMaillage({ className }: { className?: string }) {
       function rendre(delta: number) {
         uniforms.uTemps.value += delta;
 
+        // Rattrapage progressif : suivre `scrollY` au pixel près ferait sauter
+        // la nappe à chaque cran de molette.
+        uniforms.uDefilement.value +=
+          (cibleDefilement - uniforms.uDefilement.value) * 0.08;
+
         // Interpolation douce vers la cible : suivre le curseur au pixel près
         // donne un mouvement sec et artificiel.
         uniforms.uPointeur.value.lerp(ciblePointeur, 0.06);
@@ -318,6 +360,7 @@ export function ToileMaillage({ className }: { className?: string }) {
         observateurTaille.disconnect();
         observateurVue.disconnect();
         document.removeEventListener("visibilitychange", surVisibilite);
+        window.removeEventListener("scroll", surDefilement);
         window.removeEventListener("pointermove", surPointeur);
         hote.removeEventListener("pointerleave", surSortie);
         // Sans ces libérations, une navigation client laisse le contexte WebGL
@@ -341,14 +384,23 @@ export function ToileMaillage({ className }: { className?: string }) {
       ref={conteneur}
       aria-hidden="true"
       className={cn(
-        "pointer-events-none absolute inset-0 overflow-hidden",
-        // Deux masques superposés (`mask-composite: intersect`) :
-        //   — le radial creuse le centre, pour que le titre ne se lise pas
-        //     par-dessus un semis de points ;
-        //   — le linéaire éteint le bas, sinon la nappe se coupait net sur la
-        //     bande des technos, comme une image tronquée.
-        "[mask-image:radial-gradient(52%_74%_at_50%_44%,transparent_0%,transparent_42%,black_92%,black_100%),linear-gradient(to_bottom,black_0%,black_58%,transparent_94%)]",
-        "[mask-composite:intersect] [-webkit-mask-composite:source-in]",
+        "pointer-events-none overflow-hidden",
+        // `-z-10` n'est pas un détail : un élément positionné sans z-index
+        // passerait DEVANT le texte. En z-index négatif, il se peint au-dessus
+        // du fond du `body` mais sous les fonds de section et sous le contenu —
+        // exactement la couche voulue.
+        fixe ? "fixed inset-0 -z-10" : "absolute inset-0",
+        // Le masque creuse le centre de la fenêtre : le texte se lit sur du
+        // blanc, les points restent en périphérie. En fond de page, c'est ce
+        // qui permet à la nappe d'être partout sans jamais gêner une lecture.
+        fixe
+          ? "[mask-image:radial-gradient(58%_62%_at_50%_50%,transparent_0%,transparent_46%,black_96%,black_100%)]"
+          : [
+              // En section, il faut en plus éteindre le bas : sans ça la nappe
+              // se coupait net sur la bande suivante, comme une image tronquée.
+              "[mask-image:radial-gradient(52%_74%_at_50%_44%,transparent_0%,transparent_42%,black_92%,black_100%),linear-gradient(to_bottom,black_0%,black_58%,transparent_94%)]",
+              "[mask-composite:intersect] [-webkit-mask-composite:source-in]",
+            ],
         "transition-opacity duration-700 ease-out",
         pret ? "opacity-100" : "opacity-0",
         className,
