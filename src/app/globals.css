@@ -4,6 +4,11 @@
 
 @custom-variant dark (&:is(.dark *));
 
+/* Appica UI — seul le composant `Rating` est utilisé (dépôt d'avis). On ne
+   scanne que son dossier : importer la feuille complète d'Appica redéfinirait
+   `--background`, `--foreground` et `--primary`, et écraserait la charte. */
+@source "../../node_modules/@appica/ui-react/dist/components/rating";
+
 /* ---------------------------------------------------------------------------
    RGM Dev — design system
 
@@ -69,6 +74,12 @@
   --radius-2xl: calc(var(--radius) * 1.8);
   --radius-3xl: calc(var(--radius) * 2.2);
   --radius-4xl: calc(var(--radius) * 2.6);
+
+  /* Les trois jetons qu'attend le `Rating` d'Appica, sous ses noms à lui mais
+     branchés sur notre palette (voir `--appica-*` dans :root et .dark). */
+  --color-background-muted: var(--appica-etoile-vide);
+  --color-border-strong: var(--appica-bordure-forte);
+  --opacity-disabled: 50%;
 
   /* Mouvement — voir la section « Tokens de mouvement » plus bas. */
   --ease-sortie: var(--ease-out-doux);
@@ -153,6 +164,9 @@
 
   --duree-entree: var(--duree-rapide);
   --duree-sortie: var(--duree-normale);
+
+  --appica-etoile-vide: oklch(0.918 0.011 256);
+  --appica-bordure-forte: oklch(0.80 0.02 258);
 }
 
 .dark {
@@ -198,6 +212,9 @@
   --sidebar-accent-foreground: oklch(0.965 0.006 256);
   --sidebar-border: oklch(1 0 0 / 11%);
   --sidebar-ring: var(--bleu-400);
+
+  --appica-etoile-vide: oklch(0.30 0.024 260);
+  --appica-bordure-forte: oklch(0.45 0.03 258);
 }
 
 @layer base {
