@@ -99,3 +99,19 @@ export const VILLES = [
   "Oullins",
   "Givors",
 ] as const;
+
+/**
+ * Les informations légales de l'éditeur (mentions légales, LCEN art. 6).
+ *
+ * ⚠️ À REMPLIR AVANT LA MISE EN PRODUCTION. Un champ vide n'est pas affiché
+ * sur la page, pour ne rien publier de faux — mais la page n'est conforme
+ * qu'une fois le responsable, le statut, le SIRET et l'adresse renseignés.
+ */
+export const JURIDIQUE = {
+  responsable: "",
+  /** Par exemple « Entrepreneur individuel (micro-entreprise) ». */
+  statut: "",
+  siret: "",
+  /** L'adresse de domiciliation de l'entreprise. */
+  adresse: "",
+} as const;
