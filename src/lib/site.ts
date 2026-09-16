@@ -7,6 +7,29 @@
  * numéro.
  */
 
+/**
+ * L'URL canonique du site.
+ *
+ * Attention au piège : Next remplace `process.env.NEXT_PUBLIC_*` par sa valeur
+ * littérale au build, et une variable absente devient la **chaîne vide**, pas
+ * `undefined`. Un `??` ne la rattrape donc pas, et `new URL("")` fait échouer
+ * tout le build — c'est exactement ce qui est arrivé au premier déploiement
+ * Vercel. On teste le contenu, pas la nullité.
+ */
+function urlDuSite(): string {
+  const explicite = process.env.NEXT_PUBLIC_SITE_URL?.trim();
+  if (explicite) return explicite.replace(/\/$/, "");
+
+  const vercel = process.env.VERCEL_PROJECT_PRODUCTION_URL?.trim();
+  if (vercel) return `https://${vercel}`;
+
+  // Les déploiements de prévisualisation n'ont que celle-ci.
+  const apercu = process.env.VERCEL_URL?.trim();
+  if (apercu) return `https://${apercu}`;
+
+  return "http://localhost:3000";
+}
+
 export const SITE = {
   nom: "RGM Dev",
   slogan: "Développeur freelance à Lyon",
@@ -16,11 +39,7 @@ export const SITE = {
    */
   promesse:
     "Sites web et automatisation IA pour les entreprises de Lyon et de la région. Les prix sont affichés, les réalisations aussi.",
-  url:
-    process.env.NEXT_PUBLIC_SITE_URL ??
-    (process.env.VERCEL_PROJECT_PRODUCTION_URL
-      ? `https://${process.env.VERCEL_PROJECT_PRODUCTION_URL}`
-      : "http://localhost:3000"),
+  url: urlDuSite(),
   email: "glm07rafael@gmail.com",
   ville: "Lyon",
   region: "Auvergne-Rhône-Alpes",
