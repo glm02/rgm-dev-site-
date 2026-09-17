@@ -198,7 +198,7 @@ insert into projets (
   array['Next.js', 'React', 'TypeScript', 'Supabase', 'visx', 'Tailwind CSS'],
   -- Le déploiement a été retiré : mieux vaut pas de lien qu'un lien mort.
   null,
-  null,
+  '/images/socle-carte.jpg',
   null, null, 40, true, true, 3
 ),
 (

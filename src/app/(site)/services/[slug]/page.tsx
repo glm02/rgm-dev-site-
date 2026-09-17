@@ -7,6 +7,7 @@ import { Apparait } from "@/components/commun/apparait";
 import { CarteOffre } from "@/components/commun/carte-offre";
 import { FilAriane } from "@/components/commun/fil-ariane";
 import { JsonLd } from "@/components/commun/json-ld";
+import { Objet3dService } from "@/components/commun/objet-3d-service";
 import { AppelAction } from "@/components/sections/appel-action";
 import { listerOffres, listerServices, serviceParSlug } from "@/lib/donnees";
 import { jsonLdFilAriane, jsonLdService, metadonnees } from "@/lib/seo";
@@ -66,49 +67,55 @@ export default async function PageService({ params }: PageProps<"/services/[slug
         <div className="conteneur relative pt-8 pb-16 sm:pb-20">
           <FilAriane etapes={etapes} />
 
-          <div className="mt-8 max-w-3xl">
-            <h1 className="text-4xl font-semibold sm:text-5xl">{service.titre}</h1>
+          <div className="mt-8 grid items-center gap-10 lg:grid-cols-[minmax(0,1.2fr)_minmax(0,1fr)] lg:gap-14">
+            <div className="max-w-2xl">
+              <h1 className="text-4xl font-semibold sm:text-5xl">{service.titre}</h1>
 
-            <p className="mt-5 text-xl leading-relaxed text-balance text-muted-foreground">
-              {service.accroche}
-            </p>
-
-            {service.description && (
-              <p className="mt-6 max-w-2xl text-[17px] leading-relaxed text-muted-foreground">
-                {service.description}
+              <p className="mt-5 text-xl leading-relaxed text-balance text-muted-foreground">
+                {service.accroche}
               </p>
-            )}
 
-            <div className="mt-9 flex flex-col gap-3 sm:flex-row">
-              <Link
-                href={`/contact?service=${encodeURIComponent(service.titre)}`}
-                className={cn(
-                  "group inline-flex h-12 items-center justify-center gap-2 rounded-xl bg-primary px-6",
-                  "text-[15px] font-medium text-primary-foreground",
-                  "shadow-[0_1px_2px_oklch(0_0_0/0.10),0_10px_30px_-12px_var(--bleu-600)]",
-                  "transition-[background-color,scale] duration-150 ease-out",
-                  "hover:bg-bleu-700 active:scale-96 dark:hover:bg-bleu-400",
-                )}
-              >
-                Demander un devis
-                <ArrowRight
-                  className="size-4 transition-[translate] duration-150 ease-out group-hover:translate-x-0.5"
-                  strokeWidth={2}
-                  aria-hidden="true"
-                />
-              </Link>
+              {service.description && (
+                <p className="mt-6 max-w-2xl text-[17px] leading-relaxed text-muted-foreground">
+                  {service.description}
+                </p>
+              )}
 
-              <Link
-                href="/realisations"
-                className={cn(
-                  "inline-flex h-12 items-center justify-center rounded-xl border border-border bg-background px-6",
-                  "text-[15px] font-medium",
-                  "transition-[background-color,scale] duration-150 ease-out",
-                  "hover:bg-secondary active:scale-96",
-                )}
-              >
-                Voir des exemples
-              </Link>
+              <div className="mt-9 flex flex-col gap-3 sm:flex-row">
+                <Link
+                  href={`/contact?service=${encodeURIComponent(service.titre)}`}
+                  className={cn(
+                    "group inline-flex h-12 items-center justify-center gap-2 rounded-xl bg-primary px-6",
+                    "text-[15px] font-medium text-primary-foreground",
+                    "shadow-[0_1px_2px_oklch(0_0_0/0.10),0_10px_30px_-12px_var(--bleu-600)]",
+                    "transition-[background-color,scale] duration-150 ease-out",
+                    "hover:bg-bleu-700 active:scale-96 dark:hover:bg-bleu-400",
+                  )}
+                >
+                  Demander un devis
+                  <ArrowRight
+                    className="size-4 transition-[translate] duration-150 ease-out group-hover:translate-x-0.5"
+                    strokeWidth={2}
+                    aria-hidden="true"
+                  />
+                </Link>
+
+                <Link
+                  href="/realisations"
+                  className={cn(
+                    "inline-flex h-12 items-center justify-center rounded-xl border border-border bg-background px-6",
+                    "text-[15px] font-medium",
+                    "transition-[background-color,scale] duration-150 ease-out",
+                    "hover:bg-secondary active:scale-96",
+                  )}
+                >
+                  Voir des exemples
+                </Link>
+              </div>
+            </div>
+
+            <div className="relative aspect-[4/3] overflow-hidden rounded-3xl border border-border bg-slate-950/95 shadow-2xl">
+              <Objet3dService slug={service.slug} />
             </div>
           </div>
         </div>

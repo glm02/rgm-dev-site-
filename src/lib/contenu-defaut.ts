@@ -301,7 +301,7 @@ export const PROJETS_DEFAUT: Projet[] = [
     // vaut pas de lien qu'un lien mort sur une page de portfolio.
     url_live: null,
     url_depot: null,
-    image_couverture: null,
+    image_couverture: "/images/socle-carte.jpg",
     images: [],
     prix_min: null,
     prix_max: null,

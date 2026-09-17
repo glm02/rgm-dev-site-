@@ -3,6 +3,7 @@ import Link from "next/link";
 import { Activity, ArrowRight, Bot, LayoutTemplate, Sparkles } from "lucide-react";
 import type { LucideIcon } from "lucide-react";
 
+import { Objet3dService } from "@/components/commun/objet-3d-service";
 import { Apparait } from "@/components/commun/apparait";
 import { TitreSection } from "@/components/commun/titre-section";
 import { listerServices } from "@/lib/donnees";
@@ -50,17 +51,9 @@ export async function Services() {
                 "hover:shadow-[0_1px_2px_oklch(0_0_0/0.04),0_12px_32px_-16px_oklch(0_0_0/0.18)]",
               )}
             >
-              {service.image && (
-                <div className="relative aspect-[16/9] overflow-hidden rounded-xl bg-secondary outline outline-black/10 dark:outline-white/10">
-                  <Image
-                    src={service.image}
-                    alt=""
-                    fill
-                    sizes="(min-width: 768px) 33vw, 100vw"
-                    className="object-cover transition-[scale] duration-500 ease-out group-hover:scale-[1.03]"
-                  />
-                </div>
-              )}
+              <div className="relative aspect-[16/9] overflow-hidden rounded-xl bg-slate-950/95 outline outline-black/10 dark:outline-white/10">
+                <Objet3dService slug={service.slug} />
+              </div>
 
               <div className="flex flex-1 flex-col p-5 sm:p-6">
                 <span
@@ -69,9 +62,7 @@ export async function Services() {
                     "bg-bleu-50 text-bleu-600 dark:bg-bleu-900/40 dark:text-bleu-300",
                     "transition-[background-color,color] duration-200 ease-out",
                     "group-hover:bg-primary group-hover:text-primary-foreground",
-                    // L'icône chevauche le bas de l'illustration : elle rattache
-                    // visuellement l'image au texte au lieu de les empiler.
-                    service.image && "relative z-10 -mt-11 ring-4 ring-card",
+                    "relative z-10 -mt-11 ring-4 ring-card",
                   )}
                 >
                   <Icone className="size-5.5" strokeWidth={1.75} aria-hidden="true" />
