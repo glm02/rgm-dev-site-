@@ -5,6 +5,7 @@ import { redirect } from "next/navigation";
 import { z } from "zod";
 
 import { AccesRefuse, exigerAdmin } from "@/lib/auth";
+import { PREFIXE_STOCKAGE, deposerFichier, deposerImage, fichierFourni } from "@/lib/stockage";
 import { executerSupervision } from "@/lib/supervision";
 
 /**
@@ -230,6 +231,12 @@ export async function enregistrerProjet(donnees: FormData) {
       const { id: _ignore, ...champs } = v;
       void _ignore;
 
+      // Une capture choisie dans le formulaire remplace le chemin saisi à la main.
+      const capture = donnees.get("fichier_image");
+      if (fichierFourni(capture)) {
+        champs.image_couverture = await deposerImage(supabase, `realisations/${champs.slug}`, capture);
+      }
+
       if (champs.prix_min !== null && champs.prix_max !== null && champs.prix_max < champs.prix_min) {
         return { erreur: "Le prix maximum est inférieur au prix minimum." };
       }
@@ -275,6 +282,10 @@ export async function enregistrerService(donnees: FormData) {
     const v = lire(schema, donnees);
     if (typeof v === "string") return { erreur: v };
     const { id, ...champs } = v;
+    const illustration = donnees.get("fichier_image");
+    if (fichierFourni(illustration)) {
+      champs.image = await deposerImage(supabase, "services", illustration);
+    }
     const { error } = await supabase.from("services").update(champs).eq("id", id);
     if (error) throw error;
     return { ok: "Service enregistré." };
@@ -348,6 +359,10 @@ export async function enregistrerArticle(donnees: FormData) {
       if (typeof v === "string") return { erreur: v };
       const { id: _ignore, ...champs } = v;
       void _ignore;
+      const illustration = donnees.get("fichier_image");
+      if (fichierFourni(illustration)) {
+        champs.image = await deposerImage(supabase, `articles/${champs.slug}`, illustration);
+      }
       const mots = champs.contenu.split(/\s+/).filter(Boolean).length;
       const ligne = {
         ...champs,
@@ -488,11 +503,63 @@ export async function enregistrerDocument(donnees: FormData) {
     const v = lire(schema, donnees);
     if (typeof v === "string") return { erreur: v };
     const { id, ...champs } = v;
+
+    // Le fichier part dans le bucket privé, rangé sous l'identifiant du projet :
+    // c'est ce premier segment de chemin que la politique de Storage compare
+    // aux projets du client. On stocke le chemin, pas une URL qui expirerait.
+    const fichier = donnees.get("fichier");
+    if (fichierFourni(fichier)) {
+      const chemin = await deposerFichier(supabase, "documents", champs.mission_id, fichier);
+      champs.url = `${PREFIXE_STOCKAGE}documents/${chemin}`;
+    }
+
+    if (!id && !champs.url) {
+      return { erreur: "Joignez un fichier ou indiquez un lien vers le document." };
+    }
+
     const { error } = id
       ? await supabase.from("documents").update(champs).eq("id", id)
       : await supabase.from("documents").insert(champs);
     if (error) throw error;
     return { ok: champs.statut === "brouillon" ? "Document enregistré (invisible du client tant qu'il est en brouillon)." : "Document enregistré." };
+  });
+}
+
+/** Change le statut d'un document : envoyé, accepté, payé… */
+export async function majStatutDocument(donnees: FormData) {
+  const schema = z.object({
+    id: z.uuid(),
+    mission_id: z.uuid(),
+    statut: z.enum(["brouillon", "envoye", "accepte", "refuse", "paye"]),
+  });
+  const missionId = String(donnees.get("mission_id") ?? "");
+  await executer(`/admin/missions/${missionId}`, [`/compte/projets/${missionId}`], async ({ supabase }) => {
+    const v = lire(schema, donnees);
+    if (typeof v === "string") return { erreur: v };
+    const { error } = await supabase.from("documents").update({ statut: v.statut }).eq("id", v.id);
+    if (error) throw error;
+    return { ok: "Statut du document mis à jour." };
+  });
+}
+
+/** Supprime un document, et son fichier s'il est dans le stockage. */
+export async function supprimerDocument(donnees: FormData) {
+  const missionId = String(donnees.get("mission_id") ?? "");
+  await executer(`/admin/missions/${missionId}`, [`/compte/projets/${missionId}`], async ({ supabase }) => {
+    const id = z.uuid().safeParse(donnees.get("id"));
+    if (!id.success) return { erreur: "Identifiant invalide." };
+
+    const { data: document } = await supabase.from("documents").select("url").eq("id", id.data).maybeSingle();
+    const { error } = await supabase.from("documents").delete().eq("id", id.data);
+    if (error) throw error;
+
+    // Le fichier est retiré après la ligne : un échec ici laisse un fichier
+    // orphelin, jamais un document qui pointe vers un fichier disparu.
+    if (document?.url?.startsWith(`${PREFIXE_STOCKAGE}documents/`)) {
+      const chemin = document.url.slice(`${PREFIXE_STOCKAGE}documents/`.length);
+      await supabase.storage.from("documents").remove([chemin]);
+    }
+    return { ok: "Document supprimé." };
   });
 }
 

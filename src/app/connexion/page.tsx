@@ -7,6 +7,7 @@ import { FormulaireConnexion } from "@/components/commun/formulaire-connexion";
 import { Logo } from "@/components/site/logo";
 import { Skeleton } from "@/components/ui/skeleton";
 import { metadonnees } from "@/lib/seo";
+import { fournisseursActifs } from "@/lib/supabase/fournisseurs";
 
 export const metadata: Metadata = metadonnees({
   titre: "Connexion",
@@ -23,7 +24,9 @@ export const metadata: Metadata = metadonnees({
  * qui arrive ici veut entrer, pas parcourir le catalogue. Un seul lien de
  * sortie, vers l'accueil.
  */
-export default function PageConnexion() {
+export default async function PageConnexion() {
+  const fournisseurs = await fournisseursActifs();
+
   return (
     <main className="relative flex min-h-dvh flex-col items-center justify-center overflow-hidden px-5 py-12">
       <div
@@ -52,7 +55,7 @@ export default function PageConnexion() {
           <div className="mt-7">
             {/* `useSearchParams` impose une frontière Suspense. */}
             <Suspense fallback={<SqueletteConnexion />}>
-              <FormulaireConnexion />
+              <FormulaireConnexion fournisseurs={fournisseurs} />
             </Suspense>
           </div>
         </div>

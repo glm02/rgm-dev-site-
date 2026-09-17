@@ -164,3 +164,54 @@ export async function deposerAvis(
     return echec(erreur);
   }
 }
+
+// ---------------------------------------------------------------------------
+// Profil
+// ---------------------------------------------------------------------------
+
+const SchemaProfil = z.object({
+  nom: z.string().trim().min(2, "Indiquez votre nom.").max(120),
+  entreprise: z.string().trim().max(160).optional().or(z.literal("")),
+  telephone: z
+    .string()
+    .trim()
+    .max(30)
+    .regex(/^[0-9+().\s-]*$/, "Ce numéro contient des caractères inattendus.")
+    .optional()
+    .or(z.literal("")),
+});
+
+export async function majProfil(
+  _precedent: EtatAction,
+  donnees: FormData,
+): Promise<EtatAction> {
+  try {
+    const { supabase, profil } = await exigerSession();
+
+    const analyse = SchemaProfil.safeParse(Object.fromEntries(donnees));
+    if (!analyse.success) {
+      return {
+        statut: "erreur",
+        message: "Il reste quelque chose à corriger.",
+        erreurs: z.flattenError(analyse.error).fieldErrors as Record<string, string[]>,
+      };
+    }
+
+    // Seuls ces trois champs partent : le rôle n'est jamais dans la requête,
+    // et le déclencheur SQL refuserait de toute façon qu'un client le change.
+    const { error } = await supabase
+      .from("profils")
+      .update({
+        nom: analyse.data.nom,
+        entreprise: analyse.data.entreprise || null,
+        telephone: analyse.data.telephone || null,
+      })
+      .eq("id", profil.id);
+    if (error) throw error;
+
+    revalidatePath("/compte", "layout");
+    return { statut: "succes", message: "Profil enregistré." };
+  } catch (erreur) {
+    return echec(erreur);
+  }
+}

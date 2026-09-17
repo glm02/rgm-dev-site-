@@ -1,5 +1,5 @@
 import { BoutonEnvoyer } from "@/components/admin/boutons";
-import { Bandeau, Case, Champ, Liste, ZoneTexte } from "@/components/admin/formulaire";
+import { Bandeau, Case, Champ, ChampFichier, Liste, ZoneTexte } from "@/components/admin/formulaire";
 import { EntetePage, Panneau } from "@/components/espace/entete-page";
 import { Pastille } from "@/components/espace/pastille";
 import { enregistrerOffre, enregistrerService, supprimerOffre } from "@/lib/actions/admin";
@@ -64,10 +64,11 @@ export default async function PageOffres({ searchParams }: PageProps<"/admin/off
                   </div>
                   <ZoneTexte nom="description" libelle="Description" valeur={service.description} />
                   <div className="grid gap-4 sm:grid-cols-3">
-                    <Champ nom="image" libelle="Illustration" valeur={service.image} />
+                    <Champ nom="image" libelle="Illustration (chemin)" valeur={service.image} />
                     <Champ nom="ordre" libelle="Ordre" type="number" valeur={service.ordre} />
                     <Case nom="actif" libelle="Affiché" coche={service.actif} />
                   </div>
+                  <ChampFichier nom="fichier_image" libelle="Déposer une illustration" accept="image/*" />
                   <div className="grid gap-4 sm:grid-cols-2">
                     <Champ nom="seo_titre" libelle="Titre Google" valeur={service.seo_titre} />
                     <Champ nom="seo_description" libelle="Description Google" valeur={service.seo_description} />

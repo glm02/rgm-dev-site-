@@ -1,5 +1,5 @@
 import { BoutonEnvoyer } from "./boutons";
-import { Case, Champ, ZoneTexte } from "./formulaire";
+import { Case, Champ, ChampFichier, ZoneTexte } from "./formulaire";
 import { Panneau } from "@/components/espace/entete-page";
 import { enregistrerProjet } from "@/lib/actions/admin";
 import type { Projet } from "@/lib/types";
@@ -57,7 +57,18 @@ export function FormulaireProjet({ projet }: { projet?: Projet }) {
             aide="Une par ligne."
           />
           <div className="space-y-4">
-            <Champ nom="image_couverture" libelle="Capture d'écran" valeur={projet?.image_couverture} aide="Chemin /realisations/…webp ou URL Supabase Storage." />
+            <ChampFichier
+              nom="fichier_image"
+              libelle="Capture d'écran"
+              accept="image/*"
+              aide="Déposée dans le stockage Supabase, elle remplace la capture actuelle."
+            />
+            <Champ
+              nom="image_couverture"
+              libelle="…ou chemin de l'image"
+              valeur={projet?.image_couverture}
+              aide="Rempli automatiquement après un dépôt."
+            />
             <Champ nom="url_live" libelle="Site en ligne" type="url" valeur={projet?.url_live} />
             <Champ nom="url_depot" libelle="Dépôt de code" type="url" valeur={projet?.url_depot} />
           </div>

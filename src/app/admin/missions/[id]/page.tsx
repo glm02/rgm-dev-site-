@@ -1,7 +1,7 @@
 import { notFound } from "next/navigation";
 
 import { BoutonEnvoyer } from "@/components/admin/boutons";
-import { Bandeau, Champ, Liste, ZoneTexte } from "@/components/admin/formulaire";
+import { Bandeau, Champ, ChampFichier, Liste, ZoneTexte } from "@/components/admin/formulaire";
 import { DetailMission } from "@/components/espace/detail-mission";
 import { EntetePage } from "@/components/espace/entete-page";
 import {
@@ -9,8 +9,11 @@ import {
   enregistrerDocument,
   majJalon,
   majMission,
+  majStatutDocument,
+  supprimerDocument,
   supprimerJalon,
 } from "@/lib/actions/admin";
+import { avecLiens } from "@/lib/stockage";
 import { sessionAdminOuRedirection } from "@/lib/auth";
 import { STATUT_DOCUMENT, STATUT_JALON, STATUT_MISSION, TYPE_DOCUMENT } from "@/lib/libelles";
 import type { Document, Jalon, Message, Mission, Profil } from "@/lib/types";
@@ -46,6 +49,7 @@ export default async function PageMissionAdmin({ params, searchParams }: PagePro
 
   const m = mission as Mission & { profils: Pick<Profil, "nom" | "email" | "entreprise"> | null };
   const listeJalons = (jalons ?? []) as Jalon[];
+  const listeDocuments = await avecLiens(supabase, (documents ?? []) as Document[]);
   const client = m.profils?.nom ?? m.profils?.email ?? "Client";
 
   return (
@@ -60,7 +64,7 @@ export default async function PageMissionAdmin({ params, searchParams }: PagePro
       <DetailMission
         mission={m}
         jalons={listeJalons}
-        documents={(documents ?? []) as Document[]}
+        documents={listeDocuments}
         messages={(messages ?? []) as Message[]}
         moiId={profil.id}
         nomAutre={client}
@@ -139,6 +143,40 @@ export default async function PageMissionAdmin({ params, searchParams }: PagePro
             </div>
           ),
           documents: (
+            <>
+            {listeDocuments.length > 0 && (
+              <ul className="mt-5 space-y-2 border-t border-border pt-4">
+                {listeDocuments.map((document) => (
+                  <li key={document.id} className="flex flex-wrap items-center gap-2">
+                    <span className="min-w-0 flex-1 truncate text-sm">{document.titre}</span>
+                    <form action={majStatutDocument} className="flex items-center gap-2">
+                      <input type="hidden" name="id" value={document.id} />
+                      <input type="hidden" name="mission_id" value={m.id} />
+                      <select
+                        name="statut"
+                        defaultValue={document.statut}
+                        aria-label={`Statut de ${document.titre}`}
+                        className="h-8 rounded-lg border border-input bg-background px-2 text-xs"
+                      >
+                        {options(STATUT_DOCUMENT).map((o) => (
+                          <option key={o.valeur} value={o.valeur}>
+                            {o.libelle}
+                          </option>
+                        ))}
+                      </select>
+                      <BoutonEnvoyer taille="petit" variante="secondaire">OK</BoutonEnvoyer>
+                    </form>
+                    <form action={supprimerDocument}>
+                      <input type="hidden" name="id" value={document.id} />
+                      <input type="hidden" name="mission_id" value={m.id} />
+                      <BoutonEnvoyer taille="petit" variante="danger" confirmation={`Supprimer « ${document.titre} » et son fichier ?`}>
+                        Retirer
+                      </BoutonEnvoyer>
+                    </form>
+                  </li>
+                ))}
+              </ul>
+            )}
             <details className="mt-5 border-t border-border pt-4">
               <summary className="cursor-pointer text-sm font-medium text-bleu-700 dark:text-bleu-300">
                 Ajouter un document
@@ -155,11 +193,17 @@ export default async function PageMissionAdmin({ params, searchParams }: PagePro
                   />
                 </div>
                 <Champ nom="titre" libelle="Titre" placeholder="Devis site vitrine" requis />
+                <ChampFichier
+                  nom="fichier"
+                  libelle="Fichier"
+                  accept=".pdf,.doc,.docx,.xls,.xlsx,.zip,image/*"
+                  aide="PDF, document ou archive, rangé dans le stockage privé du projet."
+                />
                 <Champ
                   nom="url"
-                  libelle="Lien du fichier"
+                  libelle="…ou lien externe"
                   type="url"
-                  aide="Lien Drive, Dropbox ou Supabase Storage."
+                  aide="Drive, Dropbox : si le fichier dépasse 4 Mo."
                 />
                 <div className="grid gap-4 sm:grid-cols-3">
                   <Champ nom="reference" libelle="Référence" placeholder="D-2026-014" />
@@ -172,6 +216,7 @@ export default async function PageMissionAdmin({ params, searchParams }: PagePro
                 <BoutonEnvoyer>Ajouter</BoutonEnvoyer>
               </form>
             </details>
+            </>
           ),
         }}
       />

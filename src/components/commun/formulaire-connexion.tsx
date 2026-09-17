@@ -22,7 +22,16 @@ const MESSAGES_ERREUR: Record<string, string> = {
  * un compte que le client ouvrira trois fois dans sa vie, lui imposer un mot de
  * passe garantit qu'il l'aura oublié à la deuxième.
  */
-export function FormulaireConnexion() {
+export function FormulaireConnexion({
+  fournisseurs = ["google", "github"],
+}: {
+  /**
+   * Les fournisseurs OAuth activés dans Supabase, lus côté serveur. Un bouton
+   * « Continuer avec Google » alors que Google n'est pas activé mènerait à une
+   * page d'erreur de Supabase : on ne l'affiche pas.
+   */
+  fournisseurs?: ("google" | "github")[];
+}) {
   const parametres = useSearchParams();
   const suite = parametres.get("suite") ?? "/compte";
   const erreurUrl = parametres.get("erreur");
@@ -117,21 +126,28 @@ export function FormulaireConnexion() {
         </p>
       )}
 
-      <div className="grid gap-3">
-        <BoutonFournisseur onClick={() => connexionOAuth("google")} nom="Google">
-          <LogoGoogle />
-        </BoutonFournisseur>
+      {fournisseurs.length > 0 && (
+        <>
+          <div className="grid gap-3">
+            {fournisseurs.includes("google") && (
+              <BoutonFournisseur onClick={() => connexionOAuth("google")} nom="Google">
+                <LogoGoogle />
+              </BoutonFournisseur>
+            )}
+            {fournisseurs.includes("github") && (
+              <BoutonFournisseur onClick={() => connexionOAuth("github")} nom="GitHub">
+                <LogoGithub />
+              </BoutonFournisseur>
+            )}
+          </div>
 
-        <BoutonFournisseur onClick={() => connexionOAuth("github")} nom="GitHub">
-          <LogoGithub />
-        </BoutonFournisseur>
-      </div>
-
-      <div className="flex items-center gap-4">
-        <span className="h-px flex-1 bg-border" />
-        <span className="text-xs tracking-wide text-muted-foreground uppercase">ou</span>
-        <span className="h-px flex-1 bg-border" />
-      </div>
+          <div className="flex items-center gap-4">
+            <span className="h-px flex-1 bg-border" />
+            <span className="text-xs tracking-wide text-muted-foreground uppercase">ou</span>
+            <span className="h-px flex-1 bg-border" />
+          </div>
+        </>
+      )}
 
       <form onSubmit={envoyerLien} className="space-y-3">
         <div>

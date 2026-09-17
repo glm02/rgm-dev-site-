@@ -191,3 +191,47 @@ export function Bandeau({ ok, erreur }: { ok?: string | string[]; erreur?: strin
 
   return null;
 }
+
+/**
+ * Un champ de dépôt de fichier.
+ *
+ * Laissé vide, il n'écrase rien : l'action ne remplace l'image ou le document
+ * existant que si un fichier a vraiment été choisi.
+ */
+export function ChampFichier({
+  nom,
+  libelle,
+  aide,
+  accept,
+  className,
+}: {
+  nom: string;
+  libelle: string;
+  aide?: string;
+  accept?: string;
+  className?: string;
+}) {
+  return (
+    <div className={cn("min-w-0", className)}>
+      <label htmlFor={nom} className="mb-1.5 block text-sm font-medium">
+        {libelle}
+      </label>
+      <input
+        id={nom}
+        name={nom}
+        type="file"
+        accept={accept}
+        className={cn(
+          "block w-full cursor-pointer rounded-lg border border-dashed border-input bg-background text-sm",
+          "file:mr-3 file:cursor-pointer file:border-0 file:bg-bleu-50 file:px-3 file:py-2.5 file:text-sm file:font-medium file:text-bleu-700",
+          "transition-[border-color] duration-150 ease-out hover:border-bleu-300",
+          "focus-visible:border-ring focus-visible:ring-3 focus-visible:ring-ring/40 focus-visible:outline-none",
+          "dark:file:bg-bleu-950 dark:file:text-bleu-200",
+        )}
+      />
+      <p className="mt-1.5 text-xs text-muted-foreground">
+        {aide ? `${aide} ` : ""}4 Mo maximum.
+      </p>
+    </div>
+  );
+}

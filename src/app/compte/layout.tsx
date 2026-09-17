@@ -28,6 +28,7 @@ export default async function LayoutCompte({ children }: LayoutProps<"/compte">)
       liens={[
         { href: "/compte", libelle: "Mes projets", icone: "projets" },
         { href: "/compte/avis", libelle: "Donner mon avis", icone: "avis" },
+        { href: "/compte/profil", libelle: "Mon profil", icone: "profil" },
         ...(profil.role === "admin"
           ? [{ href: "/admin", libelle: "Administration", icone: "tableau" as const }]
           : []),

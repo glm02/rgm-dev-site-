@@ -13,6 +13,7 @@ import {
   Newspaper,
   Star,
   Tags,
+  UserRound,
   Users,
   type LucideIcon,
 } from "lucide-react";
@@ -38,6 +39,7 @@ const ICONES = {
   clients: Users,
   articles: Newspaper,
   supervision: Activity,
+  profil: UserRound,
 } satisfies Record<string, LucideIcon>;
 
 export type LienEspace = {

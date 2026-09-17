@@ -1,5 +1,5 @@
 import { BoutonEnvoyer } from "./boutons";
-import { Case, Champ, ZoneTexte } from "./formulaire";
+import { Case, Champ, ChampFichier, ZoneTexte } from "./formulaire";
 import { Panneau } from "@/components/espace/entete-page";
 import { enregistrerArticle } from "@/lib/actions/admin";
 import type { Article } from "@/lib/types";
@@ -38,7 +38,10 @@ export function FormulaireArticle({ article }: { article?: Article }) {
         <div className="grid gap-4 sm:grid-cols-3">
           <Case nom="publie" libelle="Publié" aide="Sans date : publié maintenant." coche={article?.publie} />
           <Champ nom="publie_le" libelle="Date de publication" type="date" valeur={article?.publie_le?.slice(0, 10)} />
-          <Champ nom="image" libelle="Image" valeur={article?.image} />
+          <Champ nom="image" libelle="Image (chemin)" valeur={article?.image} />
+        </div>
+        <div className="mt-4">
+          <ChampFichier nom="fichier_image" libelle="Déposer une image" accept="image/*" />
         </div>
         <ZoneTexte nom="tags" libelle="Mots-clés" valeur={article?.tags.join(", ")} lignes={1} className="mt-4" aide="Séparés par des virgules." />
         <div className="mt-4 grid gap-4 sm:grid-cols-2">
