@@ -1,3 +1,4 @@
+import { BorderBeam } from "@appica/ui-react/border-beam";
 import type { Metadata } from "next";
 import { Suspense } from "react";
 import { Clock, Mail, MapPin, ShieldCheck } from "lucide-react";
@@ -55,6 +56,15 @@ export default function PageContact() {
 
       <section className="conteneur pb-20">
         <div className="grid gap-10 lg:grid-cols-[minmax(0,1.6fr)_minmax(0,1fr)] lg:gap-14">
+          {/* Le contour lumineux apparaît quand on survole ou touche le
+              formulaire : il accompagne la saisie sans distraire avant. */}
+          <BorderBeam
+            length={18}
+            thickness={1.5}
+            speed={4}
+            revealOn={["hover", "press"]}
+            className="rounded-2xl"
+          >
           <div className="rounded-2xl border border-border bg-card p-6 sm:p-8">
             {/* `useSearchParams` impose une frontière Suspense : sans elle, la
                 page entière deviendrait dynamique et perdrait son rendu
@@ -63,6 +73,7 @@ export default function PageContact() {
               <FormulaireDevis />
             </Suspense>
           </div>
+          </BorderBeam>
 
           <aside className="space-y-4">
             {REPERES.map(({ icone: Icone, titre, texte }) => (

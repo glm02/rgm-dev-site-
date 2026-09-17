@@ -1,4 +1,4 @@
-import { clientServeur } from "./supabase/serveur";
+import { clientPublic } from "./supabase/public";
 import {
   AVIS_DEFAUT,
   OFFRES_DEFAUT,
@@ -28,7 +28,7 @@ function signaler(quoi: string, erreur: unknown) {
 // ---------------------------------------------------------------------------
 
 export async function listerServices(): Promise<Service[]> {
-  const supabase = await clientServeur();
+  const supabase = clientPublic();
   if (!supabase) return SERVICES_DEFAUT;
 
   const { data, error } = await supabase
@@ -51,7 +51,7 @@ export async function serviceParSlug(slug: string): Promise<Service | null> {
 }
 
 export async function listerOffres(): Promise<Offre[]> {
-  const supabase = await clientServeur();
+  const supabase = clientPublic();
   if (!supabase) return OFFRES_DEFAUT;
 
   const { data, error } = await supabase
@@ -88,7 +88,7 @@ export async function listerProjets(options?: {
   enVedette?: boolean;
   limite?: number;
 }): Promise<Projet[]> {
-  const supabase = await clientServeur();
+  const supabase = clientPublic();
 
   let projets: Projet[];
 
@@ -117,7 +117,7 @@ export async function listerProjets(options?: {
 }
 
 export async function projetParSlug(slug: string): Promise<Projet | null> {
-  const supabase = await clientServeur();
+  const supabase = clientPublic();
 
   if (supabase) {
     const { data, error } = await supabase
@@ -143,7 +143,7 @@ export async function listerAvis(options?: {
   enVedette?: boolean;
   limite?: number;
 }): Promise<Avis[]> {
-  const supabase = await clientServeur();
+  const supabase = clientPublic();
   if (!supabase) return AVIS_DEFAUT;
 
   let requete = supabase
@@ -192,7 +192,7 @@ export async function noteGlobale(): Promise<{
 // ---------------------------------------------------------------------------
 
 export async function listerArticles(limite?: number): Promise<Article[]> {
-  const supabase = await clientServeur();
+  const supabase = clientPublic();
   if (!supabase) return [];
 
   let requete = supabase
@@ -214,7 +214,7 @@ export async function listerArticles(limite?: number): Promise<Article[]> {
 }
 
 export async function articleParSlug(slug: string): Promise<Article | null> {
-  const supabase = await clientServeur();
+  const supabase = clientPublic();
   if (!supabase) return null;
 
   const { data, error } = await supabase

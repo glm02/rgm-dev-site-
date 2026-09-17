@@ -1,3 +1,4 @@
+import { Sparkline, SparklineChart } from "@appica/ui-react/sparkline";
 import Link from "next/link";
 import { ArrowRight } from "lucide-react";
 
@@ -25,7 +26,7 @@ export default async function TableauDeBord() {
   const il_y_a_30_jours = ilYA(30);
 
   const [demandes30, gagnees, recentes, sites, alertes] = await Promise.all([
-    supabase.from("demandes_devis").select("statut, utm_source").gte("cree_le", il_y_a_30_jours),
+    supabase.from("demandes_devis").select("statut, utm_source, cree_le").gte("cree_le", il_y_a_30_jours),
     supabase.from("demandes_devis").select("id", { count: "exact", head: true }).eq("statut", "gagne"),
     supabase.from("demandes_devis").select("*").order("cree_le", { ascending: false }).limit(6),
     supabase.from("sites_supervises").select("nom, dernier_ok").eq("actif", true),
@@ -38,6 +39,14 @@ export default async function TableauDeBord() {
   ]);
 
   const mois = demandes30.data ?? [];
+
+  // Une colonne par jour sur 30 jours, jours vides compris : sans eux, deux
+  // demandes à trois semaines d'écart auraient l'air consécutives.
+  const jours = Array.from({ length: 30 }, (_, i) => ilYA(29 - i).slice(0, 10));
+  const parJour = jours.map((jour) => mois.filter((d) => d.cree_le.slice(0, 10) === jour).length);
+  const libellesJours = jours.map((jour) =>
+    new Date(jour).toLocaleDateString("fr-FR", { day: "numeric", month: "short" }),
+  );
   const depuisAds = mois.filter((d) => d.utm_source).length;
   const listeSites = (sites.data ?? []) as Pick<SiteSupervise, "nom" | "dernier_ok">[];
   const enPanne = listeSites.filter((s) => s.dernier_ok === false).length;
@@ -69,6 +78,18 @@ export default async function TableauDeBord() {
           </div>
         ))}
       </dl>
+
+      <div className="mt-3 rounded-2xl border border-border bg-card p-5">
+        <p className="text-sm text-muted-foreground">Demandes par jour, 30 derniers jours</p>
+        <Sparkline data={parJour} labels={libellesJours} color="var(--bleu-600)" locale="fr-FR" className="mt-3">
+          <SparklineChart
+            variant="column"
+            height={56}
+            tooltip
+            aria-label={`${mois.length} demandes de devis sur les 30 derniers jours`}
+          />
+        </Sparkline>
+      </div>
 
       <div className="mt-5 grid gap-5 lg:grid-cols-[minmax(0,1.4fr)_minmax(0,1fr)]">
         <Panneau

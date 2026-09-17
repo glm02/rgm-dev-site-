@@ -1,8 +1,10 @@
+import { BorderBeam } from "@appica/ui-react/border-beam";
 import Link from "next/link";
 import { ArrowRight } from "lucide-react";
 
 import { LogoTechno, TECHNOS } from "@/components/commun/logos-technos";
 import { Surligne } from "@/components/commun/surligne";
+import { TexteAnime } from "@/components/commun/texte-anime";
 import { Marquee } from "@/components/marquee";
 import { SITE } from "@/lib/site";
 import { cn } from "@/lib/utils";
@@ -42,13 +44,24 @@ export function Hero() {
         {/* `max-w-5xl` et pas `4xl` : à 4rem, « pour les entreprises de Lyon. »
             ne tenait pas sur une ligne et laissait « Lyon. » orpheline. */}
         <div className="mx-auto max-w-5xl text-center">
-          <p className="inline-flex items-center gap-2.5 rounded-full border border-border/80 bg-background/70 py-1.5 pr-4 pl-3 text-[13px] font-medium text-muted-foreground backdrop-blur-md">
-            <span className="relative grid size-2 place-items-center" aria-hidden="true">
-              <span className="absolute size-2 animate-ping rounded-full bg-bleu-500 opacity-60 [animation-duration:2.6s]" />
-              <span className="size-2 rounded-full bg-bleu-500" />
-            </span>
-            Disponible pour de nouveaux projets
-          </p>
+          {/* Le contour lumineux (BorderBeam d'Appica) fait le tour du badge en
+              continu, lentement : c'est le seul élément « vivant » du haut de
+              page, il dit « disponible maintenant » sans un mot de plus. */}
+          <BorderBeam
+            color="var(--bleu-500)"
+            length={22}
+            thickness={1.5}
+            speed={7}
+            className="inline-flex rounded-full"
+          >
+            <p className="inline-flex items-center gap-2.5 rounded-full border border-border/80 bg-background/70 py-1.5 pr-4 pl-3 text-[13px] font-medium text-foreground backdrop-blur-md">
+              <span className="relative grid size-2 place-items-center" aria-hidden="true">
+                <span className="absolute size-2 animate-ping rounded-full bg-bleu-500 opacity-60 [animation-duration:2.6s]" />
+                <span className="size-2 rounded-full bg-bleu-500" />
+              </span>
+              Disponible pour de nouveaux projets
+            </p>
+          </BorderBeam>
 
           {/* Le texte doit pouvoir se couper où il veut : « automatisations IA »
               soudé par une espace insécable débordait de l'écran sur mobile. */}
@@ -57,12 +70,27 @@ export function Hero() {
             <br className="hidden lg:block" /> pour les entreprises de {SITE.ville}.
           </h1>
 
+          {/* Les mots s'allument l'un après l'autre (TextAnimate, effet
+              « highlight »). Effet choisi parce que chaque mot occupe déjà sa
+              place au départ : la mise en page ne bouge pas pendant l'animation. */}
           <p className="mx-auto mt-7 max-w-xl text-lg leading-relaxed text-balance text-muted-foreground sm:text-xl">
-            Je construis des sites qu&apos;on trouve sur Google, et je fais
-            disparaître les tâches qui vous prennent des heures chaque semaine.
+            <TexteAnime effet="highlight" by="word" duree={1.3} delai={0.35}>
+              {"Je construis des sites qu’on trouve sur Google, et je fais disparaître les tâches qui vous prennent des heures chaque semaine."}
+            </TexteAnime>
           </p>
 
           <div className="mt-10 flex flex-col items-center justify-center gap-3 sm:flex-row">
+            {/* Au survol, une comète blanche fait le tour du bouton principal.
+                Réservé à ce bouton : c'est l'action qu'on veut voir cliquée. */}
+            <BorderBeam
+              color="oklch(1 0 0 / 0.9)"
+              length={16}
+              thickness={1.5}
+              speed={2.4}
+              revealOn={["hover", "press"]}
+              pressScale
+              className="w-full rounded-2xl sm:w-auto"
+            >
             <Link
               href="/contact"
               className={cn(
@@ -81,6 +109,7 @@ export function Hero() {
                 aria-hidden="true"
               />
             </Link>
+            </BorderBeam>
 
             <Link
               href="/realisations"
@@ -100,10 +129,14 @@ export function Hero() {
             gonfle pas « 50 clients satisfaits » quand on démarre. Ce qui est
             promis ici est vérifiable. */}
         <dl className="mx-auto mt-20 grid max-w-3xl grid-cols-1 gap-px overflow-hidden rounded-2xl border border-border/70 bg-border/70 backdrop-blur-md sm:grid-cols-3">
-          {PREUVES.map((preuve) => (
+          {PREUVES.map((preuve, index) => (
             <div key={preuve.libelle} className="bg-background/80 px-6 py-5 text-center">
               <dt className="text-xl font-semibold tracking-tight text-bleu-700 dark:text-bleu-300">
-                {preuve.valeur}
+                {/* Les valeurs se « décodent » (effet scramble) : un clin d'œil
+                    de développeur, court, joué une seule fois. */}
+                <TexteAnime effet="scramble" duree={0.9} delai={0.5 + index * 0.12}>
+                  {preuve.valeur}
+                </TexteAnime>
               </dt>
               <dd className="mt-1 text-sm text-muted-foreground">{preuve.libelle}</dd>
             </div>

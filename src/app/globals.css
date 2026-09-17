@@ -4,10 +4,57 @@
 
 @custom-variant dark (&:is(.dark *));
 
-/* Appica UI — seul le composant `Rating` est utilisé (dépôt d'avis). On ne
-   scanne que son dossier : importer la feuille complète d'Appica redéfinirait
-   `--background`, `--foreground` et `--primary`, et écraserait la charte. */
+/* Appica UI — intégré composant par composant.
+
+   On ne scanne que les dossiers des composants réellement utilisés, et on
+   recopie ci-dessous les seules animations dont ils ont besoin. Importer la
+   feuille complète d'Appica redéfinirait `--background`, `--foreground` et
+   `--primary`, et écraserait la charte bleu et blanc.
+
+   Utilisés : Rating (avis), BorderBeam (contours lumineux), TextAnimate
+   (textes animés), Sparkline (courbes de l'admin). */
 @source "../../node_modules/@appica/ui-react/dist/components/rating";
+@source "../../node_modules/@appica/ui-react/dist/components/border-beam";
+@source "../../node_modules/@appica/ui-react/dist/components/text-animate";
+@source "../../node_modules/@appica/ui-react/dist/components/sparkline";
+
+/* Variante utilisée par BorderBeam pour rester visible au doigt, où le
+   survol n'existe pas. */
+@custom-variant hover-none (@media (hover: none));
+
+/* BorderBeam : une comète qui fait le tour du contour. L'angle est une
+   propriété enregistrée pour pouvoir être animée — sans `@property`, le
+   navigateur ne sait pas interpoler un angle dans une variable. */
+@property --border-beam-angle {
+  syntax: "<angle>";
+  inherits: false;
+  initial-value: 0deg;
+}
+
+@utility animate-border-beam {
+  animation-name: border-beam;
+  animation-duration: var(--border-beam-duration, 5s);
+  animation-delay: var(--border-beam-delay, 0s);
+  animation-timing-function: linear;
+  animation-iteration-count: infinite;
+}
+
+@keyframes border-beam {
+  to {
+    --border-beam-angle: 360deg;
+  }
+}
+
+/* TextAnimate : le curseur clignotant de l'effet « machine à écrire ». */
+@utility animate-text-caret {
+  animation: text-caret 1s steps(1, end) infinite;
+}
+
+@keyframes text-caret {
+  50% {
+    opacity: 0;
+  }
+}
 
 /* ---------------------------------------------------------------------------
    RGM Dev — design system
@@ -80,6 +127,15 @@
   --color-background-muted: var(--appica-etoile-vide);
   --color-border-strong: var(--appica-bordure-forte);
   --opacity-disabled: 50%;
+
+  /* Ceux de Sparkline (infobulle, colonne active). Le texte « muted »
+     d'Appica est noir, comme le nôtre. */
+  --color-foreground-intense: var(--foreground);
+  --color-foreground-muted: var(--muted-foreground);
+  --color-background-strong: var(--secondary);
+  --color-border-overlay: var(--border);
+  --radius-2xs: calc(var(--radius) * 0.4);
+  --radius-3xs: calc(var(--radius) * 0.25);
 
   /* Mouvement — voir la section « Tokens de mouvement » plus bas. */
   --ease-sortie: var(--ease-out-doux);

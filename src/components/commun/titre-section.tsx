@@ -1,4 +1,5 @@
 import { Apparait } from "./apparait";
+import { TexteAnime } from "./texte-anime";
 import { cn } from "@/lib/utils";
 
 /**
@@ -31,7 +32,12 @@ export function TitreSection({
     >
       {surtitre && (
         <p className="text-sm font-semibold tracking-wider text-bleu-600 uppercase dark:text-bleu-400">
-          {surtitre}
+          {/* Le surtitre se décode quand la section arrive à l'écran : il
+              signale le changement de chapitre sans toucher au titre, qui
+              reste immobile et lisible. */}
+          <TexteAnime effet="scramble" duree={0.8}>
+            {surtitre}
+          </TexteAnime>
         </p>
       )}
 

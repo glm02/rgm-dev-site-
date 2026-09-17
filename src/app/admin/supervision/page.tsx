@@ -1,3 +1,4 @@
+import { Sparkline, SparklineChart } from "@appica/ui-react/sparkline";
 import { ExternalLink } from "lucide-react";
 
 import { BoutonEnvoyer } from "@/components/admin/boutons";
@@ -96,8 +97,30 @@ export default async function PageSupervision({ searchParams }: PageProps<"/admi
                   {/* La frise des derniers contrôles : un trait par passe, rouge
                       quand ça a échoué. On y lit une panne récurrente d'un coup
                       d'œil, là où un pourcentage la noierait. */}
+                  {/* La courbe du temps de réponse (Sparkline d'Appica) : une
+                      dérive lente — un site qui passe de 300 à 1 500 ms en une
+                      semaine — se voit ici bien avant de déclencher le seuil. */}
+                  {reussis.length > 1 && (
+                    <Sparkline
+                      data={reussis.map((c) => c.temps_ms ?? 0)}
+                      labels={reussis.map((c) => `${dateCourte(c.verifie_le)} — ms`)}
+                      color="var(--bleu-500)"
+                      format={{ maximumFractionDigits: 0 }}
+                      locale="fr-FR"
+                      className="mt-4"
+                    >
+                      <SparklineChart
+                        variant="area"
+                        height={44}
+                        curve={0.4}
+                        tooltip
+                        aria-label={`Temps de réponse de ${site.nom} sur les ${reussis.length} derniers contrôles`}
+                      />
+                    </Sparkline>
+                  )}
+
                   {historique.length > 0 && (
-                    <div className="mt-4 flex h-7 items-end gap-[3px]" aria-label={`${reussis.length} contrôles réussis sur ${historique.length}`} role="img">
+                    <div className="mt-3 flex h-7 items-end gap-[3px]" aria-label={`${reussis.length} contrôles réussis sur ${historique.length}`} role="img">
                       {historique.map((controle) => (
                         <span
                           key={controle.id}

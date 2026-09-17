@@ -1,3 +1,4 @@
+import { BorderBeam } from "@appica/ui-react/border-beam";
 import Link from "next/link";
 import { ArrowRight, Mail } from "lucide-react";
 
@@ -20,7 +21,28 @@ export function AppelAction({
 }) {
   return (
     <section className="conteneur pb-4">
-      <Apparait
+      {/* Deux comètes décalées d'une demi-boucle font le tour du bloc : le
+          dernier appel de la page doit être le plus vivant, sans clignoter. */}
+      {/* L'apparition au défilement porte sur le contenant des comètes, pas sur
+          la carte : sinon la carte glisserait et les contours resteraient en
+          place, décalés, le temps de l'entrée. */}
+      <Apparait>
+      <BorderBeam
+        color="var(--bleu-500)"
+        length={14}
+        thickness={1.5}
+        speed={9}
+        className="rounded-3xl"
+      >
+      <BorderBeam
+        color="var(--bleu-400)"
+        length={14}
+        thickness={1.5}
+        speed={9}
+        delay={-4.5}
+        className="rounded-3xl"
+      >
+      <div
         className={cn(
           "relative overflow-hidden rounded-3xl border border-bleu-200 dark:border-bleu-800",
           "bg-bleu-50 px-6 py-14 text-center sm:px-14 sm:py-20 dark:bg-bleu-950/40",
@@ -77,6 +99,9 @@ export function AppelAction({
             </a>
           </div>
         </div>
+      </div>
+      </BorderBeam>
+      </BorderBeam>
       </Apparait>
     </section>
   );

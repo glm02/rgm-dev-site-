@@ -1,3 +1,4 @@
+import { BorderBeam } from "@appica/ui-react/border-beam";
 import Link from "next/link";
 import { ArrowRight, Check } from "lucide-react";
 
@@ -30,12 +31,14 @@ export function CarteOffre({
 }) {
   const vedette = vedetteForcee ?? offre.en_vedette;
 
-  return (
+  const carte = (
     <div
       className={cn(
         "relative flex h-full flex-col rounded-2xl border p-6 sm:p-7",
         "transition-[border-color,box-shadow,translate] duration-200 ease-out",
-        "hover:-translate-y-1",
+        // En vedette, c'est le contenant du contour lumineux qui se soulève :
+        // sinon la carte monterait et la comète resterait en place, décalée.
+        !vedette && "hover:-translate-y-1",
         vedette
           ? [
               "border-bleu-700 bg-bleu-600 text-white",
@@ -133,5 +136,22 @@ export function CarteOffre({
         />
       </Link>
     </div>
+  );
+
+  // Seule l'offre mise en avant reçoit le contour lumineux (BorderBeam
+  // d'Appica) : une comète sur chaque carte annulerait l'effet. Blanche, parce
+  // que la carte est bleue ; lente, parce qu'elle tourne en permanence.
+  if (!vedette) return carte;
+
+  return (
+    <BorderBeam
+      color="oklch(1 0 0 / 0.85)"
+      length={18}
+      thickness={2}
+      speed={6}
+      className="h-full rounded-2xl transition-[translate] duration-200 ease-out hover:-translate-y-1"
+    >
+      {carte}
+    </BorderBeam>
   );
 }
