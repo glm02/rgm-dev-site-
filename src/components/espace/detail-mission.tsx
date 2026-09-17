@@ -77,6 +77,9 @@ export function DetailMission({
             </div>
           </div>
 
+          {/* Masquée quand il n'y a rien à y mettre : sinon un projet tout juste
+              créé affiche un filet au-dessus d'un bloc vide. */}
+          {(mission.debut_le || mission.montant != null || mission.url_live) && (
           <dl className="mt-5 flex flex-wrap gap-x-8 gap-y-3 border-t border-border pt-4 text-sm">
             {mission.debut_le && (
               <div>
@@ -107,6 +110,7 @@ export function DetailMission({
               </div>
             )}
           </dl>
+          )}
 
           {outils?.mission}
         </Panneau>
