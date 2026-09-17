@@ -105,6 +105,33 @@ construction : tout ce qui protège vraiment les données est dans
 ⚠️ Les prix de `0003_donnees_initiales.sql` sont des **fourchettes plausibles,
 pas les tarifs de Rafael**. À relire avant la mise en ligne.
 
+## Supervision des sites clients
+
+`/api/supervision` contrôle chaque site actif (réponse HTTP, temps, certificat
+TLS) et envoie une alerte Telegram + email **à chaque changement d'état** : une
+alerte à la chute, une au retour, pas une par passe.
+
+- La route exige l'en-tête `Authorization: Bearer <CRON_SECRET>`.
+- `vercel.json` la déclenche **une fois par jour** : c'est la limite des crons
+  sur le plan Hobby de Vercel, insuffisante pour surveiller une disponibilité.
+- Pour une vraie surveillance, un workflow **n8n sur le VPS** l'appelle toutes
+  les 5 minutes (nœud Schedule → HTTP Request GET avec l'en-tête ci-dessus).
+- Le bouton « Contrôler maintenant » de `/admin/supervision` lance une passe à
+  la demande.
+
+Variables nécessaires : `SUPABASE_SERVICE_ROLE_KEY`, `CRON_SECRET`,
+`TELEGRAM_BOT_TOKEN`, `TELEGRAM_CHAT_ID`, et `RESEND_API_KEY` pour l'email.
+
+## Avant la mise en production
+
+- [ ] Remplir `JURIDIQUE` dans `src/lib/site.ts` (responsable, statut, SIRET,
+      adresse) : les mentions légales ne sont pas conformes sans.
+- [ ] Relire les prix de `0003_donnees_initiales.sql`, qui sont des fourchettes
+      plausibles et non les vrais tarifs.
+- [ ] Créer le projet Supabase, appliquer les migrations, passer son compte en
+      `admin`, activer les fournisseurs Google et GitHub dans *Authentication*.
+- [ ] Renseigner les variables d'environnement sur Vercel.
+
 ## Déploiement
 
 Chaque `push` sur `main` déclenche un déploiement Vercel. Les variables

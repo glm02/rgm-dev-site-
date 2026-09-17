@@ -40,7 +40,7 @@ export function AppelAction({
         <div className="relative mx-auto max-w-2xl">
           <h2 className="text-3xl font-semibold sm:text-4xl">{titre}</h2>
 
-          <p className="mx-auto mt-5 max-w-xl text-lg leading-relaxed text-balance text-bleu-900/80 dark:text-bleu-100/80">
+          <p className="mx-auto mt-5 max-w-xl text-lg leading-relaxed text-balance text-bleu-950 dark:text-bleu-100/80">
             {texte}
           </p>
 

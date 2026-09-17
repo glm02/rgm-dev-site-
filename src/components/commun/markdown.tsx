@@ -15,7 +15,7 @@ import { cn } from "@/lib/utils";
  */
 export function Markdown({ contenu, className }: { contenu: string; className?: string }) {
   return (
-    <div className={cn("text-[17px] leading-[1.75] text-foreground/90", className)}>
+    <div className={cn("text-[17px] leading-[1.75] text-foreground", className)}>
       <ReactMarkdown
         remarkPlugins={[remarkGfm]}
         components={{

@@ -29,7 +29,7 @@ export function FilAriane({
             <li key={etape.href} className="flex items-center gap-1">
               {index > 0 && (
                 <ChevronRight
-                  className="size-3.5 text-muted-foreground/60"
+                  className="size-3.5 text-muted-foreground"
                   strokeWidth={2}
                   aria-hidden="true"
                 />

@@ -63,7 +63,7 @@ export function LogoTechno({
     <span
       className={cn(
         "group/logo inline-flex shrink-0 items-center gap-2.5",
-        "text-muted-foreground/70 transition-colors duration-200 ease-out",
+        "text-muted-foreground transition-colors duration-200 ease-out",
         "hover:text-foreground",
         className,
       )}

@@ -12,7 +12,7 @@
 /* ---------------------------------------------------------------------------
    RGM Dev — design system
 
-   Bleu et blanc. Une seule couleur d'accent, du blanc, des gris neutres.
+   Bleu et blanc. Une seule couleur d'accent, du blanc, du texte noir.
    Toute couleur ajoutée ici doit se justifier : le rouge d'erreur en est la
    seule exception admise.
    --------------------------------------------------------------------------- */
@@ -121,7 +121,12 @@
   --secondary: oklch(0.970 0.009 256);
   --secondary-foreground: var(--bleu-900);
   --muted: oklch(0.970 0.009 256);
-  --muted-foreground: oklch(0.505 0.022 258);
+  /* Le texte secondaire est noir, pas gris : sur fond blanc — et plus encore
+     avec la nappe de points qui passe derrière — un gris moyen ne se lisait
+     pas. La hiérarchie passe par la taille et la graisse, pas par la couleur.
+     (En thème sombre, le secondaire reste plus clair que le fond, c'est
+     l'inverse qui se lit mal.) */
+  --muted-foreground: oklch(0.2 0.013 258);
   --accent: var(--bleu-50);
   --accent-foreground: var(--bleu-800);
 

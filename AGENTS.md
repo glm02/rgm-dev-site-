@@ -160,8 +160,10 @@ politiques **RLS** — pas par une simple vérification côté client.
 
 **Bleu et blanc. Et ça doit être parfait.**
 
-- Fond blanc dominant, bleu comme unique couleur d'accent, gris neutres pour le
-  texte secondaire. Pas de seconde couleur d'accent, pas de dégradé arc-en-ciel.
+- Fond blanc dominant, bleu comme unique couleur d'accent, **texte en noir** —
+  y compris le texte secondaire : pas de gris, il ne se lit pas sur le blanc
+  (demande explicite de Rafael). La hiérarchie passe par la taille et la
+  graisse. Pas de seconde couleur d'accent, pas de dégradé arc-en-ciel.
 - Beaucoup d'air. Grandes typographies. Hiérarchie lisible d'un coup d'œil.
 - Mode sombre prévu dès le départ (variables CSS sur `:root`).
 - Animations **au service de la lecture**, jamais décoratives. Durées courtes

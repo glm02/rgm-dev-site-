@@ -115,3 +115,18 @@ export function moyenne(notes: number[]): number | null {
   const somme = notes.reduce((total, note) => total + note, 0);
   return Math.round((somme / notes.length) * 10) / 10;
 }
+
+/**
+ * Les calculs relatifs à « maintenant ».
+ *
+ * Sortis des composants : lire l'horloge pendant un rendu le rend impur, et
+ * React (règle `react-hooks/purity`) le signale à raison.
+ */
+export function ilYA(jours: number): string {
+  return new Date(Date.now() - jours * 86_400_000).toISOString();
+}
+
+/** Jours entiers restants avant une date (négatif si elle est passée). */
+export function joursAvant(valeur: string | Date): number {
+  return Math.floor((new Date(valeur).getTime() - Date.now()) / 86_400_000);
+}

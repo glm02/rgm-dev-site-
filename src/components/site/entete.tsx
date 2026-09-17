@@ -21,7 +21,11 @@ import { cn } from "@/lib/utils";
 export function Entete() {
   const chemin = usePathname();
   const [defile, setDefile] = React.useState(false);
-  const [menuOuvert, setMenuOuvert] = React.useState(false);
+  // Le menu est ouvert *pour une page donnée* : dès que le chemin change, il
+  // n'est plus ouvert, sans effet ni rendu supplémentaire.
+  const [cheminDuMenu, setCheminDuMenu] = React.useState<string | null>(null);
+  const menuOuvert = cheminDuMenu === chemin;
+  const setMenuOuvert = (ouvert: boolean) => setCheminDuMenu(ouvert ? chemin : null);
 
   React.useEffect(() => {
     const surDefilement = () => setDefile(window.scrollY > 8);
@@ -29,10 +33,6 @@ export function Entete() {
     window.addEventListener("scroll", surDefilement, { passive: true });
     return () => window.removeEventListener("scroll", surDefilement);
   }, []);
-
-  // Une navigation doit refermer le menu. Sans ça, le panneau reste ouvert
-  // par-dessus la nouvelle page.
-  React.useEffect(() => setMenuOuvert(false), [chemin]);
 
   // Menu ouvert : on bloque le défilement du fond, sinon la page glisse
   // derrière le panneau quand on fait défiler celui-ci.
@@ -132,7 +132,7 @@ export function Entete() {
 
             <button
               type="button"
-              onClick={() => setMenuOuvert((ouvert) => !ouvert)}
+              onClick={() => setMenuOuvert(!menuOuvert)}
               aria-label={menuOuvert ? "Fermer le menu" : "Ouvrir le menu"}
               aria-expanded={menuOuvert}
               className={cn(

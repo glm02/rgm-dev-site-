@@ -1,3 +1,4 @@
+import Image from "next/image";
 import Link from "next/link";
 import { Quote } from "lucide-react";
 
@@ -51,12 +52,22 @@ export function CarteAvis({
       </blockquote>
 
       <figcaption className="mt-6 flex items-center gap-3 border-t border-border pt-5">
-        <span
-          className="grid size-10 shrink-0 place-items-center rounded-full bg-bleu-50 text-sm font-semibold text-bleu-700 dark:bg-bleu-900/50 dark:text-bleu-200"
-          aria-hidden="true"
-        >
-          {initiales}
-        </span>
+        {avis.auteur_avatar ? (
+          <Image
+            src={avis.auteur_avatar}
+            alt={`Photo de ${avis.auteur_nom}`}
+            width={40}
+            height={40}
+            className="size-10 shrink-0 rounded-full object-cover border border-border"
+          />
+        ) : (
+          <span
+            className="grid size-10 shrink-0 place-items-center rounded-full bg-bleu-50 text-sm font-semibold text-bleu-700 dark:bg-bleu-900/50 dark:text-bleu-200"
+            aria-hidden="true"
+          >
+            {initiales}
+          </span>
+        )}
 
         <span className="min-w-0">
           <span className="block truncate text-sm font-semibold">{avis.auteur_nom}</span>

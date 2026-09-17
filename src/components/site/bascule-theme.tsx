@@ -20,13 +20,19 @@ import { cn } from "@/lib/utils";
  * transforme — échelle 0.25 → 1, opacité 0 → 1, flou 4 px → 0. Basculer
  * l'affichage ferait clignoter.
  */
+const abonnementVide = () => () => {};
+
 export function BasculeTheme({ className }: { className?: string }) {
   const { resolvedTheme, setTheme } = useTheme();
-  const [monte, setMonte] = React.useState(false);
-
   // Le thème résolu n'est connu qu'une fois côté navigateur. Rendre une icône
   // avant ça la ferait sauter à l'autre au moment de l'hydratation.
-  React.useEffect(() => setMonte(true), []);
+  // `useSyncExternalStore` vaut `false` au rendu serveur et à l'hydratation,
+  // `true` ensuite — sans le rendu en cascade d'un `setState` dans un effet.
+  const monte = React.useSyncExternalStore(
+    abonnementVide,
+    () => true,
+    () => false,
+  );
 
   const sombre = resolvedTheme === "dark";
 
