@@ -1,3 +1,4 @@
+import { Badge } from "@appica/ui-react/badge";
 import Image from "next/image";
 import Link from "next/link";
 import { ArrowUpRight } from "lucide-react";
@@ -112,12 +113,9 @@ export function CarteProjet({
             rejetaient le « +2 » sur une ligne à lui tout seul. */}
         <div className="mt-4 mb-5 flex flex-wrap items-center gap-1.5">
           {projet.stack.slice(0, 3).map((techno) => (
-            <span
-              key={techno}
-              className="rounded-md bg-secondary px-2 py-1 text-xs font-medium text-secondary-foreground"
-            >
+            <Badge key={techno} variant="soft" size="sm">
               {techno}
-            </span>
+            </Badge>
           ))}
           {projet.stack.length > 3 && (
             <span className="text-xs font-medium text-muted-foreground">

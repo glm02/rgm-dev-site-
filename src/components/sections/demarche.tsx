@@ -1,3 +1,6 @@
+import { Thumbnail } from "@appica/ui-react/thumbnail";
+import { FileSignature, Hammer, PhoneCall, Rocket } from "lucide-react";
+
 import { Apparait } from "@/components/commun/apparait";
 import { TitreSection } from "@/components/commun/titre-section";
 
@@ -15,6 +18,7 @@ const ETAPES = [
     texte:
       "Un appel pour comprendre votre activité, ce qui vous fait perdre du temps et ce que le projet doit produire. Gratuit, sans engagement, et si ce n'est pas pour moi je vous le dis tout de suite.",
     votrePart: "Raconter votre métier.",
+    icone: PhoneCall,
   },
   {
     titre: "Vous recevez un devis chiffré",
@@ -22,6 +26,7 @@ const ETAPES = [
     texte:
       "Le périmètre écrit noir sur blanc, le prix ferme, le délai et ce qui n'est pas inclus. Pas de fourchette qui double en cours de route.",
     votrePart: "Lire, poser des questions, valider.",
+    icone: FileSignature,
   },
   {
     titre: "Je construis, vous suivez",
@@ -29,6 +34,7 @@ const ETAPES = [
     texte:
       "Vous avez un accès à votre espace client : l'avancement, les étapes franchies, les documents, et une adresse pour voir le site vivre au fur et à mesure.",
     votrePart: "Fournir les contenus, relire à chaque étape.",
+    icone: Hammer,
   },
   {
     titre: "Mise en ligne et suivi",
@@ -36,6 +42,7 @@ const ETAPES = [
     texte:
       "Le site part en production, vous êtes formé au back-office, et la supervision se met en place : si quelque chose casse, je suis prévenu avant vous.",
     votrePart: "Faire tourner votre entreprise.",
+    icone: Rocket,
   },
 ];
 
@@ -57,8 +64,15 @@ export function Demarche() {
             className="flex flex-col bg-card p-6 sm:p-7"
           >
             <div className="flex items-center justify-between gap-3">
-              <span className="grid size-8 place-items-center rounded-lg bg-bleu-50 text-sm font-semibold text-bleu-700 tabular-nums dark:bg-bleu-900/40 dark:text-bleu-300">
-                {index + 1}
+              {/* L'icône dit l'action, le numéro dit l'ordre : les deux, parce
+                  qu'une grille de quatre se lit aussi en colonne sur mobile. */}
+              <span className="flex items-center gap-2.5">
+                <Thumbnail variant="icon-primary" shape="rounded" size="sm">
+                  <etape.icone strokeWidth={1.75} aria-hidden="true" />
+                </Thumbnail>
+                <span className="text-sm font-semibold text-bleu-700 tabular-nums dark:text-bleu-300">
+                  0{index + 1}
+                </span>
               </span>
               <span className="text-xs font-medium tracking-wide text-muted-foreground uppercase">
                 {etape.delai}

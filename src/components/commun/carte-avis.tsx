@@ -1,8 +1,8 @@
 import Image from "next/image";
+import { Rating } from "@appica/ui-react/rating";
 import Link from "next/link";
 import { Quote } from "lucide-react";
 
-import { Etoiles } from "./etoiles";
 import { dateLongue } from "@/lib/format";
 import type { Avis } from "@/lib/types";
 import { cn } from "@/lib/utils";
@@ -39,7 +39,15 @@ export function CarteAvis({
       )}
     >
       <div className="flex items-center justify-between gap-3">
-        <Etoiles note={avis.note} />
+        {/* Le Rating d'Appica en lecture seule : mêmes étoiles que celles du
+            formulaire de dépôt, donc l'avis publié ressemble à celui qui a été
+            saisi. */}
+        <Rating
+          value={avis.note}
+          readOnly
+          aria-label={`${avis.note} sur 5`}
+          style={{ "--rating-size": "1.125rem" } as React.CSSProperties}
+        />
         <Quote
           className="size-5 text-bleu-200 dark:text-bleu-800"
           strokeWidth={2}

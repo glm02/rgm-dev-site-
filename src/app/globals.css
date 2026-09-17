@@ -11,12 +11,34 @@
    feuille complète d'Appica redéfinirait `--background`, `--foreground` et
    `--primary`, et écraserait la charte bleu et blanc.
 
-   Utilisés : Rating (avis), BorderBeam (contours lumineux), TextAnimate
-   (textes animés), Sparkline (courbes de l'admin). */
+   Une ligne `@source` par composant utilisé : ajouter un composant Appica au
+   site, c'est aussi ajouter sa ligne ici, sinon ses classes ne sont pas
+   générées et il s'affiche sans style. */
 @source "../../node_modules/@appica/ui-react/dist/components/rating";
 @source "../../node_modules/@appica/ui-react/dist/components/border-beam";
 @source "../../node_modules/@appica/ui-react/dist/components/text-animate";
 @source "../../node_modules/@appica/ui-react/dist/components/sparkline";
+@source "../../node_modules/@appica/ui-react/dist/components/accordion";
+@source "../../node_modules/@appica/ui-react/dist/components/avatar";
+@source "../../node_modules/@appica/ui-react/dist/components/background-pattern";
+@source "../../node_modules/@appica/ui-react/dist/components/badge";
+@source "../../node_modules/@appica/ui-react/dist/components/button";
+@source "../../node_modules/@appica/ui-react/dist/components/card";
+@source "../../node_modules/@appica/ui-react/dist/components/copy-button";
+@source "../../node_modules/@appica/ui-react/dist/components/gradient-glow";
+@source "../../node_modules/@appica/ui-react/dist/components/input";
+@source "../../node_modules/@appica/ui-react/dist/components/meter";
+@source "../../node_modules/@appica/ui-react/dist/components/number-field";
+@source "../../node_modules/@appica/ui-react/dist/components/preview-card";
+@source "../../node_modules/@appica/ui-react/dist/components/progress";
+@source "../../node_modules/@appica/ui-react/dist/components/separator";
+@source "../../node_modules/@appica/ui-react/dist/components/slider";
+@source "../../node_modules/@appica/ui-react/dist/components/tabs";
+@source "../../node_modules/@appica/ui-react/dist/components/thumbnail";
+@source "../../node_modules/@appica/ui-react/dist/components/toggle";
+@source "../../node_modules/@appica/ui-react/dist/components/toggle-group";
+@source "../../node_modules/@appica/ui-react/dist/components/tooltip";
+@source "../../node_modules/@appica/ui-react/dist/internal";
 
 /* Variante utilisée par BorderBeam pour rester visible au doigt, où le
    survol n'existe pas. */
@@ -42,6 +64,133 @@
 @keyframes border-beam {
   to {
     --border-beam-angle: 360deg;
+  }
+}
+
+/* Variantes de mouvement d'Appica : celles de Tailwind, plus l'attribut
+   `data-disable-animations` qui coupe tout sur un sous-arbre. */
+@custom-variant motion-reduce {
+  @media (prefers-reduced-motion: reduce) {
+    @slot;
+  }
+  &:is([data-disable-animations] *) {
+    @slot;
+  }
+}
+
+@custom-variant motion-safe {
+  @media (prefers-reduced-motion: no-preference) {
+    &:not([data-disable-animations] *) {
+      @slot;
+    }
+  }
+}
+
+@utility animate-ping-paced {
+  animation: ping-paced 2.5s cubic-bezier(0, 0, 0.2, 1) infinite;
+}
+
+@keyframes ping-paced {
+  25%,
+  100% {
+    transform: scale(2.2);
+    opacity: 0;
+  }
+}
+
+@utility skeleton-shimmer {
+  position: relative;
+  overflow: hidden;
+  &::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    transform: translateX(-100%);
+    background: linear-gradient(
+      90deg,
+      transparent,
+      var(--skeleton-highlight, color-mix(in oklab, currentColor 12%, transparent)),
+      transparent
+    );
+    animation: skeleton-shimmer 1.6s ease-in-out infinite;
+  }
+}
+
+@keyframes skeleton-shimmer {
+  100% {
+    transform: translateX(100%);
+  }
+}
+
+@keyframes toast-progress {
+  from {
+    transform: scaleX(1);
+  }
+  to {
+    transform: scaleX(0);
+  }
+}
+
+@utility animate-shake {
+  animation: shake 0.5s cubic-bezier(0.36, 0.07, 0.19, 0.97) both;
+  transform: translate3d(0, 0, 0);
+  backface-visibility: hidden;
+  perspective: 1000px;
+}
+
+@keyframes shake {
+  10%,
+  90% {
+    transform: translate3d(-1px, 0, 0);
+  }
+  20%,
+  80% {
+    transform: translate3d(2px, 0, 0);
+  }
+  30%,
+  50%,
+  70% {
+    transform: translate3d(-4px, 0, 0);
+  }
+  40%,
+  60% {
+    transform: translate3d(4px, 0, 0);
+  }
+}
+
+@property --gradient-glow-rotation {
+  syntax: "<angle>";
+  inherits: false;
+  initial-value: 0deg;
+}
+
+@utility animate-gradient-glow {
+  animation-name: gradient-glow;
+  animation-duration: var(--gradient-glow-duration, 4s);
+  animation-timing-function: linear;
+  animation-iteration-count: infinite;
+}
+
+@utility animate-gradient-glow-aura {
+  animation-name: gradient-glow, gradient-glow-pulse;
+  animation-duration: var(--gradient-glow-duration, 4s);
+  animation-timing-function: linear, ease-in-out;
+  animation-iteration-count: infinite;
+}
+
+@keyframes gradient-glow {
+  to {
+    --gradient-glow-rotation: 360deg;
+  }
+}
+
+@keyframes gradient-glow-pulse {
+  0%,
+  100% {
+    transform: scale(0.94);
+  }
+  50% {
+    transform: scale(1.03);
   }
 }
 
@@ -122,20 +271,82 @@
   --radius-3xl: calc(var(--radius) * 2.2);
   --radius-4xl: calc(var(--radius) * 2.6);
 
-  /* Les trois jetons qu'attend le `Rating` d'Appica, sous ses noms à lui mais
-     branchés sur notre palette (voir `--appica-*` dans :root et .dark). */
-  --color-background-muted: var(--appica-etoile-vide);
-  --color-border-strong: var(--appica-bordure-forte);
-  --opacity-disabled: 50%;
-
-  /* Ceux de Sparkline (infobulle, colonne active). Le texte « muted »
-     d'Appica est noir, comme le nôtre. */
+  /* --- Appica UI ---------------------------------------------------------
+     Les noms de jetons qu'attendent ses composants, branchés sur la palette
+     (valeurs dans le bloc `--ap-*` de :root et .dark). On ne reprend PAS ses
+     échelles de texte, d'ombres ni de rayons : elles redimensionneraient la
+     typographie et les cartes de tout le site. */
+  --color-foreground-subtle: var(--ap-foreground-subtle);
+  --color-foreground-muted: var(--ap-foreground-muted);
+  --color-foreground-strong: var(--foreground);
+  --color-foreground-emphasis: var(--foreground);
   --color-foreground-intense: var(--foreground);
-  --color-foreground-muted: var(--muted-foreground);
-  --color-background-strong: var(--secondary);
+  --color-foreground-inverse: var(--ap-foreground-inverse);
+  --color-background-subtle: var(--ap-background-subtle);
+  --color-background-muted: var(--ap-background-muted);
+  --color-background-strong: var(--ap-background-strong);
+  --color-background-inverse: var(--ap-background-inverse);
+  --color-border-muted: var(--ap-border-muted);
+  --color-border-strong: var(--ap-border-strong);
+  --color-border-emphasis: var(--ap-border-emphasis);
+  --color-border-intense: var(--ap-border-intense);
+  --color-border-inverse: var(--ap-border-inverse);
   --color-border-overlay: var(--border);
-  --radius-2xs: calc(var(--radius) * 0.4);
+  --color-primary-subtle: var(--ap-primary-subtle);
+  --color-primary-soft: var(--ap-primary-soft);
+  --color-primary-muted: var(--ap-primary-muted);
+  --color-primary-strong: var(--ap-primary-strong);
+  --color-secondary-subtle: var(--ap-primary-subtle);
+  --color-secondary-soft: var(--ap-primary-soft);
+  --color-secondary-muted: var(--ap-primary-muted);
+  --color-secondary-strong: var(--ap-primary-muted);
+  --color-secondary-emphasis: var(--primary);
+  --color-secondary-intense: var(--ap-primary-strong);
+  --color-error: var(--destructive);
+  --color-error-subtle: var(--ap-error-subtle);
+  --color-error-soft: var(--ap-error-soft);
+  --color-error-muted: var(--ap-error-muted);
+  --color-error-strong: var(--ap-error-strong);
+  --color-error-emphasis: var(--destructive);
+  --color-error-intense: var(--ap-error-strong);
+  --color-error-foreground: oklch(1 0 0);
+  --color-success: var(--ap-success);
+  --color-success-subtle: var(--ap-success-subtle);
+  --color-success-soft: var(--ap-success-soft);
+  --color-success-muted: var(--ap-success-muted);
+  --color-success-strong: var(--ap-success-strong);
+  --color-success-emphasis: var(--ap-success);
+  --color-success-intense: var(--ap-success-strong);
+  --color-success-foreground: oklch(1 0 0);
+  --color-warning: var(--ap-warning);
+  --color-warning-subtle: var(--ap-warning-subtle);
+  --color-warning-soft: var(--ap-warning-soft);
+  --color-warning-muted: var(--ap-warning-muted);
+  --color-warning-strong: var(--ap-warning-strong);
+  --color-warning-emphasis: var(--ap-warning);
+  --color-warning-intense: var(--ap-warning-strong);
+  --color-warning-foreground: oklch(0.2 0.02 70);
+  --color-info: var(--primary);
+  --color-info-subtle: var(--ap-primary-subtle);
+  --color-info-soft: var(--ap-primary-soft);
+  --color-info-muted: var(--ap-primary-muted);
+  --color-info-strong: var(--ap-primary-strong);
+  --color-info-emphasis: var(--primary);
+  --color-info-intense: var(--ap-primary-strong);
+  --color-info-foreground: var(--primary-foreground);
+  --color-ring-input: var(--ap-anneau);
+  --color-ring-primary: var(--ap-anneau);
+  --color-ring-secondary: var(--ap-anneau);
+  --color-ring-error: color-mix(in oklch, var(--destructive) 40%, transparent);
+  --color-ring-success: color-mix(in oklch, var(--ap-success) 40%, transparent);
+  --color-ring-warning: color-mix(in oklch, var(--ap-warning) 40%, transparent);
+  --color-ring-info: var(--ap-anneau);
+  --color-ring-light: oklch(1 0 0 / 0.5);
+  --radius-4xs: calc(var(--radius) * 0.15);
   --radius-3xs: calc(var(--radius) * 0.25);
+  --radius-2xs: calc(var(--radius) * 0.4);
+  --radius-xs: calc(var(--radius) * 0.5);
+  --opacity-disabled: 50%;
 
   /* Mouvement — voir la section « Tokens de mouvement » plus bas. */
   --ease-sortie: var(--ease-out-doux);
@@ -226,8 +437,61 @@
   --duree-entree: var(--duree-rapide);
   --duree-sortie: var(--duree-normale);
 
-  --appica-etoile-vide: oklch(0.918 0.011 256);
-  --appica-bordure-forte: oklch(0.80 0.02 258);
+  /* Appica UI, thème clair. Le texte « subtle » et « muted » reste presque
+     noir : pas de gris illisible sur le blanc. */
+  --ap-foreground-subtle: oklch(0.36 0.016 258);
+  --ap-foreground-muted: var(--muted-foreground);
+  --ap-foreground-inverse: oklch(1 0 0);
+  --ap-background-subtle: oklch(0.985 0.005 256);
+  --ap-background-muted: oklch(0.93 0.012 256);
+  --ap-background-strong: oklch(0.905 0.016 256);
+  --ap-background-inverse: var(--bleu-950);
+  --ap-border-muted: oklch(0.95 0.008 256);
+  --ap-border-strong: oklch(0.85 0.018 258);
+  --ap-border-emphasis: oklch(0.72 0.03 258);
+  --ap-border-intense: oklch(0.55 0.04 258);
+  --ap-border-inverse: var(--bleu-900);
+  --ap-primary-subtle: var(--bleu-50);
+  --ap-primary-soft: var(--bleu-100);
+  --ap-primary-muted: var(--bleu-300);
+  --ap-primary-strong: var(--bleu-700);
+  --ap-error-subtle: oklch(0.97 0.02 27);
+  --ap-error-soft: oklch(0.93 0.05 27);
+  --ap-error-muted: oklch(0.8 0.12 27);
+  --ap-error-strong: oklch(0.5 0.2 27);
+  --ap-success: oklch(0.6 0.13 155);
+  --ap-success-subtle: oklch(0.97 0.025 155);
+  --ap-success-soft: oklch(0.93 0.06 155);
+  --ap-success-muted: oklch(0.8 0.1 155);
+  --ap-success-strong: oklch(0.45 0.1 155);
+  --ap-warning: oklch(0.78 0.16 75);
+  --ap-warning-subtle: oklch(0.98 0.03 85);
+  --ap-warning-soft: oklch(0.94 0.07 85);
+  --ap-warning-muted: oklch(0.85 0.12 80);
+  --ap-warning-strong: oklch(0.55 0.13 60);
+  --ap-anneau: color-mix(in oklch, var(--bleu-500) 40%, transparent);
+  --shadow-color: oklch(0.2 0.03 258 / 0.08);
+
+  /* Variables brutes lues directement par certains composants Appica, hors
+     utilitaires Tailwind (dégradés de survol des boutons, rayons de carte,
+     épaisseur de bordure). Sans elles, `var(--primary-muted)` vaut « rien »
+     et le survol du bouton principal devient transparent.
+
+     `--primary-muted` est ici le bleu 700 et non le bleu 300 : c'est la
+     couleur vers laquelle s'assombrit le bouton au survol. */
+  --border-width: 1px;
+  --primary-muted: var(--bleu-700);
+  --secondary-muted: var(--bleu-100);
+  --error: var(--destructive);
+  --error-muted: var(--ap-error-strong);
+  --success-emphasis: var(--ap-success);
+  --success-muted: var(--ap-success-muted);
+  --warning-muted: var(--ap-warning-muted);
+  --info-muted: var(--ap-primary-muted);
+  --radius-xs: calc(var(--radius) * 0.5);
+  --radius-sm: calc(var(--radius) * 0.6);
+  --radius-md: calc(var(--radius) * 0.8);
+  --radius-xl: calc(var(--radius) * 1.4);
 }
 
 .dark {
@@ -274,8 +538,41 @@
   --sidebar-border: oklch(1 0 0 / 11%);
   --sidebar-ring: var(--bleu-400);
 
-  --appica-etoile-vide: oklch(0.30 0.024 260);
-  --appica-bordure-forte: oklch(0.45 0.03 258);
+  /* Appica UI, thème sombre. */
+  --ap-foreground-subtle: oklch(0.72 0.02 258);
+  --ap-foreground-muted: var(--muted-foreground);
+  --ap-foreground-inverse: oklch(0.165 0.018 260);
+  --ap-background-subtle: oklch(1 0 0 / 3%);
+  --ap-background-muted: oklch(0.30 0.024 260);
+  --ap-background-strong: oklch(0.34 0.028 260);
+  --ap-background-inverse: oklch(0.965 0.006 256);
+  --ap-border-muted: oklch(1 0 0 / 6%);
+  --ap-border-strong: oklch(1 0 0 / 18%);
+  --ap-border-emphasis: oklch(1 0 0 / 28%);
+  --ap-border-intense: oklch(1 0 0 / 40%);
+  --ap-border-inverse: oklch(0.9 0.01 256);
+  --ap-primary-subtle: oklch(0.25 0.05 258);
+  --ap-primary-soft: oklch(0.3 0.07 258);
+  --ap-primary-muted: var(--bleu-700);
+  --ap-primary-strong: var(--bleu-300);
+  --ap-error-subtle: oklch(0.25 0.05 27);
+  --ap-error-soft: oklch(0.3 0.08 27);
+  --ap-error-muted: oklch(0.45 0.13 27);
+  --ap-error-strong: oklch(0.8 0.12 27);
+  --ap-success: oklch(0.7 0.13 155);
+  --ap-success-subtle: oklch(0.25 0.04 155);
+  --ap-success-soft: oklch(0.3 0.06 155);
+  --ap-success-muted: oklch(0.45 0.09 155);
+  --ap-success-strong: oklch(0.82 0.1 155);
+  --ap-warning: oklch(0.8 0.15 75);
+  --ap-warning-subtle: oklch(0.26 0.04 75);
+  --ap-warning-soft: oklch(0.32 0.06 75);
+  --ap-warning-muted: oklch(0.5 0.1 75);
+  --ap-warning-strong: oklch(0.88 0.12 85);
+  --ap-anneau: color-mix(in oklch, var(--bleu-400) 45%, transparent);
+  --shadow-color: oklch(0 0 0 / 0.35);
+  --primary-muted: var(--bleu-600);
+  --secondary-muted: oklch(0.34 0.05 258);
 }
 
 @layer base {

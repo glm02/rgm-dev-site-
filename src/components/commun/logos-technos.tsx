@@ -32,20 +32,20 @@ import { cn } from "@/lib/utils";
  * Les logos ne servent qu'à désigner les technologies réellement employées ;
  * ils restent la propriété de leurs détenteurs.
  */
-export const TECHNOS: { icone: SimpleIcon; nom?: string }[] = [
-  { icone: siNextdotjs },
-  { icone: siReact },
-  { icone: siTypescript },
-  { icone: siSupabase },
-  { icone: siPostgresql },
-  { icone: siTailwindcss },
-  { icone: siN8n },
-  { icone: siAnthropic },
-  { icone: siPython },
-  { icone: siNodedotjs },
-  { icone: siStripe },
-  { icone: siResend },
-  { icone: siVercel },
+export const TECHNOS: { icone: SimpleIcon; nom?: string; usage: string }[] = [
+  { icone: siNextdotjs, usage: "Des sites rendus côté serveur, rapides et bien référencés." },
+  { icone: siReact, usage: "Des interfaces vivantes : espaces clients, tableaux de bord." },
+  { icone: siTypescript, usage: "Un code typé, qui casse moins et se reprend facilement." },
+  { icone: siSupabase, usage: "Base de données, comptes et fichiers, hébergés en Europe." },
+  { icone: siPostgresql, usage: "Vos données dans une base standard, jamais enfermées." },
+  { icone: siTailwindcss, usage: "Un design sur mesure, cohérent d'une page à l'autre." },
+  { icone: siN8n, usage: "Les workflows qui relient vos outils et tournent seuls." },
+  { icone: siAnthropic, usage: "Les agents IA qui lisent, trient et rédigent à votre place." },
+  { icone: siPython, usage: "Traitement de données et scripts d'automatisation." },
+  { icone: siNodedotjs, usage: "Les serveurs et API qui font tourner vos services." },
+  { icone: siStripe, usage: "Le paiement en ligne, quand votre site doit encaisser." },
+  { icone: siResend, usage: "Les emails automatiques qui arrivent en boîte de réception." },
+  { icone: siVercel, usage: "Un hébergement mondial, mis en ligne à chaque modification." },
 ];
 
 export function LogoTechno({

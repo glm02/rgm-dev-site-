@@ -1,3 +1,4 @@
+import { Button } from "@appica/ui-react/button";
 import Link from "next/link";
 import { ArrowRight } from "lucide-react";
 
@@ -34,22 +35,10 @@ export async function RealisationsVedette() {
         </div>
 
         <Apparait className="mt-12 text-center">
-          <Link
-            href="/realisations"
-            className={cn(
-              "group inline-flex h-11 items-center gap-2 rounded-xl border border-border bg-background px-5",
-              "text-sm font-medium text-foreground",
-              "transition-[background-color,scale] duration-150 ease-out",
-              "hover:bg-secondary active:scale-96",
-            )}
-          >
+          <Button variant="outline" size="lg" nativeButton={false} render={<Link href="/realisations" />}>
             Voir toutes les réalisations
-            <ArrowRight
-              className="size-4 transition-[translate] duration-150 ease-out group-hover:translate-x-0.5"
-              strokeWidth={2}
-              aria-hidden="true"
-            />
-          </Link>
+            <ArrowRight data-icon="end" aria-hidden="true" />
+          </Button>
         </Apparait>
       </div>
     </section>

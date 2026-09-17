@@ -1,3 +1,10 @@
+import { Avatar, AvatarBadge, AvatarFallback } from "@appica/ui-react/avatar";
+import {
+  PreviewCard,
+  PreviewCardContent,
+  PreviewCardTrigger,
+} from "@appica/ui-react/preview-card";
+import { Separator } from "@appica/ui-react/separator";
 import Image from "next/image";
 import Link from "next/link";
 import { ArrowRight, MapPin } from "lucide-react";
@@ -55,9 +62,16 @@ export function APropos() {
         </Apparait>
 
         <Apparait delai={70}>
-          <p className="text-sm font-semibold tracking-wider text-bleu-600 uppercase dark:text-bleu-400">
-            Qui est derrière
-          </p>
+          <div className="flex items-center gap-3">
+            {/* La pastille verte animée dit « disponible » sans phrase de plus. */}
+            <Avatar size="md">
+              <AvatarFallback className="bg-bleu-600 font-semibold text-white">RG</AvatarFallback>
+              <AvatarBadge animate className="bg-emerald-500" aria-label="Disponible" />
+            </Avatar>
+            <p className="text-sm font-semibold tracking-wider text-bleu-600 uppercase dark:text-bleu-400">
+              Qui est derrière
+            </p>
+          </div>
 
           <h2 className="mt-3 text-3xl font-semibold sm:text-4xl">
             Pas une agence. Un développeur, à Lyon.
@@ -65,9 +79,21 @@ export function APropos() {
 
           <p className="mt-5 text-lg leading-relaxed text-muted-foreground">
             Je m&apos;appelle Rafael. Je construis des sites et des automatisations pour
-            des artisans, des hébergeurs et des PME — et je les maintiens une fois en
-            ligne. Vous avez affaire à moi du premier appel à la dernière mise à jour.
+            des <ApercuClient
+              nom="artisans"
+              href="/realisations/atout-travaux"
+              image="/realisations/atout-travaux.webp"
+              legende="Atout Travaux — chauffage et ramonage à La Ciotat"
+            />, des <ApercuClient
+              nom="hébergeurs"
+              href="/realisations/campagne-vallauris"
+              image="/realisations/campagne-vallauris.webp"
+              legende="Campagne Vallauris — chambres d'hôtes près de Sisteron"
+            /> et des PME — et je les maintiens une fois en ligne. Vous avez affaire à moi
+            du premier appel à la dernière mise à jour.
           </p>
+
+          <Separator variant="gradient" className="mt-8" />
 
           <dl className="mt-8 space-y-5">
             {ENGAGEMENTS.map((engagement) => (
@@ -105,5 +131,39 @@ export function APropos() {
         </Apparait>
       </div>
     </section>
+  );
+}
+
+/**
+ * Un mot du texte qui, au survol, montre le site du client (PreviewCard
+ * d'Appica). « Des artisans » devient vérifiable sans quitter la page ; au
+ * clic, on arrive sur la fiche du projet.
+ */
+function ApercuClient({
+  nom,
+  href,
+  image,
+  legende,
+}: {
+  nom: string;
+  href: string;
+  image: string;
+  legende: string;
+}) {
+  return (
+    <PreviewCard>
+      <PreviewCardTrigger
+        href={href}
+        className="font-medium text-foreground underline decoration-bleu-400 decoration-dotted underline-offset-4 transition-colors duration-150 ease-out hover:text-bleu-700 hover:decoration-solid dark:hover:text-bleu-300"
+      >
+        {nom}
+      </PreviewCardTrigger>
+      <PreviewCardContent className="w-72 p-2">
+        <div className="relative aspect-[16/10] overflow-hidden rounded-md outline outline-black/10">
+          <Image src={image} alt="" fill sizes="288px" className="object-cover object-top" />
+        </div>
+        <p className="px-1 pt-2 pb-1 text-xs font-medium">{legende}</p>
+      </PreviewCardContent>
+    </PreviewCard>
   );
 }

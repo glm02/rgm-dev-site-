@@ -1,3 +1,4 @@
+import { Badge } from "@appica/ui-react/badge";
 import { BorderBeam } from "@appica/ui-react/border-beam";
 import Link from "next/link";
 import { ArrowRight, Check } from "lucide-react";
@@ -53,9 +54,9 @@ export function CarteOffre({
       )}
     >
       {vedette && (
-        <span className="absolute -top-3 left-6 rounded-full bg-foreground px-3 py-1 text-xs font-semibold text-background">
+        <Badge variant="primary" size="sm" className="absolute -top-3 left-6 bg-foreground text-background">
           Le plus demandé
-        </span>
+        </Badge>
       )}
 
       <h3 className={cn("text-xl font-semibold", vedette && "text-white")}>

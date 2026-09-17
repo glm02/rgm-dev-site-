@@ -1,4 +1,12 @@
+import { Badge } from "@appica/ui-react/badge";
 import { BorderBeam } from "@appica/ui-react/border-beam";
+import { Button } from "@appica/ui-react/button";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from "@appica/ui-react/tooltip";
 import Link from "next/link";
 import { ArrowRight } from "lucide-react";
 
@@ -54,13 +62,17 @@ export function Hero() {
             speed={7}
             className="inline-flex rounded-full"
           >
-            <p className="inline-flex items-center gap-2.5 rounded-full border border-border/80 bg-background/70 py-1.5 pr-4 pl-3 text-[13px] font-medium text-foreground backdrop-blur-md">
+            <Badge
+              variant="outline"
+              size="lg"
+              className="gap-2.5 rounded-full bg-background/70 pr-4 pl-3 font-medium text-foreground backdrop-blur-md"
+            >
               <span className="relative grid size-2 place-items-center" aria-hidden="true">
-                <span className="absolute size-2 animate-ping rounded-full bg-bleu-500 opacity-60 [animation-duration:2.6s]" />
+                <span className="absolute size-2 animate-ping-paced rounded-full bg-bleu-500" />
                 <span className="size-2 rounded-full bg-bleu-500" />
               </span>
               Disponible pour de nouveaux projets
-            </p>
+            </Badge>
           </BorderBeam>
 
           {/* Le texte doit pouvoir se couper où il veut : « automatisations IA »
@@ -91,37 +103,30 @@ export function Hero() {
               pressScale
               className="w-full rounded-2xl sm:w-auto"
             >
-            <Link
-              href="/contact"
+            <Button
+              variant="primary"
+              size="lg"
+              nativeButton={false}
+              render={<Link href="/contact" />}
               className={cn(
-                "group inline-flex h-13 w-full items-center justify-center gap-2 rounded-2xl px-7 sm:w-auto",
-                "bg-primary text-[15px] font-medium text-primary-foreground",
+                "h-13 w-full rounded-2xl px-7 text-[15px] sm:w-auto",
                 "shadow-[0_1px_2px_oklch(0_0_0/0.10),0_14px_40px_-16px_var(--bleu-600)]",
-                "transition-[background-color,scale,box-shadow] duration-150 ease-out",
-                "hover:bg-bleu-700 hover:shadow-[0_1px_2px_oklch(0_0_0/0.10),0_18px_46px_-16px_var(--bleu-600)]",
-                "active:scale-96 dark:hover:bg-bleu-400",
               )}
             >
               Demander un devis gratuit
-              <ArrowRight
-                className="size-4 transition-[translate] duration-150 ease-out group-hover:translate-x-0.5"
-                strokeWidth={2}
-                aria-hidden="true"
-              />
-            </Link>
+              <ArrowRight data-icon="end" aria-hidden="true" />
+            </Button>
             </BorderBeam>
 
-            <Link
-              href="/realisations"
-              className={cn(
-                "inline-flex h-13 w-full items-center justify-center rounded-2xl px-7 sm:w-auto",
-                "border border-border bg-background/70 text-[15px] font-medium backdrop-blur-md",
-                "transition-[background-color,border-color,scale] duration-150 ease-out",
-                "hover:border-bleu-200 hover:bg-background active:scale-96 dark:hover:border-bleu-800",
-              )}
+            <Button
+              variant="soft"
+              size="lg"
+              nativeButton={false}
+              render={<Link href="/realisations" />}
+              className="h-13 w-full rounded-2xl px-7 text-[15px] sm:w-auto"
             >
               Voir les réalisations
-            </Link>
+            </Button>
           </div>
         </div>
 
@@ -148,16 +153,26 @@ export function Hero() {
           accélération sur un mouvement sans fin se lirait comme un à-coup.
           Elle s'arrête au survol, pour qu'on puisse lire un logo qui intrigue. */}
       <div className="relative border-t border-border bg-secondary/30 py-4">
-        <Marquee duration={62} pauseOnHover fade fadeAmount={14}>
-          {TECHNOS.map((techno) => (
-            <LogoTechno
-              key={techno.icone.title}
-              icone={techno.icone}
-              nom={techno.nom}
-              className="mx-6"
-            />
-          ))}
-        </Marquee>
+        {/* Chaque logo dit à quoi il sert, en infobulle (Tooltip d'Appica) : un
+            dirigeant ne sait pas ce qu'est Supabase, il sait ce qu'est « vos
+            données hébergées en Europe ». La bande s'arrête au survol, ce qui
+            laisse le temps de lire. */}
+        <TooltipProvider delay={120}>
+          <Marquee duration={62} pauseOnHover fade fadeAmount={14}>
+            {TECHNOS.map((techno) => (
+              <Tooltip key={techno.icone.title}>
+                <TooltipTrigger
+                  render={<span tabIndex={0} className="mx-6 rounded-md outline-offset-4" />}
+                >
+                  <LogoTechno icone={techno.icone} nom={techno.nom} />
+                </TooltipTrigger>
+                <TooltipContent className="max-w-60 text-center text-xs leading-relaxed">
+                  {techno.usage}
+                </TooltipContent>
+              </Tooltip>
+            ))}
+          </Marquee>
+        </TooltipProvider>
       </div>
     </section>
   );

@@ -1,99 +1,97 @@
+import { Button } from "@appica/ui-react/button";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@appica/ui-react/tabs";
 import Link from "next/link";
-import { ArrowRight } from "lucide-react";
+import { ArrowRight, Info } from "lucide-react";
 
-import { Apparait } from "@/components/commun/apparait";
 import { CarteOffre } from "@/components/commun/carte-offre";
 import { TitreSection } from "@/components/commun/titre-section";
 import { offresParService } from "@/lib/donnees";
-import type { Offre } from "@/lib/types";
 import { cn } from "@/lib/utils";
 
 /**
- * Un aperçu des tarifs en page d'accueil.
+ * Les tarifs en page d'accueil, en onglets.
  *
- * **Une offre par métier, et l'automatisation IA au centre.** C'est le service
- * à plus forte marge et celui que RGM Dev met en avant : le laisser en
- * troisième position derrière deux offres web reviendrait à le vendre à
- * regret. La carte bleue est donc imposée ici, sans dépendre du drapeau
- * `en_vedette` de la base — qui en marque plusieurs, ce qui est correct pour la
- * page tarifs complète mais donnerait deux cartes concurrentes ici.
+ * Une première version montrait une offre par métier. Les onglets (Tabs
+ * d'Appica) donnent accès aux sept formules sans allonger la page : le
+ * visiteur choisit son métier, il ne fait pas défiler ceux des autres.
  *
- * L'ordre de la grille — web, IA, maintenance — n'est pas décoratif : il va du
- * budget ponctuel le plus courant au plus engageant, puis au récurrent.
+ * **L'onglet ouvert par défaut est l'automatisation IA** — le service le plus
+ * rentable et celui que RGM Dev met en avant (AGENTS.md §3). Dans chaque
+ * onglet, l'offre marquée « en vedette » en base passe en bleu.
  */
 export async function ApercuTarifs() {
-  const groupes = await offresParService();
+  const groupes = (await offresParService()).filter((g) => g.offres.length > 0);
+  if (groupes.length === 0) return null;
 
-  const offreDe = (slug: string, choisir?: (offre: Offre) => boolean) => {
-    const groupe = groupes.find((item) => item.service.slug === slug);
-    if (!groupe) return undefined;
-    return (choisir ? groupe.offres.find(choisir) : undefined) ?? groupe.offres[0];
+  const ouvert =
+    groupes.find((g) => g.service.slug === "automatisation-ia")?.service.slug ??
+    groupes[0].service.slug;
+
+  const LIBELLES_COURTS: Record<string, string> = {
+    "sites-web": "Sites web",
+    "automatisation-ia": "Automatisation IA",
+    "maintenance-supervision": "Maintenance",
   };
 
-  const web = offreDe("sites-web");
-  const ia = offreDe("automatisation-ia", (offre) => offre.en_vedette);
-  const maintenance = offreDe("maintenance-supervision");
-
-  const selection = [
-    { offre: web, vedette: false },
-    { offre: ia, vedette: true },
-    { offre: maintenance, vedette: false },
-  ].filter(
-    (item): item is { offre: Offre; vedette: boolean } => item.offre !== undefined,
-  );
-
-  if (selection.length === 0) return null;
+  const total = groupes.reduce((somme, g) => somme + g.offres.length, 0);
 
   // Ni filet ni aplat opaque : la nappe 3D passe derrière toute la page
   // d'accueil, et une bordure pleine la coupait net comme une image tronquée.
-  // Un voile très léger suffit à marquer le changement de section.
   return (
-    <section className="bg-linear-to-b from-transparent via-secondary/40 to-transparent py-20 sm:py-28">
+    <section
+      id="tarifs"
+      className="bg-linear-to-b from-transparent via-secondary/40 to-transparent py-20 sm:py-28"
+    >
       <div className="conteneur">
         <TitreSection
           surtitre="Tarifs"
           titre="Les prix sont affichés"
-          sousTitre="Un site, une automatisation, ou les deux — vous savez ce que ça coûte avant de décrocher le téléphone."
+          sousTitre="Choisissez votre besoin : vous savez ce que ça coûte avant de décrocher le téléphone."
         />
 
-        <div
-          className={cn(
-            "mt-16 grid items-stretch gap-5",
-            selection.length === 2 && "mx-auto max-w-3xl md:grid-cols-2",
-            selection.length >= 3 && "md:grid-cols-3",
-          )}
-        >
-          {selection.map(({ offre, vedette }, index) => (
-            <Apparait key={offre.id} delai={index * 70} className="h-full">
-              <CarteOffre offre={offre} vedette={vedette} />
-            </Apparait>
-          ))}
-        </div>
+        <Tabs defaultValue={ouvert} variant="pill" size="lg" className="mt-12">
+          <TabsList className="mx-auto">
+            {groupes.map(({ service }) => (
+              <TabsTrigger key={service.slug} value={service.slug}>
+                {LIBELLES_COURTS[service.slug] ?? service.titre}
+              </TabsTrigger>
+            ))}
+          </TabsList>
 
-        <Apparait className="mt-12 text-center">
-          <p className="text-sm text-muted-foreground">
-            Prix HT, à titre indicatif. Le devis est ferme une fois le périmètre écrit.
+          {groupes.map(({ service, offres }) => (
+            <TabsContent key={service.slug} value={service.slug} className="mt-12">
+              <div
+                className={cn(
+                  "grid items-stretch gap-5",
+                  offres.length === 1 && "mx-auto max-w-md",
+                  offres.length === 2 && "mx-auto max-w-3xl md:grid-cols-2",
+                  offres.length >= 3 && "md:grid-cols-3",
+                )}
+              >
+                {offres.map((offre) => (
+                  <CarteOffre key={offre.id} offre={offre} />
+                ))}
+              </div>
+            </TabsContent>
+          ))}
+        </Tabs>
+
+        <div className="mx-auto mt-12 flex max-w-3xl flex-col items-center gap-5">
+          {/* Une ligne d'information plutôt que l'Alert d'Appica : dans cette
+              colonne flex, l'Alert s'écrasait à 42 px de large, texte illisible. */}
+          <p className="flex w-full items-start gap-3 rounded-xl border border-bleu-200 bg-bleu-50 px-5 py-4 text-sm leading-relaxed text-bleu-950 dark:border-bleu-800 dark:bg-bleu-950/40 dark:text-bleu-100">
+            <Info className="mt-0.5 size-4 shrink-0 text-bleu-600 dark:text-bleu-300" aria-hidden="true" />
+            Prix HT, à titre indicatif. Le devis devient ferme une fois le périmètre écrit — et il
+            ne bouge plus ensuite.
           </p>
 
-          <Link
-            href="/tarifs"
-            className={cn(
-              "group mt-5 inline-flex h-11 items-center gap-2 rounded-xl border border-border bg-background px-5",
-              "text-sm font-medium",
-              "transition-[background-color,scale] duration-150 ease-out",
-              "hover:bg-secondary active:scale-96",
-            )}
-          >
-            {/* Le nombre est compté, pas écrit en dur : une offre ajoutée dans
-                l'admin ne doit pas transformer ce lien en mensonge. */}
-            Voir les {groupes.reduce((total, g) => total + g.offres.length, 0)} formules
-            <ArrowRight
-              className="size-4 transition-[translate] duration-150 ease-out group-hover:translate-x-0.5"
-              strokeWidth={2}
-              aria-hidden="true"
-            />
-          </Link>
-        </Apparait>
+          <Button variant="outline" size="lg" nativeButton={false} render={<Link href="/tarifs" />}>
+            {/* Compté, pas écrit en dur : une offre ajoutée dans l'admin ne doit
+                pas transformer ce lien en mensonge. */}
+            Comparer les {total} formules
+            <ArrowRight data-icon="end" aria-hidden="true" />
+          </Button>
+        </div>
       </div>
     </section>
   );
