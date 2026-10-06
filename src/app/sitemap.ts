@@ -26,6 +26,10 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const pagesFixes: Omit<MetadataRoute.Sitemap[number], "lastModified">[] = [
     { url: SITE.url, changeFrequency: "weekly", priority: 1 },
     { url: `${SITE.url}/tarifs`, changeFrequency: "monthly", priority: 0.9 },
+    // La page locale vise la recherche la plus concurrentielle du secteur :
+    // elle compte autant que les tarifs.
+    { url: `${SITE.url}/developpeur-web-lyon`, changeFrequency: "monthly", priority: 0.9 },
+    { url: `${SITE.url}/methode`, changeFrequency: "yearly", priority: 0.6 },
     { url: `${SITE.url}/services`, changeFrequency: "monthly", priority: 0.8 },
     { url: `${SITE.url}/realisations`, changeFrequency: "monthly", priority: 0.8 },
     { url: `${SITE.url}/contact`, changeFrequency: "yearly", priority: 0.7 },

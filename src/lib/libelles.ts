@@ -3,6 +3,8 @@ import type {
   StatutDocument,
   StatutJalon,
   StatutMission,
+  StatutProspect,
+  TypeActivite,
   TypeAlerte,
   TypeDocument,
 } from "./types";
@@ -56,6 +58,34 @@ export const STATUT_DEMANDE: Record<StatutDemande, { libelle: string; ton: Ton }
   devis_envoye: { libelle: "Devis envoyé", ton: "attention" },
   gagne: { libelle: "Gagnée", ton: "succes" },
   perdu: { libelle: "Perdue", ton: "echec" },
+};
+
+/**
+ * Les étapes du pipeline, dans l'ordre où on les traverse.
+ *
+ * `probabilite` est la valeur proposée quand on fait avancer une affaire : on
+ * peut toujours la corriger à la main, mais partir de zéro à chaque fois
+ * donnerait un pipeline pondéré faux.
+ */
+export const STATUT_PROSPECT: Record<
+  StatutProspect,
+  { libelle: string; ton: Ton; probabilite: number; ouvert: boolean }
+> = {
+  nouveau: { libelle: "Nouveau", ton: "bleu", probabilite: 20, ouvert: true },
+  qualifie: { libelle: "Qualifié", ton: "bleu", probabilite: 40, ouvert: true },
+  devis_envoye: { libelle: "Devis envoyé", ton: "attention", probabilite: 60, ouvert: true },
+  negociation: { libelle: "En négociation", ton: "attention", probabilite: 80, ouvert: true },
+  gagne: { libelle: "Gagné", ton: "succes", probabilite: 100, ouvert: false },
+  perdu: { libelle: "Perdu", ton: "echec", probabilite: 0, ouvert: false },
+};
+
+export const TYPE_ACTIVITE: Record<TypeActivite, { libelle: string; icone: string }> = {
+  appel: { libelle: "Appel", icone: "appel" },
+  email: { libelle: "Email", icone: "email" },
+  rdv: { libelle: "Rendez-vous", icone: "rdv" },
+  devis: { libelle: "Devis", icone: "devis" },
+  relance: { libelle: "Relance", icone: "relance" },
+  note: { libelle: "Note", icone: "note" },
 };
 
 export const TYPE_ALERTE: Record<TypeAlerte, { libelle: string; ton: Ton }> = {

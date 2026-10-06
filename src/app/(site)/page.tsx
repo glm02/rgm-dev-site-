@@ -6,8 +6,10 @@ import { AppelAction } from "@/components/sections/appel-action";
 import { ApercuTarifs } from "@/components/sections/apercu-tarifs";
 import { AvisSection } from "@/components/sections/avis-section";
 import { CalculateurGain } from "@/components/sections/calculateur-gain";
+import { Comparatif } from "@/components/sections/comparatif";
 import { Demarche } from "@/components/sections/demarche";
 import { Faq } from "@/components/sections/faq";
+import { Garanties } from "@/components/sections/garanties";
 import { Hero } from "@/components/sections/hero";
 import { RealisationsVedette } from "@/components/sections/realisations-vedette";
 import { Services } from "@/components/sections/services";
@@ -27,8 +29,9 @@ export const metadata: Metadata = metadonnees({
  * L'ordre des sections suit la question que se pose le visiteur, dans l'ordre
  * où il se la pose : qu'est-ce que c'est → qu'est-ce que vous faites → est-ce
  * que vous savez le faire → qui est derrière → comment ça se passe → combien
- * je perds aujourd'hui → combien ça coûte → est-ce que d'autres ont été
- * contents → et mes doutes → on y va.
+ * je perds aujourd'hui → combien ça coûte → pourquoi vous plutôt qu'une
+ * agence → qu'est-ce qui me protège → est-ce que d'autres ont été contents →
+ * et mes doutes → on y va.
  *
  * La nappe de points est posée ici, en fond **fixe de toute la page** et non
  * dans le hero : elle accompagne la lecture d'un bout à l'autre, et la houle
@@ -58,6 +61,8 @@ export default async function Accueil() {
       <Demarche />
       <CalculateurGain prixMin={prixMin} prixMax={prixMax} />
       <ApercuTarifs />
+      <Comparatif />
+      <Garanties />
       <AvisSection />
       <Faq />
       <AppelAction />

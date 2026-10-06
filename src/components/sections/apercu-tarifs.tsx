@@ -50,7 +50,10 @@ export async function ApercuTarifs() {
         />
 
         <Tabs defaultValue={ouvert} variant="pill" size="lg" className="mt-12">
-          <TabsList className="mx-auto">
+          {/* Les trois onglets dépassent la largeur d'un téléphone : ils
+              défilent dans leur propre bande plutôt que de faire glisser la
+              page entière de côté. */}
+          <TabsList className="mx-auto max-w-full overflow-x-auto">
             {groupes.map(({ service }) => (
               <TabsTrigger key={service.slug} value={service.slug}>
                 {LIBELLES_COURTS[service.slug] ?? service.titre}

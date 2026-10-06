@@ -13,6 +13,7 @@ import {
   Newspaper,
   Star,
   Tags,
+  TrendingUp,
   UserRound,
   Users,
   type LucideIcon,
@@ -38,6 +39,7 @@ const ICONES = {
   moderation: MessageSquareQuote,
   clients: Users,
   articles: Newspaper,
+  pipeline: TrendingUp,
   supervision: Activity,
   profil: UserRound,
 } satisfies Record<string, LucideIcon>;

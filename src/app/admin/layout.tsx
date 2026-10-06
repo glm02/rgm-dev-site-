@@ -22,10 +22,19 @@ export default async function LayoutAdmin({ children }: LayoutProps<"/admin">) {
 
   const { supabase, profil } = session;
 
-  const [demandes, avis, alertes] = await Promise.all([
+  const aujourdHui = new Date().toISOString().slice(0, 10);
+
+  const [demandes, avis, alertes, relances] = await Promise.all([
     supabase.from("demandes_devis").select("id", { count: "exact", head: true }).eq("statut", "nouveau"),
     supabase.from("avis").select("id", { count: "exact", head: true }).eq("publie", false),
     supabase.from("alertes").select("id", { count: "exact", head: true }).is("resolue_le", null),
+    // Les relances en retard ou du jour : c'est le seul compteur du CRM qui
+    // appelle une action immédiate.
+    supabase
+      .from("prospects")
+      .select("id", { count: "exact", head: true })
+      .lte("relance_le", aujourdHui)
+      .in("statut", ["nouveau", "qualifie", "devis_envoye", "negociation"]),
   ]);
 
   return (
@@ -35,6 +44,7 @@ export default async function LayoutAdmin({ children }: LayoutProps<"/admin">) {
       liens={[
         { href: "/admin", libelle: "Tableau de bord", icone: "tableau" },
         { href: "/admin/demandes", libelle: "Demandes", icone: "demandes", compteur: demandes.count ?? 0 },
+        { href: "/admin/crm", libelle: "Pipeline", icone: "pipeline", compteur: relances.count ?? 0 },
         { href: "/admin/clients", libelle: "Clients", icone: "clients" },
         { href: "/admin/realisations", libelle: "Réalisations", icone: "realisations" },
         { href: "/admin/offres", libelle: "Services et tarifs", icone: "offres" },

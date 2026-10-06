@@ -5,9 +5,10 @@ import { ArrowRight } from "lucide-react";
 import { EntetePage, Panneau } from "@/components/espace/entete-page";
 import { Pastille } from "@/components/espace/pastille";
 import { sessionAdminOuRedirection } from "@/lib/auth";
-import { depuis, ilYA } from "@/lib/format";
+import { relanceDue, resumePipeline } from "@/lib/crm";
+import { dateCourte, depuis, euros, ilYA } from "@/lib/format";
 import { STATUT_DEMANDE, TYPE_ALERTE } from "@/lib/libelles";
-import type { Alerte, DemandeDevis, SiteSupervise } from "@/lib/types";
+import type { Alerte, DemandeDevis, Prospect, SiteSupervise } from "@/lib/types";
 
 type AlerteAvecSite = Alerte & { sites_supervises: Pick<SiteSupervise, "nom"> | null };
 
@@ -25,7 +26,7 @@ export default async function TableauDeBord() {
   const { supabase } = session;
   const il_y_a_30_jours = ilYA(30);
 
-  const [demandes30, gagnees, recentes, sites, alertes] = await Promise.all([
+  const [demandes30, gagnees, recentes, sites, alertes, pipeline] = await Promise.all([
     supabase.from("demandes_devis").select("statut, utm_source, cree_le").gte("cree_le", il_y_a_30_jours),
     supabase.from("demandes_devis").select("id", { count: "exact", head: true }).eq("statut", "gagne"),
     supabase.from("demandes_devis").select("*").order("cree_le", { ascending: false }).limit(6),
@@ -36,6 +37,7 @@ export default async function TableauDeBord() {
       .is("resolue_le", null)
       .order("cree_le", { ascending: false })
       .limit(5),
+    supabase.from("prospects").select("*"),
   ]);
 
   const mois = demandes30.data ?? [];
@@ -51,9 +53,18 @@ export default async function TableauDeBord() {
   const listeSites = (sites.data ?? []) as Pick<SiteSupervise, "nom" | "dernier_ok">[];
   const enPanne = listeSites.filter((s) => s.dernier_ok === false).length;
 
+  const affaires = (pipeline.data ?? []) as Prospect[];
+  const resume = resumePipeline(affaires);
+  const aujourdHui = new Date().toISOString().slice(0, 10);
+  const relances = affaires.filter((affaire) => relanceDue(affaire, aujourdHui));
+
   const indicateurs = [
     { libelle: "Demandes sur 30 jours", valeur: mois.length, detail: `${depuisAds} via une campagne` },
-    { libelle: "Projets gagnés", valeur: gagnees.count ?? 0, detail: "depuis le début" },
+    {
+      libelle: "Pipeline pondéré",
+      valeur: euros(Math.round(resume.ponderee)),
+      detail: `${resume.ouvertes} affaire${resume.ouvertes > 1 ? "s" : ""} ouverte${resume.ouvertes > 1 ? "s" : ""} · ${gagnees.count ?? 0} gagnée${(gagnees.count ?? 0) > 1 ? "s" : ""}`,
+    },
     {
       libelle: "Sites surveillés",
       valeur: listeSites.length,
@@ -90,6 +101,31 @@ export default async function TableauDeBord() {
           />
         </Sparkline>
       </div>
+
+      {relances.length > 0 && (
+        <div className="mt-3">
+          <Panneau titre="À rappeler aujourd'hui" actions={<LienTout href="/admin/crm" />}>
+            <ul className="divide-y divide-border">
+              {relances.slice(0, 5).map((affaire) => (
+                <li key={affaire.id} className="flex items-center gap-3 py-2.5 first:pt-0 last:pb-0">
+                  <Link
+                    href={`/admin/crm/${affaire.id}`}
+                    className="min-w-0 flex-1 truncate text-sm font-medium underline-offset-4 hover:underline"
+                  >
+                    {affaire.entreprise ?? affaire.contact}
+                  </Link>
+                  <span className="hidden text-xs text-muted-foreground sm:block">
+                    {affaire.besoin ?? "—"}
+                  </span>
+                  <span className="shrink-0 text-xs text-muted-foreground tabular-nums">
+                    {dateCourte(affaire.relance_le)}
+                  </span>
+                </li>
+              ))}
+            </ul>
+          </Panneau>
+        </div>
+      )}
 
       <div className="mt-5 grid gap-5 lg:grid-cols-[minmax(0,1.4fr)_minmax(0,1fr)]">
         <Panneau

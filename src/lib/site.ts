@@ -64,6 +64,8 @@ export const NAVIGATION_PIED = {
     { libelle: "Maintenance et supervision", href: "/services/maintenance-supervision" },
   ],
   Découvrir: [
+    { libelle: "Développeur web à Lyon", href: "/developpeur-web-lyon" },
+    { libelle: "La méthode", href: "/methode" },
     { libelle: "Réalisations", href: "/realisations" },
     { libelle: "Tarifs", href: "/tarifs" },
     { libelle: "Avis clients", href: "/avis" },

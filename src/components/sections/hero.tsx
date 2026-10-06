@@ -152,7 +152,10 @@ export function Hero() {
       {/* La bande des technos. Défilement continu, donc `linear` : une
           accélération sur un mouvement sans fin se lirait comme un à-coup.
           Elle s'arrête au survol, pour qu'on puisse lire un logo qui intrigue. */}
-      <div className="relative border-t border-border bg-secondary/30 py-4">
+      {/* `overflow-hidden` : la piste du défilement est plus large que l'écran
+          par construction, et sans lui la page entière défile de côté sur
+          mobile. */}
+      <div className="relative overflow-hidden border-t border-border bg-secondary/30 py-4">
         {/* Chaque logo dit à quoi il sert, en infobulle (Tooltip d'Appica) : un
             dirigeant ne sait pas ce qu'est Supabase, il sait ce qu'est « vos
             données hébergées en Europe ». La bande s'arrête au survol, ce qui

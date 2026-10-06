@@ -33,6 +33,14 @@ export type StatutDocument =
   | "accepte"
   | "refuse"
   | "paye";
+export type StatutProspect =
+  | "nouveau"
+  | "qualifie"
+  | "devis_envoye"
+  | "negociation"
+  | "gagne"
+  | "perdu";
+export type TypeActivite = "appel" | "email" | "rdv" | "devis" | "relance" | "note";
 export type TypeAlerte =
   | "hors_ligne"
   | "lenteur"
@@ -201,6 +209,40 @@ export type Message = {
   auteur_id: string;
   contenu: string;
   lu_le: string | null;
+  cree_le: string;
+};
+
+/** Une affaire en cours dans le pipeline commercial. */
+export type Prospect = {
+  id: string;
+  entreprise: string | null;
+  contact: string;
+  email: string | null;
+  telephone: string | null;
+  ville: string | null;
+  secteur: string | null;
+  source: string | null;
+  besoin: string | null;
+  statut: StatutProspect;
+  valeur_estimee: number | null;
+  probabilite: number;
+  relance_le: string | null;
+  note: string | null;
+  etiquettes: string[];
+  demande_id: string | null;
+  profil_id: string | null;
+  mission_id: string | null;
+  derniere_activite_le: string;
+  cree_le: string;
+  maj_le: string;
+};
+
+export type Activite = {
+  id: string;
+  prospect_id: string;
+  type: TypeActivite;
+  resume: string;
+  fait_le: string;
   cree_le: string;
 };
 

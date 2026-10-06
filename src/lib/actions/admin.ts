@@ -1,120 +1,30 @@
 "use server";
 
 import { revalidatePath } from "next/cache";
-import { redirect } from "next/navigation";
 import { z } from "zod";
 
-import { AccesRefuse, exigerAdmin } from "@/lib/auth";
+import {
+  coche,
+  dateOptionnelle,
+  entierOptionnel,
+  executer,
+  lignes,
+  lire,
+  liste,
+  slug,
+  texte,
+  texteOptionnel,
+} from "@/lib/actions/noyau";
 import { PREFIXE_STOCKAGE, deposerFichier, deposerImage, fichierFourni } from "@/lib/stockage";
 import { executerSupervision } from "@/lib/supervision";
 
 /**
  * Les actions de l'administration — le CRUD qui tient lieu de CMS.
  *
- * Convention commune :
- * - chaque action commence par `exigerAdmin()` : joignable par POST direct,
- *   elle ne fait confiance à rien de ce qu'affiche la page ;
- * - elle se termine par une redirection vers la page d'origine, avec `?ok=` ou
- *   `?erreur=`. Le résultat s'affiche donc même sans JavaScript, et un
- *   rechargement ne rejoue pas l'envoi du formulaire.
- *
- * `redirect()` fonctionne en levant une exception : il est toujours appelé
- * **hors** des `try`, sinon le `catch` l'avalerait.
+ * Les briques communes (validation, redirection avec `?ok=` / `?erreur=`)
+ * vivent dans `noyau.ts` : un fichier `"use server"` ne peut exporter que des
+ * fonctions asynchrones, donc tout ce qui n'est pas une action est ailleurs.
  */
-
-/** `vers` remplace la page de retour en cas de succès (ex. : le projet tout juste créé). */
-type Resultat = { ok: string; vers?: string } | { erreur: string };
-
-function revenir(chemin: string, resultat: Resultat): never {
-  const [base, fragment] = ("ok" in resultat && resultat.vers ? resultat.vers : chemin).split("#");
-  const url = new URL(base, "http://x");
-  url.searchParams.delete("ok");
-  url.searchParams.delete("erreur");
-  if ("ok" in resultat) url.searchParams.set("ok", resultat.ok);
-  else url.searchParams.set("erreur", resultat.erreur);
-  redirect(`${url.pathname}${url.search}${fragment ? `#${fragment}` : ""}`);
-}
-
-async function executer(
-  chemin: string,
-  aRevalider: string[],
-  travail: (session: Awaited<ReturnType<typeof exigerAdmin>>) => Promise<Resultat>,
-): Promise<never> {
-  let resultat: Resultat;
-  try {
-    const session = await exigerAdmin();
-    resultat = await travail(session);
-  } catch (erreur) {
-    if (erreur instanceof AccesRefuse) resultat = { erreur: erreur.message };
-    else {
-      console.error("[admin]", erreur);
-      const message =
-        erreur && typeof erreur === "object" && "message" in erreur
-          ? String((erreur as { message: unknown }).message)
-          : "Erreur inconnue";
-      resultat = { erreur: `L'enregistrement a échoué : ${message}` };
-    }
-  }
-  if ("ok" in resultat) for (const p of aRevalider) revalidatePath(p);
-  revenir(chemin, resultat);
-}
-
-const texte = (max = 500) => z.string().trim().max(max);
-const texteOptionnel = (max = 500) =>
-  z.string().trim().max(max).optional().transform((v) => (v ? v : null));
-const entierOptionnel = z
-  .string()
-  .trim()
-  .optional()
-  .transform((v) => (v ? Number(v) : null))
-  .refine((v) => v === null || (Number.isInteger(v) && v >= 0), "Nombre entier positif attendu.");
-const dateOptionnelle = z
-  .string()
-  .trim()
-  .optional()
-  .transform((v) => (v ? v : null));
-const coche = z
-  .string()
-  .optional()
-  .transform((v) => v === "on" || v === "true");
-const slug = z
-  .string()
-  .trim()
-  .min(2)
-  .max(80)
-  .regex(/^[a-z0-9]+(?:-[a-z0-9]+)*$/, "Le slug ne contient que des minuscules, chiffres et tirets.");
-
-/** Une liste saisie une valeur par ligne (ou séparée par des virgules). */
-const liste = z
-  .string()
-  .optional()
-  .transform((v) =>
-    (v ?? "")
-      .split(/\r?\n|,/)
-      .map((ligne) => ligne.trim())
-      .filter(Boolean),
-  );
-
-/**
- * Une liste saisie **une valeur par ligne**, virgules comprises : « Connexion à
- * vos outils (mail, CRM, tableur) » est une seule ligne d'offre, pas quatre.
- */
-const lignes = z
-  .string()
-  .optional()
-  .transform((v) =>
-    (v ?? "")
-      .split(/\r?\n/)
-      .map((ligne) => ligne.trim())
-      .filter(Boolean),
-  );
-
-function lire<T extends z.ZodTypeAny>(schema: T, donnees: FormData): z.infer<T> | string {
-  const analyse = schema.safeParse(Object.fromEntries(donnees));
-  if (analyse.success) return analyse.data;
-  const premiere = analyse.error.issues[0];
-  return `${premiere.path.join(".") || "formulaire"} : ${premiere.message}`;
-}
 
 // ---------------------------------------------------------------------------
 // Demandes de devis

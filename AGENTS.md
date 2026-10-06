@@ -86,6 +86,12 @@ durée de réalisation, et un drapeau `en_vedette`.
 ### Espace admin (`/admin`)
 - CRUD complet : projets, services, tarifs, articles, avis (modération),
   clients, devis, factures.
+- **Pipeline commercial (`/admin/crm`)** : chaque demande de devis crée son
+  affaire (déclencheur SQL), avec étape, valeur estimée, probabilité,
+  prochaine relance et journal des échanges. Pipeline pondéré, taux de
+  conversion, export CSV, et conversion d'une affaire gagnée en mission suivie
+  par le client. Tables `prospects` et `activites` (`0006_crm.sql`), réservées
+  à l'admin par RLS.
 - Tableau de bord : demandes de devis, trafic, conversions.
 - **Supervision et notifications** : surveiller les sites livrés (Atout Travaux,
   Vallauris, etc.) — disponibilité, erreurs, expiration du certificat TLS — et

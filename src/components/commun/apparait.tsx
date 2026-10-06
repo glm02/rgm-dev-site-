@@ -22,16 +22,20 @@ export function Apparait({
   children,
   delai = 0,
   className,
+  id,
   as: Balise = "div",
 }: {
   children: React.ReactNode;
   /** En millisecondes, converti en décalage de plage. 60–80 ms par élément. */
   delai?: number;
   className?: string;
+  /** Cible d'une ancre, quand la section est atteinte depuis un sommaire. */
+  id?: string;
   as?: "div" | "section" | "li" | "article";
 }) {
   return (
     <Balise
+      id={id}
       className={cn("apparait", className)}
       style={
         delai
