@@ -101,11 +101,10 @@ export function Entete() {
           <div className="flex items-center gap-1.5">
             <BasculeTheme className="hidden sm:grid" />
 
-            {/* L'entrée de l'administration. Discrète mais présente : /admin
-                renvoie vers la connexion si on n'est pas identifié, et vers
-                l'espace client si le compte n'est pas admin. */}
+            {/* L'entrée de l'administration : la page du mot de passe admin
+                (variable ADMIN_PASSWORD sur Vercel). */}
             <Link
-              href="/admin"
+              href="/acces-admin"
               aria-label="Administration"
               title="Administration"
               className={cn(
@@ -249,7 +248,7 @@ function MenuMobile({
           </Link>
 
           <Link
-            href="/admin"
+            href="/acces-admin"
             aria-label="Administration"
             className={cn(
               "grid size-11 place-items-center rounded-xl border border-border text-muted-foreground",
