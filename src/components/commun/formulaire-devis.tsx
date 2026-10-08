@@ -5,7 +5,11 @@ import { usePathname } from "next/navigation";
 import { ArrowRight, Check, Loader2 } from "lucide-react";
 import * as React from "react";
 
-import { ETAT_INITIAL, envoyerDemandeDevis } from "@/lib/actions/devis";
+import { envoyerDemandeDevis, type EtatDevis } from "@/lib/actions/devis";
+
+// Ici et pas dans `actions/devis.ts` : un fichier « use server » ne peut
+// exporter que des fonctions async, un objet y fait planter l'action en prod.
+const ETAT_INITIAL: EtatDevis = { statut: "inerte" };
 import { cn } from "@/lib/utils";
 
 const TYPES_PROJET = [

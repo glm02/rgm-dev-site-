@@ -46,8 +46,6 @@ export type EtatDevis = {
   valeurs?: Record<string, string>;
 };
 
-export const ETAT_INITIAL: EtatDevis = { statut: "inerte" };
-
 export async function envoyerDemandeDevis(
   _precedent: EtatDevis,
   donnees: FormData,
