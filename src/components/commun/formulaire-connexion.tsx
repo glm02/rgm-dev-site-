@@ -108,7 +108,13 @@ export function FormulaireConnexion({
     });
 
     if (error) {
-      setErreur("L'envoi a échoué. Vérifiez l'adresse et réessayez.");
+      // Le quota d'emails de Supabase est vite atteint : le dire franchement
+      // plutôt que de laisser croire à une adresse mal saisie.
+      setErreur(
+        error.status === 429 || error.code === "over_email_send_rate_limit"
+          ? "Trop de liens envoyés en peu de temps. Réessayez dans quelques minutes."
+          : "L'envoi a échoué. Vérifiez l'adresse et réessayez.",
+      );
       setEtat("inerte");
       return;
     }
