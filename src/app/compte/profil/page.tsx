@@ -1,4 +1,5 @@
 import { EntetePage, Panneau } from "@/components/espace/entete-page";
+import { FormulaireMotDePasse } from "@/components/espace/formulaire-mot-de-passe";
 import { FormulaireProfil } from "@/components/espace/formulaire-profil";
 import { sessionOuRedirection } from "@/lib/auth";
 import { dateLongue } from "@/lib/format";
@@ -17,9 +18,19 @@ export default async function PageProfil() {
       />
 
       <div className="grid gap-5 lg:grid-cols-[minmax(0,1.5fr)_minmax(0,1fr)]">
-        <Panneau>
-          <FormulaireProfil profil={profil} />
-        </Panneau>
+        <div className="space-y-5">
+          <Panneau>
+            <FormulaireProfil profil={profil} />
+          </Panneau>
+
+          <Panneau titre="Mot de passe">
+            <p className="mb-5 text-sm leading-relaxed">
+              Facultatif : il permet d&apos;entrer avec votre email et ce mot de passe, sans
+              attendre de lien par mail.
+            </p>
+            <FormulaireMotDePasse />
+          </Panneau>
+        </div>
 
         <Panneau titre="Votre compte">
           <dl className="space-y-4 text-sm">

@@ -37,6 +37,10 @@ export function FormulaireConnexion({
   const erreurUrl = parametres.get("erreur");
 
   const [email, setEmail] = React.useState("");
+  const [motDePasse, setMotDePasse] = React.useState("");
+  // Le lien magique reste la voie par défaut pour les clients ; le mot de
+  // passe sert à ceux qui en ont défini un depuis leur profil (l'admin d'abord).
+  const [mode, setMode] = React.useState<"lien" | "mot_de_passe">("lien");
   const [etat, setEtat] = React.useState<"inerte" | "envoi" | "envoye">("inerte");
   const [erreur, setErreur] = React.useState<string | null>(
     erreurUrl ? (MESSAGES_ERREUR[erreurUrl] ?? "La connexion a échoué.") : null,
@@ -59,12 +63,44 @@ export function FormulaireConnexion({
     if (error) setErreur("Ce fournisseur n'a pas répondu. Réessayez.");
   }
 
+  async function connexionMotDePasse() {
+    if (!supabase) return;
+
+    const { error } = await supabase.auth.signInWithPassword({
+      email: email.trim(),
+      password: motDePasse,
+    });
+
+    if (error) {
+      // Même message pour un email inconnu et un mauvais mot de passe : on ne
+      // dit pas à un inconnu quelles adresses ont un compte.
+      setErreur(
+        error.code === "invalid_credentials"
+          ? "Email ou mot de passe incorrect."
+          : "La connexion a échoué. Réessayez.",
+      );
+      setEtat("inerte");
+      return;
+    }
+
+    // Rechargement complet plutôt que router.push : les Server Components
+    // doivent relire les cookies de session qu'on vient de poser.
+    // Chemin interne uniquement : « //site.com » serait une redirection externe.
+    const interne = suite.startsWith("/") && !suite.startsWith("//") && !suite.startsWith("/\\");
+    window.location.assign(interne ? suite : "/compte");
+  }
+
   async function envoyerLien(evenement: React.FormEvent) {
     evenement.preventDefault();
     if (!supabase || etat === "envoi") return;
 
     setErreur(null);
     setEtat("envoi");
+
+    if (mode === "mot_de_passe") {
+      await connexionMotDePasse();
+      return;
+    }
 
     const { error } = await supabase.auth.signInWithOtp({
       email: email.trim(),
@@ -149,6 +185,33 @@ export function FormulaireConnexion({
         </>
       )}
 
+      <div role="tablist" aria-label="Mode de connexion" className="grid grid-cols-2 gap-1 rounded-xl bg-secondary p-1">
+        {(
+          [
+            ["lien", "Lien par email"],
+            ["mot_de_passe", "Mot de passe"],
+          ] as const
+        ).map(([valeur, libelle]) => (
+          <button
+            key={valeur}
+            type="button"
+            role="tab"
+            aria-selected={mode === valeur}
+            onClick={() => {
+              setMode(valeur);
+              setErreur(null);
+            }}
+            className={cn(
+              "h-9 rounded-lg text-sm font-medium",
+              "transition-[background-color,box-shadow] duration-150 ease-out",
+              mode === valeur ? "bg-background text-foreground shadow-sm" : "text-foreground hover:bg-background/60",
+            )}
+          >
+            {libelle}
+          </button>
+        ))}
+      </div>
+
       <form onSubmit={envoyerLien} className="space-y-3">
         <div>
           <label htmlFor="email" className="mb-2 block text-sm font-medium">
@@ -172,6 +235,28 @@ export function FormulaireConnexion({
           />
         </div>
 
+        {mode === "mot_de_passe" && (
+          <div>
+            <label htmlFor="mot-de-passe" className="mb-2 block text-sm font-medium">
+              Mot de passe
+            </label>
+            <input
+              id="mot-de-passe"
+              name="password"
+              type="password"
+              required
+              autoComplete="current-password"
+              value={motDePasse}
+              onChange={(evenement) => setMotDePasse(evenement.target.value)}
+              className={cn(
+                "h-12 w-full rounded-xl border border-input bg-background px-4 text-[15px]",
+                "transition-[border-color,box-shadow] duration-150 ease-out",
+                "focus-visible:border-ring focus-visible:outline-none focus-visible:ring-3 focus-visible:ring-ring/40",
+              )}
+            />
+          </div>
+        )}
+
         <button
           type="submit"
           disabled={etat === "envoi"}
@@ -186,7 +271,16 @@ export function FormulaireConnexion({
           {etat === "envoi" ? (
             <>
               <Loader2 className="size-4 animate-spin" strokeWidth={2} aria-hidden="true" />
-              Envoi…
+              {mode === "mot_de_passe" ? "Connexion…" : "Envoi…"}
+            </>
+          ) : mode === "mot_de_passe" ? (
+            <>
+              Se connecter
+              <ArrowRight
+                className="size-4 transition-[translate] duration-150 ease-out group-hover:translate-x-0.5"
+                strokeWidth={2}
+                aria-hidden="true"
+              />
             </>
           ) : (
             <>
@@ -203,8 +297,9 @@ export function FormulaireConnexion({
       </form>
 
       <p className="text-center text-xs leading-relaxed text-muted-foreground">
-        Pas de mot de passe à retenir. Le lien reçu par mail vous connecte
-        directement.
+        {mode === "lien"
+          ? "Pas de mot de passe à retenir. Le lien reçu par mail vous connecte directement."
+          : "Pas encore de mot de passe ? Connectez-vous une fois par lien, puis définissez-le dans votre profil."}
       </p>
     </div>
   );
