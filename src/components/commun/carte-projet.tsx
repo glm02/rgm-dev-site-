@@ -134,7 +134,9 @@ export function CarteProjet({
               <span className="font-semibold text-foreground">{prix}</span>
             </>
           ) : (
-            <span className="text-muted-foreground">Projet interne</span>
+            <span className="text-muted-foreground">
+              {/interne/i.test(projet.client_nom ?? "") ? "Projet interne" : "Budget sur devis"}
+            </span>
           )}
         </p>
       </div>

@@ -6,6 +6,7 @@ import { AppelAction } from "@/components/sections/appel-action";
 import { ApercuTarifs } from "@/components/sections/apercu-tarifs";
 import { AvisSection } from "@/components/sections/avis-section";
 import { CalculateurGain } from "@/components/sections/calculateur-gain";
+import { Clients } from "@/components/sections/clients";
 import { Comparatif } from "@/components/sections/comparatif";
 import { Demarche } from "@/components/sections/demarche";
 import { Faq } from "@/components/sections/faq";
@@ -27,7 +28,7 @@ export const metadata: Metadata = metadonnees({
  * L'accueil.
  *
  * L'ordre des sections suit la question que se pose le visiteur, dans l'ordre
- * où il se la pose : qu'est-ce que c'est → qu'est-ce que vous faites → est-ce
+ * où il se la pose : qu'est-ce que c'est → qui vous a déjà fait confiance → qu'est-ce que vous faites → est-ce
  * que vous savez le faire → qui est derrière → comment ça se passe → combien
  * je perds aujourd'hui → combien ça coûte → pourquoi vous plutôt qu'une
  * agence → qu'est-ce qui me protège → est-ce que d'autres ont été contents →
@@ -55,6 +56,7 @@ export default async function Accueil() {
       <ToileMaillage fixe />
 
       <Hero />
+      <Clients />
       <Services />
       <RealisationsVedette />
       <APropos />

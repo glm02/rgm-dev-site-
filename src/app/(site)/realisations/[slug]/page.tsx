@@ -120,7 +120,11 @@ export default async function PageProjet({ params }: PageProps<"/realisations/[s
               <Donnee
                 icone={Euro}
                 libelle="Budget"
-                valeur={prix ?? "Projet interne"}
+                valeur={
+                  // Sans prix renseigné : un projet interne n'a pas de budget
+                  // client ; pour un vrai client, le montant reste à saisir.
+                  prix ?? (/interne/i.test(projet.client_nom ?? "") ? "Projet interne" : "Sur devis")
+                }
               />
               <Donnee
                 icone={Timer}
