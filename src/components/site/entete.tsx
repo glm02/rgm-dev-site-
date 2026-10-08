@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { ArrowRight, Menu, UserRound, X } from "lucide-react";
+import { ArrowRight, LockKeyhole, Menu, UserRound, X } from "lucide-react";
 import * as React from "react";
 
 import { BasculeTheme } from "./bascule-theme";
@@ -100,6 +100,22 @@ export function Entete() {
 
           <div className="flex items-center gap-1.5">
             <BasculeTheme className="hidden sm:grid" />
+
+            {/* L'entrée de l'administration. Discrète mais présente : /admin
+                renvoie vers la connexion si on n'est pas identifié, et vers
+                l'espace client si le compte n'est pas admin. */}
+            <Link
+              href="/admin"
+              aria-label="Administration"
+              title="Administration"
+              className={cn(
+                "hidden size-9 place-items-center rounded-lg text-muted-foreground sm:grid",
+                "transition-[color,background-color,scale] duration-150 ease-out",
+                "hover:bg-secondary hover:text-foreground active:scale-96",
+              )}
+            >
+              <LockKeyhole className="size-4.5" strokeWidth={1.75} />
+            </Link>
 
             <Link
               href="/compte"
@@ -230,6 +246,18 @@ function MenuMobile({
             )}
           >
             <UserRound className="size-5" strokeWidth={1.75} />
+          </Link>
+
+          <Link
+            href="/admin"
+            aria-label="Administration"
+            className={cn(
+              "grid size-11 place-items-center rounded-xl border border-border text-muted-foreground",
+              "transition-[background-color,scale] duration-150 ease-out",
+              "hover:bg-secondary active:scale-96",
+            )}
+          >
+            <LockKeyhole className="size-5" strokeWidth={1.75} />
           </Link>
 
           <BasculeTheme className="size-11 rounded-xl border border-border" />
