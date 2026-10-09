@@ -9,6 +9,7 @@ import { AppelAction } from "@/components/sections/appel-action";
 import { articleParSlug, listerArticles } from "@/lib/donnees";
 import { dateLongue } from "@/lib/format";
 import { jsonLdArticle, jsonLdFilAriane, metadonnees } from "@/lib/seo";
+import { AUTEUR } from "@/lib/site";
 
 export async function generateStaticParams() {
   const articles = await listerArticles();
@@ -62,7 +63,9 @@ export default async function PageArticle({ params }: PageProps<"/blog/[slug]">)
 
           <header className="mt-10">
             <p className="text-sm text-muted-foreground tabular-nums">
-              {dateLongue(article.publie_le)}
+              {/* La signature visible : un article d'une personne identifiée
+                  inspire plus confiance qu'un texte de marque anonyme. */}
+              Par {AUTEUR.nom} · {dateLongue(article.publie_le)}
               {article.temps_lecture ? ` · ${article.temps_lecture} min de lecture` : ""}
             </p>
             <h1 className="mt-3 text-4xl font-semibold sm:text-5xl">{article.titre}</h1>

@@ -49,6 +49,19 @@ export const SITE = {
   github: "https://github.com/glm02",
 } as const;
 
+/**
+ * La personne derrière RGM Dev.
+ *
+ * Les moteurs (Google comme les assistants IA) accordent plus de crédit à un
+ * contenu signé par une personne identifiable qu'à une marque anonyme. Le
+ * prénom seul, comme dans la section « À propos » : rien de plus n'est
+ * affiché publiquement tant que les mentions légales ne sont pas remplies.
+ */
+export const AUTEUR = {
+  nom: "Rafael",
+  metier: "Développeur full-stack freelance",
+} as const;
+
 export const NAVIGATION = [
   { libelle: "Services", href: "/services" },
   { libelle: "Réalisations", href: "/realisations" },

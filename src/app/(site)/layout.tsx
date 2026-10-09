@@ -2,7 +2,7 @@ import { Entete } from "@/components/site/entete";
 import { Pied } from "@/components/site/pied";
 import { JsonLd } from "@/components/commun/json-ld";
 import { noteGlobale } from "@/lib/donnees";
-import { jsonLdEntreprise } from "@/lib/seo";
+import { jsonLdEntreprise, jsonLdSiteEtAuteur } from "@/lib/seo";
 
 /**
  * Le chrome du site public : entête, pied de page, et la fiche d'entreprise en
@@ -18,6 +18,7 @@ export default async function LayoutSite({ children }: LayoutProps<"/">) {
   return (
     <>
       <JsonLd donnees={jsonLdEntreprise(note)} />
+      <JsonLd donnees={jsonLdSiteEtAuteur()} />
 
       {/* Le lien d'évitement : premier élément focusable de la page, invisible
           jusqu'à ce qu'on l'atteigne au clavier. */}

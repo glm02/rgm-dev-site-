@@ -27,6 +27,15 @@ export const metadata: Metadata = {
     template: `%s — ${SITE.nom}`,
   },
   description: SITE.promesse,
+  // Les codes de validation de Google Search Console et de Bing Webmaster
+  // Tools. Bing compte double : c'est son index qu'interroge la recherche de
+  // ChatGPT. Posés en variables d'environnement, rien à redéployer à la main.
+  verification: {
+    google: process.env.GOOGLE_SITE_VERIFICATION?.trim() || undefined,
+    other: process.env.BING_SITE_VERIFICATION?.trim()
+      ? { "msvalidate.01": process.env.BING_SITE_VERIFICATION.trim() }
+      : undefined,
+  },
   applicationName: SITE.nom,
   authors: [{ name: SITE.nom, url: SITE.url }],
   creator: SITE.nom,

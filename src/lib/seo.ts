@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 
-import { SITE, VILLES } from "./site";
+import { AUTEUR, SITE, VILLES } from "./site";
 import type { Article, Avis, Offre, Projet, Service } from "./types";
 
 /**
@@ -64,6 +64,52 @@ export function metadonnees({
 // JSON-LD
 // ---------------------------------------------------------------------------
 
+const ID_AUTEUR = `${SITE.url}/#rafael`;
+
+/**
+ * Le site et son auteur, reliés à l'entreprise par leurs `@id`.
+ *
+ * Un graphe d'entités cohérent (qui, quoi, où) est ce que les moteurs
+ * génératifs exploitent le mieux : il leur permet de répondre « RGM Dev est
+ * l'activité de Rafael, développeur freelance à Lyon » sans deviner.
+ */
+export function jsonLdSiteEtAuteur() {
+  return {
+    "@context": "https://schema.org",
+    "@graph": [
+      {
+        "@type": "WebSite",
+        "@id": `${SITE.url}/#site`,
+        url: SITE.url,
+        name: SITE.nom,
+        description: SITE.promesse,
+        inLanguage: "fr-FR",
+        publisher: { "@id": `${SITE.url}/#entreprise` },
+      },
+      {
+        "@type": "Person",
+        "@id": ID_AUTEUR,
+        name: AUTEUR.nom,
+        jobTitle: AUTEUR.metier,
+        worksFor: { "@id": `${SITE.url}/#entreprise` },
+        url: SITE.url,
+        sameAs: [SITE.github],
+        homeLocation: { "@type": "City", name: SITE.ville },
+        knowsAbout: [
+          "Développement web",
+          "Next.js",
+          "React",
+          "TypeScript",
+          "Supabase",
+          "Automatisation IA",
+          "n8n",
+          "Référencement local",
+        ],
+      },
+    ],
+  };
+}
+
 /**
  * L'entreprise. `ProfessionalService` plutôt que `Organization` : c'est ce qui
  * déclenche l'affichage local (zone d'intervention, avis) dans Google.
@@ -98,6 +144,10 @@ export function jsonLdEntreprise(note: { moyenne: number; nombre: number } | nul
       "Référencement local",
     ],
     sameAs: [SITE.github],
+    founder: { "@id": ID_AUTEUR },
+    knowsLanguage: "fr",
+    slogan: SITE.slogan,
+    logo: `${SITE.url}/images/logo-rgm.svg`,
     ...(note
       ? {
           aggregateRating: {
@@ -181,9 +231,13 @@ export function jsonLdArticle(article: Article) {
     headline: article.titre,
     description: article.chapo ?? undefined,
     datePublished: article.publie_le ?? undefined,
-    author: { "@id": `${SITE.url}/#entreprise` },
+    // Signé par une personne : c'est ce qui donne du poids à un article, pour
+    // Google (E-E-A-T) comme pour les assistants IA qui citent leurs sources.
+    author: { "@id": ID_AUTEUR },
     publisher: { "@id": `${SITE.url}/#entreprise` },
     url: `${SITE.url}/blog/${article.slug}`,
+    mainEntityOfPage: `${SITE.url}/blog/${article.slug}`,
+    inLanguage: "fr-FR",
     image: article.image ?? undefined,
     keywords: article.tags.join(", "),
   };
