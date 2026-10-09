@@ -10,9 +10,11 @@ import { SITE } from "@/lib/site";
  * pas `/admin`. Les priorités décroissent selon l'intention commerciale —
  * l'accueil et les tarifs d'abord, parce que ce sont les pages qui convertissent.
  *
- * `force-static` : le plan est calculé au build, comme le reste du site public.
+ * Recalculé au plus toutes les heures : une réalisation ou un article publié
+ * depuis l'admin (ou en SQL) y entre sans attendre un redéploiement. Calculé
+ * une seule fois au build, il oubliait tout ce qui était ajouté ensuite.
  */
-export const dynamic = "force-static";
+export const revalidate = 3600;
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const [services, projets, articles] = await Promise.all([

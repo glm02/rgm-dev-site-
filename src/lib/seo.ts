@@ -34,7 +34,9 @@ export function metadonnees({
   const titreComplet = titre.includes(SITE.nom) ? titre : `${titre} — ${SITE.nom}`;
 
   return {
-    title: titreComplet,
+    // `absolute` : le nom est déjà ajouté ici, le gabarit du layout
+    // (« %s — RGM Dev ») le doublait — « … — RGM Dev — RGM Dev » dans Google.
+    title: { absolute: titreComplet },
     description,
     alternates: { canonical: url },
     robots: horsIndex ? { index: false, follow: false } : undefined,

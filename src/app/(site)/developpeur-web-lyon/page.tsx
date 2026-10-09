@@ -15,9 +15,9 @@ import { jsonLdFaq, jsonLdFilAriane, metadonnees } from "@/lib/seo";
 import { SITE, VILLES } from "@/lib/site";
 
 export const metadata: Metadata = metadonnees({
-  titre: "Développeur web freelance à Lyon — sites et automatisation IA",
+  titre: "Développeur web freelance à Lyon — sites et IA",
   description:
-    "Développeur freelance à Lyon : création de sites web, refonte, e-commerce et automatisation IA. Prix affichés, devis ferme sous 48 h, rendez-vous sur place dans la métropole.",
+    "Développeur freelance à Lyon : création de sites web, refonte, e-commerce et automatisation IA. Prix affichés, devis sous 48 h, rendez-vous dans la métropole.",
   chemin: "/developpeur-web-lyon",
 });
 
