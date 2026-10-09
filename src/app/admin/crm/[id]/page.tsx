@@ -307,39 +307,32 @@ export default async function PageAffaire({ params, searchParams }: PageProps<"/
             </Panneau>
           ) : (
             <Panneau titre="Gagner l'affaire">
-              {clients.length === 0 ? (
-                <p className="text-sm text-muted-foreground">
-                  Aucun compte client pour l&apos;instant. Le client doit se connecter une première
-                  fois sur le site ; son compte apparaîtra ensuite ici.
-                </p>
-              ) : (
-                <form action={convertirProspect} className="space-y-4">
-                  <input type="hidden" name="id" value={prospect.id} />
-                  <Liste
-                    nom="profil_id"
-                    libelle="Compte client"
-                    options={clients.map((client) => ({
-                      valeur: client.id,
-                      libelle: client.entreprise ?? client.nom ?? client.email,
-                    }))}
-                    vide="Choisir…"
-                    aide="Le compte qui suivra le projet depuis son espace."
-                  />
-                  <Champ
-                    nom="titre"
-                    libelle="Titre de la mission"
-                    valeur={prospect.besoin ?? ""}
-                    requis
-                  />
-                  <Champ
-                    nom="montant"
-                    libelle="Montant signé"
-                    valeur={prospect.valeur_estimee ?? ""}
-                    aide="En euros HT. Vide : la valeur estimée."
-                  />
-                  <BoutonEnvoyer>Marquer gagnée et ouvrir la mission</BoutonEnvoyer>
-                </form>
-              )}
+              <form action={convertirProspect} className="space-y-4">
+                <input type="hidden" name="id" value={prospect.id} />
+                <Liste
+                  nom="profil_id"
+                  libelle="Compte client (facultatif)"
+                  options={clients.map((client) => ({
+                    valeur: client.id,
+                    libelle: client.entreprise ?? client.nom ?? client.email,
+                  }))}
+                  vide="Pas encore de compte"
+                  aide="Sans compte, la mission se suit dans l'admin ; le client la verra une fois son compte rattaché."
+                />
+                <Champ
+                  nom="titre"
+                  libelle="Titre de la mission"
+                  valeur={prospect.besoin ?? ""}
+                  requis
+                />
+                <Champ
+                  nom="montant"
+                  libelle="Montant signé"
+                  valeur={prospect.valeur_estimee ?? ""}
+                  aide="En euros HT. Vide : la valeur estimée."
+                />
+                <BoutonEnvoyer>Marquer gagnée et ouvrir la mission</BoutonEnvoyer>
+              </form>
             </Panneau>
           )}
 

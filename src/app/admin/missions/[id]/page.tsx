@@ -10,13 +10,14 @@ import {
   majJalon,
   majMission,
   majStatutDocument,
+  rattacherCompte,
   supprimerDocument,
   supprimerJalon,
 } from "@/lib/actions/admin";
 import { avecLiens } from "@/lib/stockage";
 import { sessionAdminOuRedirection } from "@/lib/auth";
 import { STATUT_DOCUMENT, STATUT_JALON, STATUT_MISSION, TYPE_DOCUMENT } from "@/lib/libelles";
-import type { Document, Jalon, Message, Mission, Profil } from "@/lib/types";
+import type { Document, Jalon, Message, Mission, Profil, Prospect } from "@/lib/types";
 
 const options = <T extends string>(table: Record<T, string | { libelle: string }>) =>
   (Object.entries(table) as [T, string | { libelle: string }][]).map(([valeur, v]) => ({
@@ -38,25 +39,41 @@ export default async function PageMissionAdmin({ params, searchParams }: PagePro
   const { ok, erreur } = await searchParams;
   const { supabase, profil } = session;
 
-  const [{ data: mission }, { data: jalons }, { data: documents }, { data: messages }] = await Promise.all([
-    supabase.from("missions").select("*, profils(nom, email, entreprise)").eq("id", id).maybeSingle(),
+  const [{ data: mission }, { data: jalons }, { data: documents }, { data: messages }, { data: comptes }] = await Promise.all([
+    supabase
+      .from("missions")
+      .select(
+        "*, profils:profils!missions_profil_id_fkey(nom, email, entreprise), prospect:prospects!missions_prospect_id_fkey(id, entreprise, contact)",
+      )
+      .eq("id", id)
+      .maybeSingle(),
     supabase.from("jalons").select("*").eq("mission_id", id).order("ordre"),
     supabase.from("documents").select("*").eq("mission_id", id).order("cree_le", { ascending: false }),
     supabase.from("messages").select("*").eq("mission_id", id).order("cree_le"),
+    supabase.from("profils").select("id, nom, email, entreprise").eq("role", "client").order("nom"),
   ]);
 
   if (!mission) notFound();
 
-  const m = mission as Mission & { profils: Pick<Profil, "nom" | "email" | "entreprise"> | null };
+  // Ouvrir le projet, c'est lire la conversation : les messages de l'autre
+  // partie passent en « lus » (fonction SQL de 0010_missions_clients.sql).
+  await supabase.rpc("marquer_messages_lus", { p_mission: id });
+
+  const m = mission as Mission & {
+    profils: Pick<Profil, "nom" | "email" | "entreprise"> | null;
+    prospect: Pick<Prospect, "id" | "entreprise" | "contact"> | null;
+  };
   const listeJalons = (jalons ?? []) as Jalon[];
   const listeDocuments = await avecLiens(supabase, (documents ?? []) as Document[]);
-  const client = m.profils?.nom ?? m.profils?.email ?? "Client";
+  // Le nom du client : celui du pipeline d'abord (l'entreprise), sinon le compte.
+  const client = m.prospect?.entreprise ?? m.prospect?.contact ?? m.profils?.nom ?? m.profils?.email ?? "Client";
+  const listeComptes = (comptes ?? []) as Pick<Profil, "id" | "nom" | "email" | "entreprise">[];
 
   return (
     <>
       <EntetePage
         titre={m.titre}
-        description={`${client}${m.profils?.entreprise ? ` · ${m.profils.entreprise}` : ""}`}
+        description={`${client}${m.profils ? ` · compte ${m.profils.email}` : " · sans compte client : le client ne voit pas encore ce projet"}`}
         retour={{ href: "/admin/clients", libelle: "Clients" }}
       />
       <Bandeau ok={ok} erreur={erreur} />
@@ -74,6 +91,21 @@ export default async function PageMissionAdmin({ params, searchParams }: PagePro
               <summary className="cursor-pointer text-sm font-medium text-bleu-700 dark:text-bleu-300">
                 Modifier le projet
               </summary>
+              <form action={rattacherCompte} className="mt-4 flex flex-wrap items-end gap-3">
+                <input type="hidden" name="id" value={m.id} />
+                <Liste
+                  nom="profil_id"
+                  libelle="Compte client"
+                  valeur={m.profil_id}
+                  vide={m.prospect_id ? "Aucun (le client ne voit pas le projet)" : undefined}
+                  options={listeComptes.map((c) => ({
+                    valeur: c.id,
+                    libelle: `${c.nom ?? c.email}${c.entreprise ? ` (${c.entreprise})` : ""}`,
+                  }))}
+                  className="min-w-56 flex-1"
+                />
+                <BoutonEnvoyer variante="secondaire">Rattacher</BoutonEnvoyer>
+              </form>
               <form action={majMission} className="mt-4 space-y-4">
                 <input type="hidden" name="id" value={m.id} />
                 <Champ nom="titre" libelle="Titre" valeur={m.titre} requis />

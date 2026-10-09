@@ -167,7 +167,10 @@ export type DemandeDevis = {
 
 export type Mission = {
   id: string;
-  profil_id: string;
+  /** Le compte qui voit la mission dans son espace. Vide tant que le client ne s'est pas connecté. */
+  profil_id: string | null;
+  /** Le client côté pipeline (0010_missions_clients.sql). */
+  prospect_id: string | null;
   titre: string;
   description: string | null;
   statut: StatutMission;

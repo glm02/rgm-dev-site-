@@ -178,7 +178,7 @@ export function DetailMission({
       </div>
 
       <div className="space-y-5">
-        <Panneau titre="Documents">
+        <Panneau id="documents" titre="Documents">
           {documents.length === 0 ? (
             <p className="text-sm text-muted-foreground">
               Devis, factures et livrables apparaîtront ici.
@@ -219,7 +219,7 @@ export function DetailMission({
           {outils?.documents}
         </Panneau>
 
-        <Panneau titre="Conversation">
+        <Panneau id="conversation" titre="Conversation">
           <Conversation
             missionId={mission.id}
             messages={messages}

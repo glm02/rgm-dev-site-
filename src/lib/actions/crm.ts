@@ -173,16 +173,16 @@ export async function annulerRelance(donnees: FormData) {
 }
 
 /**
- * Transforme une affaire gagnée en mission suivie par le client.
+ * Transforme une affaire gagnée en mission.
  *
- * Le compte client doit déjà exister : c'est lui qui donne accès à l'espace,
- * et on ne crée pas un compte à la place de quelqu'un sans qu'il se soit
- * connecté une première fois.
+ * Le compte client est facultatif : la mission se rattache d'abord à
+ * l'affaire du pipeline. Le client ne la voit dans son espace qu'une fois un
+ * compte rattaché — on ne crée pas de compte à la place de quelqu'un.
  */
 export async function convertirProspect(donnees: FormData) {
   const schema = z.object({
     id: z.uuid(),
-    profil_id: z.uuid("Choisissez le compte client."),
+    profil_id: z.union([z.uuid(), z.literal("")]).optional(),
     titre: texte(160).min(2, "Donnez un titre à la mission."),
     montant: montantOptionnel,
   });
@@ -202,7 +202,8 @@ export async function convertirProspect(donnees: FormData) {
     const { data: mission, error: erreurMission } = await supabase
       .from("missions")
       .insert({
-        profil_id: v.profil_id,
+        profil_id: v.profil_id || null,
+        prospect_id: v.id,
         titre: v.titre,
         description: prospect.besoin,
         statut: "cadrage",
@@ -218,7 +219,7 @@ export async function convertirProspect(donnees: FormData) {
       .update({
         statut: "gagne",
         probabilite: 100,
-        profil_id: v.profil_id,
+        profil_id: v.profil_id || null,
         mission_id: mission.id,
         relance_le: null,
       })

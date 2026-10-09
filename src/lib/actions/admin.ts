@@ -317,16 +317,65 @@ const champsMission = {
   url_live: texteOptionnel(300),
 };
 
+/**
+ * Le champ « client » des formulaires de mission : `p:<uuid>` pour un client du
+ * pipeline (sans compte), `c:<uuid>` pour un compte client.
+ */
+function lireClient(valeur: FormDataEntryValue | null): { prospect_id: string } | { profil_id: string } | null {
+  const [genre, id] = String(valeur ?? "").split(":");
+  if (!z.uuid().safeParse(id).success) return null;
+  if (genre === "p") return { prospect_id: id };
+  if (genre === "c") return { profil_id: id };
+  return null;
+}
+
 export async function creerMission(donnees: FormData) {
-  const schema = z.object({ profil_id: z.uuid("Choisissez un client."), ...champsMission });
-  await executer("/admin/clients", ["/admin/clients"], async ({ supabase }) => {
+  const schema = z.object(champsMission);
+  await executer("/admin/clients", ["/admin/clients", "/admin"], async ({ supabase }) => {
+    const client = lireClient(donnees.get("client"));
+    if (!client) return { erreur: "Choisissez un client." };
     const v = lire(schema, donnees);
     if (typeof v === "string") return { erreur: v };
-    const { data, error } = await supabase.from("missions").insert(v).select("id").single();
+    const { data, error } = await supabase.from("missions").insert({ ...v, ...client }).select("id").single();
     if (error) throw error;
+    if ("prospect_id" in client) {
+      // L'affaire du pipeline pointe vers sa mission, comme après une conversion.
+      await supabase.from("prospects").update({ mission_id: data.id }).eq("id", client.prospect_id).is("mission_id", null);
+    }
     // On enchaîne directement sur le projet : la suite logique est d'y poser
     // les étapes et le devis.
     return { ok: "Projet créé. Ajoutez ses étapes et son devis.", vers: `/admin/missions/${data.id}` };
+  });
+}
+
+/**
+ * Rattache (ou détache) le compte client d'une mission. C'est ce qui la fait
+ * apparaître dans l'espace du client : avant, seul l'admin la voit.
+ */
+export async function rattacherCompte(donnees: FormData) {
+  const schema = z.object({ id: z.uuid(), profil_id: z.union([z.uuid(), z.literal("")]) });
+  const id = String(donnees.get("id") ?? "");
+  await executer(`/admin/missions/${id}`, [`/admin/missions/${id}`, "/admin/clients", "/compte"], async ({ supabase }) => {
+    const v = lire(schema, donnees);
+    if (typeof v === "string") return { erreur: v };
+    const { data: mission, error: erreurLecture } = await supabase
+      .from("missions")
+      .select("prospect_id")
+      .eq("id", v.id)
+      .single();
+    if (erreurLecture) throw erreurLecture;
+    if (!v.profil_id && !mission.prospect_id) {
+      return { erreur: "Cette mission n'a pas de client au pipeline : elle doit garder un compte." };
+    }
+    const { error } = await supabase
+      .from("missions")
+      .update({ profil_id: v.profil_id || null })
+      .eq("id", v.id);
+    if (error) throw error;
+    if (v.profil_id && mission.prospect_id) {
+      await supabase.from("prospects").update({ profil_id: v.profil_id }).eq("id", mission.prospect_id);
+    }
+    return { ok: v.profil_id ? "Compte rattaché : le client voit le projet dans son espace." : "Compte détaché." };
   });
 }
 

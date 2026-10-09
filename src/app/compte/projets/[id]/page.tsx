@@ -25,6 +25,10 @@ export default async function PageProjetClient({ params }: PageProps<"/compte/pr
 
   if (!mission) notFound();
 
+  // Ouvrir le projet, c'est lire la conversation : les messages de l'autre
+  // partie passent en « lus » (fonction SQL de 0010_missions_clients.sql).
+  await supabase.rpc("marquer_messages_lus", { p_mission: id });
+
   // Les fichiers du stockage privé deviennent des liens signés valables une
   // heure, fabriqués avec la session du client : Storage vérifie qu'il ne
   // signe que les fichiers de ses propres projets.

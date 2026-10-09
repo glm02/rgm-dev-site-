@@ -9,7 +9,7 @@ import { metadonnees } from "@/lib/seo";
 export const metadata: Metadata = metadonnees({
   titre: "Réalisations — sites et automatisations livrés",
   description:
-    "Les projets livrés par RGM Dev : contexte, problème, solution, stack technique et budget. Sites vitrines, réservation en ligne, cartographie de données.",
+    "Les projets livrés par RGM Dev : contexte, problème, solution, stack technique et budget. Sites vitrines, réservation en ligne, refontes.",
   chemin: "/realisations",
 });
 

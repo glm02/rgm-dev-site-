@@ -39,18 +39,21 @@ export function EntetePage({
 
 /** Un bloc blanc sur le fond légèrement teinté des espaces. */
 export function Panneau({
+  id,
   titre,
   actions,
   children,
   className,
 }: {
+  /** Ancre, pour y mener directement depuis un lien (`#documents`). */
+  id?: string;
   titre?: React.ReactNode;
   actions?: React.ReactNode;
   children: React.ReactNode;
   className?: string;
 }) {
   return (
-    <section className={`rounded-2xl border border-border bg-card ${className ?? ""}`}>
+    <section id={id} className={`scroll-mt-24 rounded-2xl border border-border bg-card ${className ?? ""}`}>
       {(titre || actions) && (
         <div className="flex items-center justify-between gap-3 border-b border-border px-5 py-4">
           {titre && <h2 className="font-semibold">{titre}</h2>}

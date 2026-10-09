@@ -55,14 +55,18 @@ doit être aussi visible que les sites web, pas relégué en bas de page.
 ## 4. Réalisations à mettre en portfolio
 
 Les fiches projet vivent en base (table `projets`), pas en dur dans le code.
-Contenu de départ, tiré des dépôts existants de Rafael :
+Les projets clients présentés (migrations 0007 et 0009) :
 
 | Projet | Ce que c'est | Stack | Note |
 |---|---|---|---|
 | **Atout Travaux** | Site + demandes de devis pour un artisan (ramonage, chauffage, clim, plomberie, tubage) à La Ciotat | HTML statique, fonctions Vercel, Upstash, Resend | SEO local, c'est l'essentiel de sa valeur |
 | **Campagne Vallauris** | Site + réservation en direct pour des chambres d'hôtes à Vaumeilh (campagne-vallauris.fr) | HTML/JS, Vercel KV + Blob, Resend | Réservations, galerie photo, emails |
-| **Socle** | Cartographie du foncier raccordable en France pour data centers | Next.js, Supabase, visx | Projet data, montre le niveau technique |
-| **Boréal** | Site événementiel | — | à compléter |
+| **Liccia Immo** | Refonte du site d'une agence immobilière à La Ciotat (liccia-immo.vercel.app) | Next.js, Supabase | Pas encore sur liccia-immo.fr (ancien WordPress) |
+| **Le K Répare** | Site vitrine d'un réparateur téléphone / PC à la Croix-Rousse | HTML, Tailwind, Vercel Functions, Resend | Site hors ligne au 2026-10-09 |
+| **La Santon** | Réservation directe pour des chambres d'hôtes et gîtes à Vif (Isère) | HTML/JS, Vercel KV + Blob, Stripe, Resend | Version sur santon-virid.vercel.app |
+
+**Socle ne figure plus au portfolio** (décision de Rafael du 2026-10-09 : on
+ne montre que des projets clients). La fiche reste en base, dépubliée.
 
 Chaque fiche porte : titre, slug, client, secteur, résumé, problème, solution,
 résultat chiffré si possible, stack, captures, lien live, **fourchette de prix**,
