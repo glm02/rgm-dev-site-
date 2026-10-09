@@ -9,11 +9,13 @@ import { CalculateurGain } from "@/components/sections/calculateur-gain";
 import { Clients } from "@/components/sections/clients";
 import { Comparatif } from "@/components/sections/comparatif";
 import { Demarche } from "@/components/sections/demarche";
+import { DerniersArticles } from "@/components/sections/derniers-articles";
 import { Faq } from "@/components/sections/faq";
 import { Garanties } from "@/components/sections/garanties";
 import { Hero } from "@/components/sections/hero";
 import { RealisationsVedette } from "@/components/sections/realisations-vedette";
 import { Services } from "@/components/sections/services";
+import { SupervisionDirect } from "@/components/sections/supervision-direct";
 import { listerOffres } from "@/lib/donnees";
 import { metadonnees } from "@/lib/seo";
 import { SITE } from "@/lib/site";
@@ -31,7 +33,7 @@ export const metadata: Metadata = metadonnees({
  * où il se la pose : qu'est-ce que c'est → qui vous a déjà fait confiance → qu'est-ce que vous faites → est-ce
  * que vous savez le faire → qui est derrière → comment ça se passe → combien
  * je perds aujourd'hui → combien ça coûte → pourquoi vous plutôt qu'une
- * agence → qu'est-ce qui me protège → est-ce que d'autres ont été contents →
+ * agence → qu'est-ce qui me protège → et après la livraison → est-ce que d'autres ont été contents →
  * et mes doutes → on y va.
  *
  * La nappe de points est posée ici, en fond **fixe de toute la page** et non
@@ -40,6 +42,13 @@ export const metadata: Metadata = metadonnees({
  * fenêtre dégagé, donc le texte reste lisible partout — c'est ce qui permet de
  * la laisser présente sans qu'elle devienne du papier peint.
  */
+/**
+ * Régénérée toutes les 5 minutes : la section supervision affiche des mesures
+ * réelles, et un article ou une réalisation publiés apparaissent sans
+ * redéploiement. La page reste servie en statique entre deux régénérations.
+ */
+export const revalidate = 300;
+
 export default async function Accueil() {
   // Le calculateur chiffre le projet avec la vraie fourchette de l'offre
   // « Automatisation d'un processus » : si le prix change dans l'admin, le
@@ -65,7 +74,9 @@ export default async function Accueil() {
       <ApercuTarifs />
       <Comparatif />
       <Garanties />
+      <SupervisionDirect />
       <AvisSection />
+      <DerniersArticles />
       <Faq />
       <AppelAction />
     </>

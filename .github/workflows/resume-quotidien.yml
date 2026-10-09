@@ -1,0 +1,29 @@
+# Le résumé du matin sur Telegram : relances dues, demandes non traitées,
+# factures échues, avis à modérer, alertes ouvertes. Voir
+# src/app/api/resume-quotidien/route.ts. Rien n'est envoyé s'il n'y a rien.
+#
+# 7 h UTC = 9 h à Paris en été, 8 h en hiver.
+
+name: Résumé quotidien
+
+on:
+  schedule:
+    - cron: "0 7 * * *"
+  workflow_dispatch:
+
+permissions: {}
+
+jobs:
+  resume:
+    runs-on: ubuntu-latest
+    timeout-minutes: 3
+    steps:
+      - name: Envoyer le résumé
+        env:
+          CRON_SECRET: ${{ secrets.CRON_SECRET }}
+        run: |
+          code=$(curl -sS -o reponse.json -w "%{http_code}" --max-time 60 \
+            -H "Authorization: Bearer $CRON_SECRET" \
+            https://www.rgm-dev.site/api/resume-quotidien)
+          echo "HTTP $code"; cat reponse.json; echo
+          [ "$code" = "200" ] || { echo "::error::Le résumé a répondu HTTP $code."; exit 1; }

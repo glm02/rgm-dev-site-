@@ -4,7 +4,7 @@ import { revalidatePath } from "next/cache";
 import { z } from "zod";
 
 import { AccesRefuse, exigerSession } from "@/lib/auth";
-import { envoyerTelegram } from "@/lib/notifications";
+import { echapper, envoyerTelegram } from "@/lib/notifications";
 
 /**
  * Les actions de l'espace client.
@@ -76,7 +76,7 @@ export async function envoyerMessage(
     // simple enregistrement. Sauf quand c'est Rafael qui répond.
     if (profil.role !== "admin") {
       await envoyerTelegram(
-        `💬 <b>Message de ${profil.nom ?? profil.email}</b> — ${mission.titre}\n\n${analyse.data.contenu.slice(0, 500)}`,
+        `💬 <b>Message de ${echapper(profil.nom ?? profil.email)}</b> — ${echapper(mission.titre)}\n\n${echapper(analyse.data.contenu.slice(0, 500))}`,
       );
     }
 
@@ -151,7 +151,7 @@ export async function deposerAvis(
     if (error) throw error;
 
     await envoyerTelegram(
-      `⭐ <b>Nouvel avis à modérer</b> — ${"★".repeat(analyse.data.note)}${"☆".repeat(5 - analyse.data.note)}\n${analyse.data.auteur_nom}\n\n${analyse.data.contenu.slice(0, 500)}`,
+      `⭐ <b>Nouvel avis à modérer</b> — ${"★".repeat(analyse.data.note)}${"☆".repeat(5 - analyse.data.note)}\n${echapper(analyse.data.auteur_nom)}\n\n${echapper(analyse.data.contenu.slice(0, 500))}`,
     );
 
     revalidatePath("/compte/avis");

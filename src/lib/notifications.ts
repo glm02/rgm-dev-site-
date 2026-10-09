@@ -27,7 +27,12 @@ function resend(): Resend | null {
 }
 
 /** Échappe le HTML. Une saisie libre finit dans un email : elle ne doit rien exécuter. */
-function echapper(valeur: string): string {
+/**
+ * Échappe le texte saisi par un tiers avant de l'insérer dans un message HTML
+ * (email, Telegram en `parse_mode: "HTML"`) : un « < » non échappé fait
+ * refuser le message entier par Telegram, et la notification est perdue.
+ */
+export function echapper(valeur: string): string {
   return valeur
     .replace(/&/g, "&amp;")
     .replace(/</g, "&lt;")
