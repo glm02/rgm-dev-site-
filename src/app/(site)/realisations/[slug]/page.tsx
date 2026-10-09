@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import Image from "next/image";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { ArrowUpRight, CalendarDays, Euro, Timer } from "lucide-react";
@@ -137,6 +138,16 @@ export default async function PageProjet({ params }: PageProps<"/realisations/[s
                 valeur={`${projet.stack.length} briques`}
               />
             </dl>
+
+            {projet.image_couverture && (
+              <Apparait className="mt-10">
+                <ApercuSite
+                  image={projet.image_couverture}
+                  titre={projet.titre}
+                  url={projet.url_live}
+                />
+              </Apparait>
+            )}
           </div>
         </section>
 
@@ -240,5 +251,57 @@ function Donnee({
       </dt>
       <dd className="mt-1.5 text-lg font-semibold tabular-nums">{valeur}</dd>
     </div>
+  );
+}
+
+/**
+ * La capture du site, dans un cadre de navigateur.
+ *
+ * Un visiteur juge d'abord sur pièce : voir le site compte plus que le lire.
+ * Le cadre (barre et adresse) dit « c'est un vrai site en ligne », pas une
+ * maquette. Cliquable vers le site quand il est en ligne.
+ */
+function ApercuSite({ image, titre, url }: { image: string; titre: string; url: string | null }) {
+  const domaine = url ? new URL(url).hostname.replace(/^www\./, "") : null;
+
+  const contenu = (
+    <figure className="overflow-hidden rounded-2xl border border-border bg-card shadow-[0_1px_2px_oklch(0_0_0/0.04),0_24px_48px_-24px_oklch(0_0_0/0.18)]">
+      <div className="flex h-10 items-center gap-3 border-b border-border bg-secondary/60 px-4">
+        <span className="flex gap-1.5" aria-hidden="true">
+          <span className="size-2.5 rounded-full bg-border" />
+          <span className="size-2.5 rounded-full bg-border" />
+          <span className="size-2.5 rounded-full bg-border" />
+        </span>
+        {domaine && (
+          <span className="mx-auto truncate rounded-md bg-background px-3 py-0.5 text-xs font-medium">
+            {domaine}
+          </span>
+        )}
+      </div>
+      <div className="relative aspect-[16/10] bg-secondary">
+        <Image
+          src={image}
+          alt={`Page d'accueil du site ${titre}`}
+          fill
+          priority
+          sizes="(min-width: 1280px) 1200px, 100vw"
+          className="object-cover object-top"
+        />
+      </div>
+    </figure>
+  );
+
+  if (!url) return contenu;
+
+  return (
+    <a
+      href={url}
+      target="_blank"
+      rel="noreferrer"
+      aria-label={`Ouvrir le site ${titre} dans un nouvel onglet`}
+      className="block rounded-2xl transition-[translate] duration-200 ease-out hover:-translate-y-0.5 focus-visible:outline-none focus-visible:ring-3 focus-visible:ring-ring/40"
+    >
+      {contenu}
+    </a>
   );
 }
