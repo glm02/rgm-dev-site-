@@ -1,0 +1,51 @@
+# Supervision des sites clients toutes les 5 minutes.
+#
+# Le cron Vercel du plan Hobby ne tourne qu'une fois par jour : un site client
+# en panne à 9 h n'était signalé que le lendemain à 7 h. Le brief demande une
+# alerte immédiate. GitHub Actions est gratuit et illimité sur un dépôt public,
+# et 5 minutes est l'intervalle le plus court qu'il accepte.
+#
+# Le workflow appelle seulement /api/supervision : les contrôles, l'écriture en
+# base et les alertes Telegram / email restent dans le site. Si l'appel échoue
+# (site RGM Dev lui-même en panne, secret faux, clé Supabase absente), le
+# workflow échoue et GitHub prévient par email : la surveillance ne peut pas
+# tomber en silence.
+#
+# Secret requis dans le dépôt : CRON_SECRET (même valeur que sur Vercel).
+
+name: Supervision
+
+on:
+  schedule:
+    - cron: "*/5 * * * *"
+  workflow_dispatch:
+
+permissions: {}
+
+concurrency:
+  group: supervision
+  cancel-in-progress: false
+
+jobs:
+  controle:
+    runs-on: ubuntu-latest
+    timeout-minutes: 3
+    steps:
+      - name: Lancer la supervision
+        env:
+          CRON_SECRET: ${{ secrets.CRON_SECRET }}
+        run: |
+          if [ -z "$CRON_SECRET" ]; then
+            echo "::error::Le secret CRON_SECRET n'est pas défini dans le dépôt."
+            exit 1
+          fi
+          code=$(curl -sS -o reponse.json -w "%{http_code}" --max-time 90 \
+            -H "Authorization: Bearer $CRON_SECRET" \
+            https://www.rgm-dev.site/api/supervision)
+          echo "HTTP $code"
+          # La réponse ne contient que des noms de sites et des statuts.
+          cat reponse.json; echo
+          if [ "$code" != "200" ]; then
+            echo "::error::La supervision a répondu HTTP $code."
+            exit 1
+          fi
