@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="fr">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="color-scheme" content="light">
+    <title>Mot de passe</title>
+  </head>
+  <body style="margin:0;padding:0;background:#f4f7fd;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,Helvetica,Arial,sans-serif;">
+    <div style="display:none;max-height:0;overflow:hidden;opacity:0;">Un lien pour définir un nouveau mot de passe.</div>
+    <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="background:#f4f7fd;">
+      <tr>
+        <td align="center" style="padding:40px 16px;">
+          <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="max-width:520px;">
+            <tr>
+              <td style="padding:0 4px 20px;">
+                <table role="presentation" cellpadding="0" cellspacing="0" border="0">
+                  <tr>
+                    <td width="36" height="36" align="center" bgcolor="#0b5cff" style="border-radius:10px;font-family:'SFMono-Regular',Consolas,monospace;font-size:14px;font-weight:700;color:#ffffff;">&lt;&gt;</td>
+                    <td style="padding-left:10px;font-size:17px;font-weight:700;color:#0b1220;">RGM Dev</td>
+                  </tr>
+                </table>
+              </td>
+            </tr>
+            <tr>
+              <td style="background:#ffffff;border:1px solid #e3e8f2;border-radius:16px;padding:36px 32px;">
+                <h1 style="margin:0 0 20px;font-size:24px;line-height:1.3;font-weight:700;color:#0b1220;">Nouveau mot de passe</h1><p style="margin:0 0 16px;font-size:16px;line-height:1.6;color:#0b1220;">Bonjour,</p><p style="margin:0 0 16px;font-size:16px;line-height:1.6;color:#0b1220;">Vous avez demandé à changer le mot de passe de votre compte RGM Dev. Ce lien vous connecte et vous mène à votre profil, où vous choisirez le nouveau mot de passe. Il est valable une heure.</p>
+              <table role="presentation" cellpadding="0" cellspacing="0" border="0" style="margin:28px 0 8px;">
+                <tr>
+                  <td align="center" bgcolor="#0b5cff" style="border-radius:12px;">
+                    <a href="{{ .SiteURL }}/auth/callback?token_hash={{ .TokenHash }}&amp;type=recovery&amp;suite=/compte/profil" target="_blank" style="display:inline-block;padding:15px 28px;font-size:16px;font-weight:600;color:#ffffff;text-decoration:none;border-radius:12px;">Choisir un nouveau mot de passe</a>
+                  </td>
+                </tr>
+              </table>
+              <p style="margin:24px 0 0;font-size:13px;line-height:1.6;color:#0b1220;">Le bouton ne fonctionne pas ? Copiez ce lien dans votre navigateur :<br><a href="{{ .SiteURL }}/auth/callback?token_hash={{ .TokenHash }}&amp;type=recovery&amp;suite=/compte/profil" style="color:#0a47c2;word-break:break-all;">{{ .SiteURL }}/auth/callback?token_hash={{ .TokenHash }}&amp;type=recovery&amp;suite=/compte/profil</a></p><p style="margin:24px 0 0;padding-top:20px;border-top:1px solid #e3e8f2;font-size:13px;line-height:1.6;color:#0b1220;">Vous n'êtes pas à l'origine de cette demande ? Ignorez simplement cet email : rien ne sera modifié. Votre mot de passe actuel reste valable tant que vous n'en choisissez pas un autre.</p>
+              </td>
+            </tr>
+            <tr>
+              <td style="padding:20px 4px 0;font-size:12px;line-height:1.6;color:#0b1220;">
+                RGM Dev · Développeur freelance à Lyon<br>
+                <a href="{{ .SiteURL }}" style="color:#0a47c2;text-decoration:none;">rgm-dev.site</a> · glm07rafael@gmail.com
+              </td>
+            </tr>
+          </table>
+        </td>
+      </tr>
+    </table>
+  </body>
+</html>

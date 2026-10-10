@@ -62,7 +62,11 @@ export async function GET(requete: NextRequest) {
   const { error } = tokenHash
     ? await supabase.auth.verifyOtp({
         token_hash: tokenHash,
-        type: typeOtp === "signup" || typeOtp === "invite" || typeOtp === "recovery" ? typeOtp : "email",
+        // Les types que les modèles d'email de supabase/templates/ envoient.
+        type:
+          typeOtp === "signup" || typeOtp === "invite" || typeOtp === "recovery" || typeOtp === "email_change"
+            ? typeOtp
+            : "email",
       })
     : await supabase.auth.exchangeCodeForSession(code!);
 
