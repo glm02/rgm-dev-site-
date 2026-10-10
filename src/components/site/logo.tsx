@@ -1,12 +1,13 @@
 import Link from "next/link";
 
+import { MarqueRgm } from "./marque-rgm";
 import { cn } from "@/lib/utils";
 
 /**
- * Le logo : un chevron `</>` stylisé en bleu, puis le nom.
+ * Le logo : le symbole RGM en blanc sur une pastille bleue, puis le nom.
  *
- * Dessiné en SVG inline plutôt qu'importé : c'est six lignes, ça évite une
- * requête réseau, et `currentColor` lui fait suivre le thème tout seul.
+ * Le symbole est vectorisé dans `marque-rgm.tsx` : net à toutes les tailles,
+ * sans requête réseau, et il suit le thème par `currentColor`.
  */
 export function Logo({
   className,
@@ -32,19 +33,7 @@ export function Logo({
           "transition-[background-color] duration-150 ease-out",
         )}
       >
-        <svg
-          viewBox="0 0 24 24"
-          fill="none"
-          stroke="currentColor"
-          strokeWidth={2.25}
-          strokeLinecap="round"
-          strokeLinejoin="round"
-          className="size-[18px]"
-          aria-hidden="true"
-        >
-          <path d="m8 7-5 5 5 5" />
-          <path d="m16 7 5 5-5 5" />
-        </svg>
+        <MarqueRgm className="size-[22px]" />
       </span>
 
       {avecTexte && (

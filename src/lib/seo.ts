@@ -147,7 +147,7 @@ export function jsonLdEntreprise(note: { moyenne: number; nombre: number } | nul
     founder: { "@id": ID_AUTEUR },
     knowsLanguage: "fr",
     slogan: SITE.slogan,
-    logo: `${SITE.url}/images/logo-rgm.svg`,
+    logo: `${SITE.url}/images/logo-rgm-complet.png`,
     ...(note
       ? {
           aggregateRating: {
