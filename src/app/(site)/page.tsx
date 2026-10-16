@@ -39,9 +39,7 @@ export const metadata: Metadata = metadonnees({
  *
  * La nappe de points est posée ici, en fond **fixe de toute la page** et non
  * dans le hero : elle accompagne la lecture d'un bout à l'autre, et la houle
- * glisse au rythme du défilement. Les sections reposent chacune sur un
- * `Panneau` opaque : le texte ne se lit jamais sur les points, la nappe ne
- * reste visible que dans les marges et entre deux panneaux.
+ * glisse au rythme du défilement.
  */
 /**
  * Régénérée toutes les 5 minutes : la section supervision affiche des mesures
@@ -65,55 +63,27 @@ export default async function Accueil() {
     <>
       <ToileMaillage fixe />
 
-      {/* Chaque section repose sur son panneau opaque : les points ne passent
-          plus derrière le texte, ils ne se voient qu'entre les panneaux. */}
-      <div className="flex flex-col gap-5 px-3 pt-3 pb-8 sm:gap-6 sm:px-6 sm:pt-4">
-        <Panneau>
-          <Hero />
-        </Panneau>
-        <Panneau>
-          <Clients />
-        </Panneau>
-        <Panneau>
-          <Services />
-        </Panneau>
-        <Panneau>
-          <RealisationsVedette />
-        </Panneau>
+      <Hero />
+      <Clients />
+      <Services />
+      <RealisationsVedette />
+      {/* Seule « Qui est derrière » repose sur un panneau opaque : sur les
+          autres sections, un panneau en plus doublait les cartes existantes. */}
+      <div className="px-3 sm:px-6">
         <Panneau>
           <APropos />
         </Panneau>
-        <Panneau>
-          <Demarche />
-        </Panneau>
-        <Panneau>
-          <CalculateurGain prixMin={prixMin} prixMax={prixMax} />
-        </Panneau>
-        <Panneau>
-          <ApercuTarifs />
-        </Panneau>
-        <Panneau>
-          <Comparatif />
-        </Panneau>
-        <Panneau>
-          <Garanties />
-        </Panneau>
-        <Panneau>
-          <SupervisionDirect />
-        </Panneau>
-        <Panneau>
-          <AvisSection />
-        </Panneau>
-        <Panneau>
-          <DerniersArticles />
-        </Panneau>
-        <Panneau>
-          <Faq />
-        </Panneau>
-        <Panneau className="py-8 sm:py-10">
-          <AppelAction />
-        </Panneau>
       </div>
+      <Demarche />
+      <CalculateurGain prixMin={prixMin} prixMax={prixMax} />
+      <ApercuTarifs />
+      <Comparatif />
+      <Garanties />
+      <SupervisionDirect />
+      <AvisSection />
+      <DerniersArticles />
+      <Faq />
+      <AppelAction />
     </>
   );
 }
