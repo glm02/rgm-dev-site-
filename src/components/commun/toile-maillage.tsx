@@ -171,21 +171,26 @@ export function ToileMaillage({
 
             // Deux houles croisées de périodes différentes : leur somme ne se
             // répète pas à l'œil, là où une seule sinusoïde se lit tout de suite.
+            //
+            // Vitesses et amplitudes volontairement basses : en fond fixe sur
+            // toute la page, une houle plus vive donnait mal à la tête. Le
+            // mouvement doit se deviner, pas se regarder.
             float houle =
-                sin(pos.x * 0.42 + uTemps * 0.55) * 0.52
-              + sin(pos.z * 0.62 - uTemps * 0.38) * 0.38
-              + sin((pos.x + pos.z) * 0.24 + uTemps * 0.28) * 0.26;
+                sin(pos.x * 0.42 + uTemps * 0.18) * 0.28
+              + sin(pos.z * 0.62 - uTemps * 0.13) * 0.20
+              + sin((pos.x + pos.z) * 0.24 + uTemps * 0.10) * 0.14;
 
             // Le creux sous le curseur. Amorti par la distance, pour que le
             // relief se résorbe au lieu de s'arrêter net.
             float d = distance(pos.xz, uPointeur);
             float creux = exp(-d * d * 0.16) * uForcePointeur;
 
-            pos.y += houle + creux * 0.85;
+            pos.y += houle + creux * 0.4;
 
             // Les crêtes sont plus denses que les creux : c'est ce qui fait
-            // lire la houle comme un relief et non comme un bruit.
-            vIntensite = clamp((houle + 1.15) * 0.44 + creux * 0.6, 0.0, 1.0);
+            // lire la houle comme un relief et non comme un bruit. Le facteur
+            // compense l'amplitude réduite pour garder le même contraste.
+            vIntensite = clamp((houle + 0.62) * 0.8 + creux * 0.4, 0.0, 1.0);
 
             vec4 vuePos = modelViewMatrix * vec4(pos, 1.0);
             vDistance = -vuePos.z;
@@ -227,8 +232,10 @@ export function ToileMaillage({
             // passent devant le texte au lieu de rester derrière.
             float proche = 1.0 - smoothstep(3.4, 1.6, vDistance);
 
+            // Opacité plafonnée plus bas : moins de contraste, moins de
+            // scintillement perçu quand la nappe bouge.
             float alpha = bord
-                        * (0.30 + vIntensite * 0.62)
+                        * (0.20 + vIntensite * 0.40)
                         * (1.0 - lointain * 0.55)
                         * proche
                         * uOpacite;
@@ -246,8 +253,9 @@ export function ToileMaillage({
       const surDefilement = () => {
         // Une page entière ne vaut qu'une fraction de la profondeur de la
         // nappe : sinon le fond file plus vite que le contenu et donne le
-        // tournis.
-        cibleDefilement = (window.scrollY / window.innerHeight) * 1.6;
+        // tournis. À 1.6 c'était déjà trop : le fond défilait en même temps
+        // que la houle et fatiguait l'œil.
+        cibleDefilement = (window.scrollY / window.innerHeight) * 0.4;
       };
 
       if (fixe) {
@@ -319,13 +327,13 @@ export function ToileMaillage({
         // Rattrapage progressif : suivre `scrollY` au pixel près ferait sauter
         // la nappe à chaque cran de molette.
         uniforms.uDefilement.value +=
-          (cibleDefilement - uniforms.uDefilement.value) * 0.08;
+          (cibleDefilement - uniforms.uDefilement.value) * 0.05;
 
         // Interpolation douce vers la cible : suivre le curseur au pixel près
         // donne un mouvement sec et artificiel.
-        uniforms.uPointeur.value.lerp(ciblePointeur, 0.06);
+        uniforms.uPointeur.value.lerp(ciblePointeur, 0.03);
         uniforms.uForcePointeur.value +=
-          (cibleForce - uniforms.uForcePointeur.value) * 0.05;
+          (cibleForce - uniforms.uForcePointeur.value) * 0.03;
 
         // Fondu d'entrée : la première image arrive avec un temps de retard sur
         // le texte, l'apparition brutale se verrait.
