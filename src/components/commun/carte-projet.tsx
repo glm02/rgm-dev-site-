@@ -3,6 +3,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { ArrowUpRight } from "lucide-react";
 
+import { Objet3dProjet } from "@/components/commun/objet-3d-projet";
 import { fourchetteProjet } from "@/lib/format";
 import type { Projet } from "@/lib/types";
 import { cn } from "@/lib/utils";
@@ -76,7 +77,7 @@ export function CarteProjet({
             />
           )
         ) : (
-          <PlaceholderProjet titre={projet.titre} />
+          <Objet3dProjet slug={projet.slug} />
         )}
       </div>
 
@@ -141,32 +142,5 @@ export function CarteProjet({
         </p>
       </div>
     </article>
-  );
-}
-
-/**
- * Le motif affiché tant qu'il n'y a pas de capture.
- *
- * Une grille bleue très pâle avec l'initiale du projet. Mieux qu'un carré gris
- * ou qu'une image d'archive : ça se lit comme « capture à venir » plutôt que
- * comme une image cassée.
- */
-function PlaceholderProjet({ titre }: { titre: string }) {
-  return (
-    <div className="relative grid size-full place-items-center">
-      <div
-        aria-hidden="true"
-        className="absolute inset-0 opacity-70 dark:opacity-40"
-        style={{
-          backgroundImage:
-            "linear-gradient(var(--bleu-200) 1px, transparent 1px), linear-gradient(90deg, var(--bleu-200) 1px, transparent 1px)",
-          backgroundSize: "28px 28px",
-          maskImage: "radial-gradient(70% 70% at 50% 50%, black, transparent)",
-        }}
-      />
-      <span className="relative text-5xl font-semibold text-bleu-600/25 dark:text-bleu-400/25">
-        {titre.charAt(0)}
-      </span>
-    </div>
   );
 }

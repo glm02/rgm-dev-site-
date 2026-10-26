@@ -8,6 +8,7 @@ import { Apparait } from "@/components/commun/apparait";
 import { CarteAvis } from "@/components/commun/carte-avis";
 import { FilAriane } from "@/components/commun/fil-ariane";
 import { JsonLd } from "@/components/commun/json-ld";
+import { Objet3dProjet } from "@/components/commun/objet-3d-projet";
 import { AppelAction } from "@/components/sections/appel-action";
 import { listerAvis, listerProjets, projetParSlug } from "@/lib/donnees";
 import { duree, fourchetteProjet } from "@/lib/format";
@@ -80,39 +81,45 @@ export default async function PageProjet({ params }: PageProps<"/realisations/[s
           <div className="conteneur relative pt-8 pb-14">
             <FilAriane etapes={etapes} />
 
-            <div className="mt-8 max-w-3xl">
-              {projet.secteur && (
-                <p className="text-sm font-semibold tracking-wider text-bleu-600 uppercase dark:text-bleu-400">
-                  {projet.secteur}
+            <div className="mt-8 grid items-center gap-10 lg:grid-cols-[minmax(0,1.2fr)_minmax(0,1fr)] lg:gap-14">
+              <div className="max-w-2xl">
+                {projet.secteur && (
+                  <p className="text-sm font-semibold tracking-wider text-bleu-600 uppercase dark:text-bleu-400">
+                    {projet.secteur}
+                  </p>
+                )}
+
+                <h1 className="mt-3 text-4xl font-semibold sm:text-5xl">{projet.titre}</h1>
+
+                <p className="mt-5 text-xl leading-relaxed text-balance text-muted-foreground">
+                  {projet.resume}
                 </p>
-              )}
 
-              <h1 className="mt-3 text-4xl font-semibold sm:text-5xl">{projet.titre}</h1>
+                {projet.url_live && (
+                  <a
+                    href={projet.url_live}
+                    target="_blank"
+                    rel="noreferrer"
+                    className={cn(
+                      "group mt-7 inline-flex h-11 items-center gap-2 rounded-xl bg-primary px-5",
+                      "text-sm font-medium text-primary-foreground",
+                      "transition-[background-color,scale] duration-150 ease-out",
+                      "hover:bg-bleu-700 active:scale-96 dark:hover:bg-bleu-400",
+                    )}
+                  >
+                    Voir le site en ligne
+                    <ArrowUpRight
+                      className="size-4 transition-[translate] duration-150 ease-out group-hover:-translate-y-0.5 group-hover:translate-x-0.5"
+                      strokeWidth={2}
+                      aria-hidden="true"
+                    />
+                  </a>
+                )}
+              </div>
 
-              <p className="mt-5 text-xl leading-relaxed text-balance text-muted-foreground">
-                {projet.resume}
-              </p>
-
-              {projet.url_live && (
-                <a
-                  href={projet.url_live}
-                  target="_blank"
-                  rel="noreferrer"
-                  className={cn(
-                    "group mt-7 inline-flex h-11 items-center gap-2 rounded-xl bg-primary px-5",
-                    "text-sm font-medium text-primary-foreground",
-                    "transition-[background-color,scale] duration-150 ease-out",
-                    "hover:bg-bleu-700 active:scale-96 dark:hover:bg-bleu-400",
-                  )}
-                >
-                  Voir le site en ligne
-                  <ArrowUpRight
-                    className="size-4 transition-[translate] duration-150 ease-out group-hover:-translate-y-0.5 group-hover:translate-x-0.5"
-                    strokeWidth={2}
-                    aria-hidden="true"
-                  />
-                </a>
-              )}
+              <div className="relative aspect-[4/3] overflow-hidden rounded-3xl border border-border bg-slate-950/95 shadow-2xl">
+                <Objet3dProjet slug={projet.slug} />
+              </div>
             </div>
 
             {/* La fiche d'identité du projet. Le budget y figure : c'est la
