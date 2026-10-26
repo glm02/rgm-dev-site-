@@ -79,6 +79,7 @@ export const NAVIGATION_PIED = {
   Découvrir: [
     { libelle: "Développeur web à Lyon", href: "/developpeur-web-lyon" },
     { libelle: "La méthode", href: "/methode" },
+    { libelle: "Ma stack IA", href: "/stack" },
     { libelle: "Réalisations", href: "/realisations" },
     { libelle: "Tarifs", href: "/tarifs" },
     { libelle: "Avis clients", href: "/avis" },

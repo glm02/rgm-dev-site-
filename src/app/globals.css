@@ -99,6 +99,33 @@
   }
 }
 
+/* Orbite de la page « Ma stack » : l'anneau tourne, chaque tuile tourne en
+   sens inverse à la même vitesse pour garder son logo droit. Rotation lente
+   et linéaire : un mouvement sans fin qui accélère se lit comme un à-coup. */
+@utility animate-orbite {
+  animation: orbite var(--orbite-duree, 80s) linear infinite;
+}
+
+@utility animate-orbite-inverse {
+  animation: orbite var(--orbite-duree, 80s) linear infinite reverse;
+}
+
+@keyframes orbite {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+/* Le point qui descend le long d'une liaison du schéma Hermes, sur téléphone. */
+@keyframes descente {
+  from {
+    top: -8px;
+  }
+  to {
+    top: 100%;
+  }
+}
+
 @utility skeleton-shimmer {
   position: relative;
   overflow: hidden;

@@ -32,6 +32,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     // elle compte autant que les tarifs.
     { url: `${SITE.url}/developpeur-web-lyon`, changeFrequency: "monthly", priority: 0.9 },
     { url: `${SITE.url}/methode`, changeFrequency: "yearly", priority: 0.6 },
+    { url: `${SITE.url}/stack`, changeFrequency: "monthly", priority: 0.6 },
     { url: `${SITE.url}/services`, changeFrequency: "monthly", priority: 0.8 },
     { url: `${SITE.url}/realisations`, changeFrequency: "monthly", priority: 0.8 },
     { url: `${SITE.url}/contact`, changeFrequency: "yearly", priority: 0.7 },
