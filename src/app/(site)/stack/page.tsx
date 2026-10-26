@@ -3,7 +3,7 @@ import { Badge } from "@appica/ui-react/badge";
 import { Button } from "@appica/ui-react/button";
 import type { Metadata } from "next";
 import { ArrowDown, ArrowRight, ArrowUpRight, KeyRound, ShieldCheck, UserCheck } from "lucide-react";
-import { siGithub, siGooglecalendar, siGooglecloud, siGmail, siGooglesearchconsole, siTelegram } from "simple-icons";
+import { siClaude, siGithub, siGooglecalendar, siGooglecloud, siGmail, siGooglesearchconsole, siMarkdown, siTelegram } from "simple-icons";
 
 import { Apparait } from "@/components/commun/apparait";
 import { FilAriane } from "@/components/commun/fil-ariane";
@@ -16,6 +16,9 @@ import { CatalogueSkills } from "@/components/stack/catalogue-skills";
 import { OrbiteStack } from "@/components/stack/orbite-stack";
 import { SchemaHermes } from "@/components/stack/schema-hermes";
 import { TuileLogo } from "@/components/stack/tuile-logo";
+import { TutoInstallation } from "@/components/stack/tuto-installation";
+import { ETOILES, logoEtoile, NOMBRE_ETOILES } from "@/lib/etoiles";
+import { siOpenai } from "@/lib/logos-supplementaires";
 import { jsonLdFilAriane, metadonnees } from "@/lib/seo";
 import {
   CATEGORIES_STACK,
@@ -355,6 +358,49 @@ export default function PageStack() {
         </div>
       </section>
 
+      {/* ---------- Le tuto d'installation ---------- */}
+      <section id="installer" className="conteneur scroll-mt-24 py-16 sm:py-20">
+        <TitreSection
+          surtitre="Tuto"
+          titre="Installer mes skills dans votre agent"
+          sousTitre="Trois étapes, le même fichier SKILL.md partout."
+        />
+        <div className="mt-10">
+          <TutoInstallation
+            agents={[
+              {
+                id: "claude",
+                nom: "Claude Code",
+                logo: { d: siClaude.path, couleur: `#${siClaude.hex}` },
+                dossier: "~/.claude/skills/",
+                utiliser: "Relancez Claude Code et tapez /site-a-z, ou décrivez la tâche : la skill se charge seule.",
+              },
+              {
+                id: "codex",
+                nom: "Codex",
+                logo: { d: siOpenai.path, couleur: `#${siOpenai.hex}` },
+                dossier: "~/.codex/skills/",
+                utiliser: "Relancez Codex : la skill est proposée dès que la tâche correspond.",
+              },
+              {
+                id: "hermes",
+                nom: "Hermes Agent",
+                logo: { image: "/logos/hermes.png" },
+                dossier: "~/.hermes/skills/rgm/",
+                utiliser: "Redémarrez la passerelle Hermes : l'agent charge la skill à la demande.",
+              },
+              {
+                id: "autres",
+                nom: "Autres agents",
+                logo: { d: siMarkdown.path, couleur: `#${siMarkdown.hex}` },
+                dossier: "<dossier-des-skills>/",
+                utiliser: "Tout agent compatible SKILL.md la reconnaît. Sinon, collez le SKILL.md dans ses instructions (AGENTS.md).",
+              },
+            ]}
+          />
+        </div>
+      </section>
+
       {/* ---------- Les skills des autres ---------- */}
       <section className="conteneur py-16 sm:py-20">
         <TitreSection
@@ -412,6 +458,42 @@ export default function PageStack() {
             );
           })}
         </ul>
+      </section>
+
+      {/* ---------- Mes étoiles GitHub ---------- */}
+      <section className="conteneur py-16 sm:py-20">
+        <TitreSection
+          surtitre="Veille"
+          titre={`${NOMBRE_ETOILES} dépôts que je suis sur GitHub`}
+          sousTitre="Ce qui m'inspire et ce que je teste."
+        />
+        <div className="mt-12 space-y-10">
+          {ETOILES.map((categorie) => (
+            <div key={categorie.titre}>
+              <h3 className="text-lg font-semibold">{categorie.titre}</h3>
+              <ul className="mt-4 grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-3">
+                {categorie.depots.map((etoile) => (
+                  <li key={etoile.depot} className="min-w-0">
+                    <a
+                      href={`https://github.com/${etoile.depot}`}
+                      target="_blank"
+                      rel="noreferrer"
+                      className="group flex h-full items-center gap-3.5 rounded-2xl border border-border/70 bg-background p-3.5 transition-[border-color,box-shadow,translate] duration-200 ease-out hover:-translate-y-0.5 hover:border-bleu-300 hover:shadow-[0_14px_40px_-20px_var(--bleu-600)] focus-visible:ring-3 focus-visible:ring-ring/40 focus-visible:outline-none dark:hover:border-bleu-700"
+                    >
+                      <TuileLogo outil={logoEtoile(etoile)} className="size-11" />
+                      <span className="min-w-0">
+                        <span className="block truncate font-mono text-[13px] font-semibold text-bleu-700 dark:text-bleu-300">
+                          {etoile.depot}
+                        </span>
+                        <span className="block text-sm leading-snug">{etoile.texte}</span>
+                      </span>
+                    </a>
+                  </li>
+                ))}
+              </ul>
+            </div>
+          ))}
+        </div>
       </section>
 
       <AppelAction
