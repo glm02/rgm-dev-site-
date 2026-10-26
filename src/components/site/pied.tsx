@@ -30,7 +30,9 @@ export function Pied() {
   const annee = new Date().getFullYear();
 
   return (
-    <footer className="mt-24 border-t border-border bg-secondary/40">
+    // Fond plein, pas translucide : sur l'accueil, la nappe de points fixe
+    // passait au travers et brouillait les liens.
+    <footer className="relative mt-24 border-t border-border bg-background">
       <div className="conteneur-large py-14">
         <div className="grid gap-10 md:grid-cols-[minmax(0,1.4fr)_repeat(4,minmax(0,1fr))] md:gap-8">
           <div className="max-w-xs">
