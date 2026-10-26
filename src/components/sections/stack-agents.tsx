@@ -43,7 +43,7 @@ export function StackAgents() {
               centre={false}
               surtitre="Ma stack"
               titre="Des agents IA cadrés, et toute la stack qui va avec"
-              sousTitre={`Claude, Codex et Hermes travaillent sur mes projets avec ${SKILLS.length} procédures écrites et ${TOUS_LES_OUTILS.length} outils maîtrisés. Trois règles ne bougent jamais :`}
+              sousTitre={`${SKILLS.length} skills, ${TOUS_LES_OUTILS.length} outils, trois règles :`}
             />
 
             <ul className="mt-6 space-y-3">

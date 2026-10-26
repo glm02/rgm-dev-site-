@@ -3,143 +3,118 @@ import "server-only";
 import {
   siAnthropic,
   siArduino,
-  siAxios,
   siBaseui,
   siBlender,
   siBrevo,
   siCaddy,
-  siCheerio,
   siClaude,
   siCloudflare,
   siContabo,
   siCss,
-  siD3,
-  siDatefns,
-  siDiscord,
   siDocker,
-  siDotenv,
   siElevenlabs,
   siEslint,
   siEspressif,
-  siExpress,
-  siFastapi,
-  siFfmpeg,
   siFigma,
   siGit,
   siGithub,
   siGmail,
+  siGnubash,
+  siGoogle,
   siGoogleanalytics,
   siGooglecalendar,
   siGooglechrome,
   siGooglecloud,
   siGoogledrive,
   siGooglemaps,
+  siGooglephotos,
   siGooglesearchconsole,
   siGooglesheets,
   siGsap,
   siHtml5,
   siIntel,
   siJavascript,
-  siJsonwebtokens,
-  siKeycloak,
   siKicad,
-  siLeaflet,
   siLetsencrypt,
   siLinear,
   siLucide,
-  siMantine,
-  siMaplibre,
   siMarkdown,
-  siMediapipe,
   siMeta,
   siModelcontextprotocol,
-  siMqtt,
   siN8n,
   siNextdotjs,
   siNodedotjs,
   siNpm,
   siObsidian,
-  siOxc,
-  siPhosphoricons,
   siPostgresql,
-  siPosthog,
-  siPrettier,
-  siPrisma,
-  siPuppeteer,
-  siPwa,
-  siPydantic,
   siPython,
   siRadixui,
   siReact,
-  siReacthookform,
-  siReactrouter,
   siResend,
-  siSentry,
   siShadcnui,
-  siSharp,
-  siShopify,
   siStripe,
   siSupabase,
   siTailwindcss,
-  siTanstack,
   siTelegram,
   siThreedotjs,
   siTiktok,
   siTypescript,
   siUbuntu,
-  siUmami,
   siUpstash,
   siUptimekuma,
   siVercel,
-  siVisx,
   siVite,
-  siVitest,
   siWhatsapp,
   siZod,
   type SimpleIcon,
 } from "simple-icons";
+
+import { siOpenai, siPlaywright, siSlack } from "@/lib/logos-supplementaires";
 
 /**
  * Le contenu de la page « Ma stack » : ce que j'utilise réellement, et
  * comment les agents IA s'en servent.
  *
  * Règle d'honnêteté : rien ici n'est décoratif. Chaque outil apparaît parce
- * qu'il tourne dans un projet livré ou dans un skill écrit ; pas de logo
- * ajouté pour remplir une grille. Les outils absents de Simple Icons (Orca,
- * Hermes, Codex…) gardent un monogramme plutôt qu'un faux logo.
+ * que je m'en sers ; pas de logo ajouté pour remplir une grille. Les logos
+ * viennent de Simple Icons, ou du compte officiel de la marque quand elle n'y
+ * figure pas (`public/logos/`).
  */
 
 export type Outil = {
   nom: string;
   usage: string;
   icone?: SimpleIcon;
-  /** Deux lettres affichées quand la marque n'a pas de logo libre. */
+  /** Logo officiel en image, quand la marque n'est pas dans Simple Icons. */
+  image?: string;
+  /** Dernier recours, sans logo disponible. */
   monogramme?: string;
 };
+
+const ORCA: Omit<Outil, "usage"> = { nom: "Orca", image: "/logos/orca.png" };
+const HERMES_AGENT: Omit<Outil, "usage"> = { nom: "Hermes Agent", image: "/logos/hermes.png" };
+const HYPERFRAMES: Omit<Outil, "usage"> = { nom: "HyperFrames", image: "/logos/hyperframes.png" };
 
 export const DEPOT_SKILLS = "https://github.com/glm02/skills-claude-code";
 
 export const CHIFFRES = [
-  { valeur: "40", libelle: "skills Claude Code écrites et versionnées" },
-  { valeur: "56", libelle: "skills métier pour les agents en production" },
-  { valeur: "6", libelle: "étapes, chacune vérifiée avant la suivante" },
+  { valeur: "40", libelle: "skills écrites" },
+  { valeur: "56", libelle: "skills d'agents en production" },
+  { valeur: "6", libelle: "étapes vérifiées" },
 ] as const;
 
 export const REGLES = [
   {
     titre: "Rien n'est annoncé sans preuve",
-    texte:
-      "Chaque tâche se termine sur une capture téléphone et ordinateur, un code HTTP, un test vert ou une mesure. « C'est fait » veut dire « c'est vérifié ».",
+    texte: "Capture, test ou mesure à chaque fin de tâche.",
   },
   {
     titre: "Aucun secret dans la conversation",
-    texte:
-      "Les clés d'API se posent par un script à saisie masquée, testées avant d'être écrites dans un fichier lisible par un seul compte. L'agent ne les voit jamais.",
+    texte: "Les clés se posent par saisie masquée. L'agent ne les voit jamais.",
   },
   {
     titre: "L'humain valide ce qui sort",
-    texte:
-      "Un email à un client, une dépense, une suppression : l'agent prépare, je décide. Les agents sont rapides parce qu'ils savent où s'arrêter.",
+    texte: "Email client, dépense, suppression : l'agent prépare, je décide.",
   },
 ] as const;
 
@@ -153,295 +128,205 @@ export const ETAPES_AGENTS: {
   {
     numero: "01",
     titre: "Le brief",
-    texte:
-      "Chaque dépôt commence par un AGENTS.md : ce qu'on construit, pour qui, la stack imposée et ce qu'on ne fait pas. Tout agent — Claude, Codex ou Hermes — le lit avant de toucher une ligne.",
+    texte: "Un AGENTS.md par dépôt : quoi, pour qui, avec quoi. Chaque agent le lit d'abord.",
     outils: [
-      { nom: "GitHub", icone: siGithub, usage: "Un dépôt par projet, avec son brief" },
-      { nom: "Claude Code", icone: siClaude, usage: "L'environnement de travail principal" },
+      { nom: "GitHub", icone: siGithub, usage: "" },
+      { nom: "Claude Code", icone: siClaude, usage: "" },
     ],
   },
   {
     numero: "02",
     titre: "Le découpage",
-    texte:
-      "Un chantier se découpe en tâches indépendantes. Orca les confie à des workers Claude et Codex en parallèle, chacun dans son propre worktree git. Aucun ne pousse sur la branche principale : je relis et je fusionne.",
+    texte: "Orca répartit le chantier entre Claude et Codex, chacun sur sa branche. Je relis, je fusionne.",
     outils: [
-      { nom: "Orca", monogramme: "Or", usage: "Orchestration des sous-agents" },
-      { nom: "Codex", monogramme: "Cx", usage: "Workers en parallèle" },
-      { nom: "Git", icone: siGit, usage: "Un worktree par worker" },
+      { ...ORCA, usage: "" },
+      { nom: "Codex", icone: siOpenai, usage: "" },
+      { nom: "Git", icone: siGit, usage: "" },
     ],
   },
   {
     numero: "03",
     titre: "Les skills",
-    texte:
-      "L'agent charge la procédure adaptée : les étapes, les pièges déjà rencontrés, et la preuve attendue. Chaque erreur qui a coûté du temps finit dans une skill — c'est ce qui rend les agents fiables d'un projet à l'autre.",
+    texte: "L'agent suit la procédure écrite : étapes, pièges connus, preuve attendue.",
     outils: [
-      { nom: "Skills", monogramme: "Sk", usage: "40 procédures écrites" },
-      { nom: "Obsidian", icone: siObsidian, usage: "Le coffre qui documente les skills" },
+      { nom: "Skills Claude", icone: siClaude, usage: "" },
+      { nom: "Obsidian", icone: siObsidian, usage: "" },
     ],
   },
   {
     numero: "04",
     titre: "La preuve",
-    texte:
-      "Build, lint, tests, puis des captures automatiques sur téléphone et ordinateur pour traquer débordements et textes qui se chevauchent. Un pentest léger avant toute livraison avec espace admin.",
+    texte: "Build, tests, captures téléphone et ordinateur. Pentest léger avant livraison.",
     outils: [
-      { nom: "Playwright", monogramme: "Pw", usage: "Captures téléphone et ordinateur" },
-      { nom: "ESLint", icone: siEslint, usage: "Le code relu à chaque passage" },
+      { nom: "Playwright", icone: siPlaywright, usage: "" },
+      { nom: "ESLint", icone: siEslint, usage: "" },
     ],
   },
   {
     numero: "05",
     titre: "La livraison",
-    texte:
-      "Poussé sur GitHub, déployé par Vercel, vérifié en ligne — pas seulement en local. L'agent m'envoie lui-même le lien, la vidéo ou les captures sur Telegram.",
+    texte: "Poussé, déployé, vérifié en ligne. Le lien arrive sur Telegram.",
     outils: [
-      { nom: "Vercel", icone: siVercel, usage: "Mise en ligne à chaque poussée" },
-      { nom: "Telegram", icone: siTelegram, usage: "Le livrable arrive sur mon téléphone" },
+      { nom: "Vercel", icone: siVercel, usage: "" },
+      { nom: "Telegram", icone: siTelegram, usage: "" },
     ],
   },
   {
     numero: "06",
     titre: "La production",
-    texte:
-      "Chez le client, des agents Hermes prennent le relais : joignables sur Telegram, branchés sur l'agenda Google, cadrés par des garde-fous. La supervision me prévient avant que le client ne s'en aperçoive.",
+    texte: "Les agents Hermes prennent le relais chez le client. La supervision veille.",
     outils: [
-      { nom: "Hermes Agent", monogramme: "He", usage: "Agents en production" },
-      { nom: "Google Cloud", icone: siGooglecloud, usage: "OAuth et API Google" },
-      { nom: "Uptime Kuma", icone: siUptimekuma, usage: "Supervision des sites" },
+      { ...HERMES_AGENT, usage: "" },
+      { nom: "Google Cloud", icone: siGooglecloud, usage: "" },
+      { nom: "Uptime Kuma", icone: siUptimekuma, usage: "" },
     ],
   },
 ];
 
 export const HERMES = [
-  {
-    titre: "Joignable sur Telegram",
-    texte:
-      "Chaque collaborateur parle à son agent depuis son téléphone. La passerelle Telegram tourne en service système sur un serveur Linux, redémarrée seule en cas de panne.",
-  },
-  {
-    titre: "Branché sur Google",
-    texte:
-      "Une application OAuth créée dans la Google Cloud Console, et un pont MCP qui donne à l'agent l'accès à l'agenda : il lit les disponibilités et pose les rendez-vous.",
-  },
-  {
-    titre: "56 skills métier",
-    texte:
-      "Préparer un devis, planifier une intervention, relancer un client, rédiger un compte rendu, repérer un email d'arnaque : des procédures écrites pour le métier du client, pas des prompts génériques.",
-  },
-  {
-    titre: "Cloisonné par conception",
-    texte:
-      "Une instance par client, un compte système dédié, des outils autorisés en liste blanche et vérifiés sur la liste réellement chargée — pas sur le fichier de configuration.",
-  },
+  { titre: "Sur Telegram", texte: "Chaque collaborateur parle à son agent depuis son téléphone." },
+  { titre: "Branché sur Google", texte: "OAuth Google Cloud et pont MCP : l'agent pose les rendez-vous." },
+  { titre: "56 skills métier", texte: "Devis, planning, relances, comptes rendus : écrits pour le métier." },
+  { titre: "Cloisonné", texte: "Une instance par client, des outils en liste blanche." },
 ] as const;
 
 export const TELEGRAM = [
-  {
-    titre: "Livraison",
-    texte: "Les vidéos rendues, les liens de production et les captures d'audit arrivent sur Telegram dès qu'ils sont prêts.",
-  },
-  {
-    titre: "Supervision",
-    texte: "Un site tombe, un certificat expire, une erreur se répète : l'alerte part tout de suite, et un résumé chaque matin.",
-  },
-  {
-    titre: "Agents et objets",
-    texte: "Les agents Hermes répondent sur Telegram, et des cartes ESP32 y envoient leurs mesures.",
-  },
+  { titre: "Livraison", texte: "Vidéos, liens et captures arrivent dès qu'ils sont prêts." },
+  { titre: "Supervision", texte: "Site en panne, certificat expiré : alerte immédiate et résumé du matin." },
+  { titre: "Agents et objets", texte: "Les agents Hermes y répondent, les ESP32 y envoient leurs mesures." },
 ] as const;
 
 export const CATEGORIES_STACK: { titre: string; texte: string; outils: Outil[] }[] = [
   {
     titre: "IA et agents",
-    texte: "Les agents qui écrivent, vérifient et travaillent en production.",
+    texte: "",
     outils: [
-      { nom: "Claude Code", icone: siClaude, usage: "Environnement principal, 40 skills maison" },
-      { nom: "API Claude", icone: siAnthropic, usage: "Le SDK dans les agents sur mesure" },
-      { nom: "Codex", monogramme: "Cx", usage: "Sous-agents en parallèle" },
-      { nom: "Orca", monogramme: "Or", usage: "Orchestration des workers" },
-      { nom: "Hermes Agent", monogramme: "He", usage: "Agents en production (Nous Research)" },
-      { nom: "MCP", icone: siModelcontextprotocol, usage: "Ponts entre agents et outils" },
-      { nom: "n8n", icone: siN8n, usage: "Workflows d'automatisation" },
-      { nom: "ElevenLabs", icone: siElevenlabs, usage: "Voix off des vidéos" },
-      { nom: "Higgsfield", monogramme: "Hg", usage: "Images et vidéos générées" },
-      { nom: "MediaPipe", icone: siMediapipe, usage: "Vision dans le navigateur" },
+      { nom: "Claude Code", icone: siClaude, usage: "Environnement principal" },
+      { nom: "API Claude", icone: siAnthropic, usage: "Agents sur mesure" },
+      { nom: "Codex", icone: siOpenai, usage: "Sous-agents" },
+      { ...ORCA, usage: "Orchestration" },
+      { ...HERMES_AGENT, usage: "Agents en production" },
+      { nom: "MCP", icone: siModelcontextprotocol, usage: "Agents ↔ outils" },
+      { nom: "n8n", icone: siN8n, usage: "Workflows" },
+      { nom: "ElevenLabs", icone: siElevenlabs, usage: "Voix off" },
+      { nom: "Higgsfield", image: "/logos/higgsfield.png", usage: "Images et vidéos IA" },
+    ],
+  },
+  {
+    titre: "Bibliothèques de composants",
+    texte: "",
+    outils: [
+      { nom: "shadcn/ui", icone: siShadcnui, usage: "Base des composants" },
+      { nom: "Appica UI", image: "/logos/appica.png", usage: "Composants et effets" },
+      { nom: "Spell UI", image: "/logos/spell.png", usage: "Effets d'interface" },
+      { nom: "Base UI", icone: siBaseui, usage: "Primitives" },
+      { nom: "Radix UI", icone: siRadixui, usage: "Primitives" },
+      { nom: "21st.dev", image: "/logos/21st.png", usage: "Composants" },
+      { nom: "Bklit UI", image: "/logos/bklit.png", usage: "Graphiques" },
     ],
   },
   {
     titre: "Interface",
-    texte: "Des sites rendus côté serveur, rapides et soignés au détail.",
+    texte: "",
     outils: [
-      { nom: "Next.js", icone: siNextdotjs, usage: "App Router, rendu serveur" },
+      { nom: "Next.js", icone: siNextdotjs, usage: "Rendu serveur" },
       { nom: "React", icone: siReact, usage: "React 19" },
-      { nom: "TypeScript", icone: siTypescript, usage: "Strict partout" },
-      { nom: "Vite", icone: siVite, usage: "Applications et back-offices" },
-      { nom: "Tailwind CSS", icone: siTailwindcss, usage: "Tailwind v4" },
-      { nom: "shadcn/ui", icone: siShadcnui, usage: "Composants qu'on possède" },
-      { nom: "Base UI", icone: siBaseui, usage: "Primitives accessibles" },
-      { nom: "Radix UI", icone: siRadixui, usage: "Primitives accessibles" },
-      { nom: "Mantine", icone: siMantine, usage: "Interfaces d'administration" },
-      { nom: "TanStack", icone: siTanstack, usage: "Router, Query, Start" },
-      { nom: "React Router", icone: siReactrouter, usage: "Applications monopages" },
-      { nom: "React Hook Form", icone: siReacthookform, usage: "Formulaires" },
-      { nom: "Zod", icone: siZod, usage: "Validation des données" },
-      { nom: "Motion", monogramme: "Mo", usage: "Animations d'interface" },
-      { nom: "GSAP", icone: siGsap, usage: "Animations des vidéos" },
-      { nom: "Three.js", icone: siThreedotjs, usage: "Scènes 3D" },
+      { nom: "TypeScript", icone: siTypescript, usage: "Strict" },
+      { nom: "Tailwind CSS", icone: siTailwindcss, usage: "v4" },
+      { nom: "Vite", icone: siVite, usage: "Back-offices" },
+      { nom: "Motion", image: "/logos/motion.png", usage: "Animations" },
+      { nom: "GSAP", icone: siGsap, usage: "Animations vidéo" },
+      { nom: "Three.js", icone: siThreedotjs, usage: "3D" },
+      { nom: "Zod", icone: siZod, usage: "Validation" },
       { nom: "Lucide", icone: siLucide, usage: "Icônes" },
-      { nom: "Phosphor", icone: siPhosphoricons, usage: "Icônes" },
-      { nom: "HTML", icone: siHtml5, usage: "Sites sans framework, durables" },
-      { nom: "CSS", icone: siCss, usage: "Animations au défilement natives" },
-      { nom: "JavaScript", icone: siJavascript, usage: "Sans dépendance quand c'est mieux" },
-      { nom: "PWA", icone: siPwa, usage: "Applications installables, hors ligne" },
-    ],
-  },
-  {
-    titre: "Cartes et données visuelles",
-    texte: "Quand les données doivent se lire d'un coup d'œil.",
-    outils: [
-      { nom: "D3", icone: siD3, usage: "Échelles et formes" },
-      { nom: "visx", icone: siVisx, usage: "Graphiques sur mesure" },
-      { nom: "Recharts", monogramme: "Rc", usage: "Tableaux de bord" },
-      { nom: "MapLibre", icone: siMaplibre, usage: "Cartes vectorielles" },
-      { nom: "Leaflet", icone: siLeaflet, usage: "Cartes interactives" },
-      { nom: "Google Maps", icone: siGooglemaps, usage: "Accès et zones d'intervention" },
+      { nom: "HTML", icone: siHtml5, usage: "Sites sans framework" },
+      { nom: "CSS", icone: siCss, usage: "Animations natives" },
+      { nom: "JavaScript", icone: siJavascript, usage: "Vanilla" },
     ],
   },
   {
     titre: "Données et serveur",
-    texte: "Des données dans des bases standard, jamais enfermées.",
+    texte: "",
     outils: [
-      { nom: "Supabase", icone: siSupabase, usage: "Base, comptes, fichiers, RLS" },
-      { nom: "PostgreSQL", icone: siPostgresql, usage: "Migrations SQL versionnées" },
-      { nom: "Prisma", icone: siPrisma, usage: "Accès typé à la base" },
+      { nom: "Supabase", icone: siSupabase, usage: "Base, comptes, fichiers" },
+      { nom: "PostgreSQL", icone: siPostgresql, usage: "Migrations SQL" },
       { nom: "Node.js", icone: siNodedotjs, usage: "API et scripts" },
-      { nom: "Express", icone: siExpress, usage: "API sur serveur" },
-      { nom: "Python", icone: siPython, usage: "Données, audits, ponts MCP" },
-      { nom: "FastAPI", icone: siFastapi, usage: "API Python" },
-      { nom: "Pydantic", icone: siPydantic, usage: "Validation côté Python" },
+      { nom: "Python", icone: siPython, usage: "Scripts et ponts MCP" },
       { nom: "Upstash", icone: siUpstash, usage: "Limitation de débit" },
-      { nom: "Stripe", icone: siStripe, usage: "Paiement en ligne" },
-      { nom: "Sharp", icone: siSharp, usage: "Images optimisées" },
-    ],
-  },
-  {
-    titre: "Infrastructure",
-    texte: "Hébergé, supervisé et sécurisé — sans dépendre d'une seule plateforme.",
-    outils: [
-      { nom: "Vercel", icone: siVercel, usage: "Sites, fonctions, KV et Blob" },
-      { nom: "GitHub", icone: siGithub, usage: "Code et historique" },
-      { nom: "Git", icone: siGit, usage: "Worktrees, une branche par chantier" },
-      { nom: "Contabo", icone: siContabo, usage: "Serveur des agents" },
-      { nom: "Ubuntu", icone: siUbuntu, usage: "Services systemd" },
-      { nom: "Docker", icone: siDocker, usage: "Services isolés" },
-      { nom: "Caddy", icone: siCaddy, usage: "Proxy HTTPS" },
-      { nom: "Let's Encrypt", icone: siLetsencrypt, usage: "Certificats" },
-      { nom: "Cloudflare", icone: siCloudflare, usage: "DNS" },
-      { nom: "Keycloak", icone: siKeycloak, usage: "Authentification unique" },
-      { nom: "Uptime Kuma", icone: siUptimekuma, usage: "Supervision" },
-    ],
-  },
-  {
-    titre: "Google et messageries",
-    texte: "Les outils où travaillent déjà les clients, branchés par API.",
-    outils: [
-      { nom: "Google Cloud", icone: siGooglecloud, usage: "Applications OAuth, clés d'API" },
-      { nom: "Google Agenda", icone: siGooglecalendar, usage: "API Calendar" },
-      { nom: "Gmail", icone: siGmail, usage: "API Gmail : lecture et tri" },
-      { nom: "Search Console", icone: siGooglesearchconsole, usage: "Données SEO réelles" },
-      { nom: "Google Analytics", icone: siGoogleanalytics, usage: "Mesure d'audience" },
-      { nom: "Google Sheets", icone: siGooglesheets, usage: "Tableaux partagés" },
-      { nom: "Telegram", icone: siTelegram, usage: "Bots et passerelle des agents" },
-      { nom: "WhatsApp", icone: siWhatsapp, usage: "Échanges clients" },
-      { nom: "Meta", icone: siMeta, usage: "Campagnes publicitaires" },
-      { nom: "TikTok", icone: siTiktok, usage: "Vidéos courtes" },
+      { nom: "Stripe", icone: siStripe, usage: "Paiement" },
     ],
   },
   {
     titre: "Emails et messages",
-    texte: "Chaque demande, rappel ou alerte arrive là où on la lira.",
+    texte: "",
     outils: [
       { nom: "Resend", icone: siResend, usage: "Emails transactionnels" },
       { nom: "Brevo", icone: siBrevo, usage: "SMS et campagnes" },
-      { nom: "Nodemailer", monogramme: "Nm", usage: "Envoi SMTP" },
-      { nom: "ImapFlow", monogramme: "Im", usage: "Lecture d'une boîte mail" },
-      { nom: "Slack", monogramme: "Sl", usage: "Notifications d'équipe" },
-      { nom: "Discord", icone: siDiscord, usage: "Alertes et communautés" },
+      { nom: "Slack", icone: siSlack, usage: "Notifications d'équipe" },
+      { nom: "Telegram", icone: siTelegram, usage: "Bots et alertes" },
+      { nom: "WhatsApp", icone: siWhatsapp, usage: "Échanges clients" },
     ],
   },
   {
-    titre: "Bots et automatisation",
-    texte: "Les scripts qui tournent seuls et préviennent quand il le faut.",
+    titre: "Google",
+    texte: "",
     outils: [
-      { nom: "grammY", monogramme: "gY", usage: "Bots Telegram en TypeScript" },
-      { nom: "aiogram", monogramme: "Ag", usage: "Bots Telegram en Python" },
-      { nom: "Puppeteer", icone: siPuppeteer, usage: "Navigateur piloté" },
-      { nom: "Playwright", monogramme: "Pw", usage: "Captures et parcours automatisés" },
-      { nom: "Cheerio", icone: siCheerio, usage: "Lecture de pages web" },
-      { nom: "MQTT", icone: siMqtt, usage: "Messages des objets connectés" },
-      { nom: "FFmpeg", icone: siFfmpeg, usage: "Montage et son des vidéos" },
+      { nom: "Google Cloud", icone: siGooglecloud, usage: "OAuth et API" },
+      { nom: "Google Agenda", icone: siGooglecalendar, usage: "API Calendar" },
+      { nom: "Gmail", icone: siGmail, usage: "API Gmail" },
+      { nom: "Search Console", icone: siGooglesearchconsole, usage: "SEO" },
+      { nom: "Google Analytics", icone: siGoogleanalytics, usage: "Audience" },
+      { nom: "Google Sheets", icone: siGooglesheets, usage: "Tableaux" },
+      { nom: "Google Maps", icone: siGooglemaps, usage: "Cartes" },
     ],
   },
   {
-    titre: "Qualité et mesure",
-    texte: "Ce qui est livré est testé, relu et suivi en production.",
+    titre: "Infrastructure",
+    texte: "",
     outils: [
-      { nom: "Vitest", icone: siVitest, usage: "Tests unitaires" },
-      { nom: "ESLint", icone: siEslint, usage: "Relecture du code" },
-      { nom: "Oxlint", icone: siOxc, usage: "Relecture ultra-rapide" },
-      { nom: "Prettier", icone: siPrettier, usage: "Formatage" },
-      { nom: "Sentry", icone: siSentry, usage: "Erreurs en production" },
-      { nom: "PostHog", icone: siPosthog, usage: "Analyse produit" },
-      { nom: "Umami", icone: siUmami, usage: "Statistiques sans cookies" },
+      { nom: "Vercel", icone: siVercel, usage: "Production" },
+      { nom: "GitHub", icone: siGithub, usage: "Code" },
+      { nom: "Git", icone: siGit, usage: "Une branche par chantier" },
+      { nom: "Contabo", icone: siContabo, usage: "Serveur des agents" },
+      { nom: "Ubuntu", icone: siUbuntu, usage: "Services" },
+      { nom: "Docker", icone: siDocker, usage: "Conteneurs" },
+      { nom: "Caddy", icone: siCaddy, usage: "HTTPS" },
+      { nom: "Cloudflare", icone: siCloudflare, usage: "DNS" },
+      { nom: "Uptime Kuma", icone: siUptimekuma, usage: "Supervision" },
+      { nom: "Playwright", icone: siPlaywright, usage: "Captures et tests" },
     ],
   },
   {
     titre: "Création et matériel",
-    texte: "Vidéo, design et électronique : la formation de génie électrique sert aussi.",
+    texte: "",
     outils: [
-      { nom: "HyperFrames", monogramme: "Hf", usage: "Vidéos en HTML" },
+      { ...HYPERFRAMES, usage: "Vidéos en HTML" },
       { nom: "Figma", icone: siFigma, usage: "Maquettes" },
-      { nom: "Blender", icone: siBlender, usage: "Modélisation 3D" },
+      { nom: "Blender", icone: siBlender, usage: "3D" },
       { nom: "KiCad", icone: siKicad, usage: "Cartes électroniques" },
-      { nom: "Arduino", icone: siArduino, usage: "arduino-cli" },
+      { nom: "Arduino", icone: siArduino, usage: "Microcontrôleurs" },
       { nom: "ESP32", icone: siEspressif, usage: "Objets connectés" },
-      { nom: "Obsidian", icone: siObsidian, usage: "Documentation des skills" },
-    ],
-  },
-  {
-    titre: "Bibliothèques",
-    texte: "Les petites briques qui évitent de réinventer, choisies une par une.",
-    outils: [
-      { nom: "date-fns", icone: siDatefns, usage: "Dates en français" },
-      { nom: "Axios", icone: siAxios, usage: "Appels HTTP" },
-      { nom: "dotenv", icone: siDotenv, usage: "Configuration hors du code" },
-      { nom: "Sonner", monogramme: "So", usage: "Notifications à l'écran" },
-      { nom: "Embla", monogramme: "Em", usage: "Carrousels tactiles" },
-      { nom: "cmdk", monogramme: "⌘", usage: "Palette de commandes" },
-      { nom: "PDFKit", monogramme: "Pd", usage: "Devis et factures en PDF" },
-      { nom: "ExcelJS", monogramme: "Xl", usage: "Exports tableur" },
-      { nom: "DOMPurify", monogramme: "Dp", usage: "Contenu nettoyé avant affichage" },
-      { nom: "JWT", icone: siJsonwebtokens, usage: "Jetons d'accès signés" },
+      { nom: "Obsidian", icone: siObsidian, usage: "Notes" },
+      { nom: "Meta", icone: siMeta, usage: "Publicité" },
+      { nom: "TikTok", icone: siTiktok, usage: "Vidéos courtes" },
     ],
   },
   {
     titre: "Connecteurs MCP",
-    texte: "Les services que mes agents pilotent directement, sans copier-coller.",
+    texte: "",
     outils: [
-      { nom: "Supabase", icone: siSupabase, usage: "Tables, migrations, journaux" },
-      { nom: "Vercel", icone: siVercel, usage: "Déploiements et erreurs" },
-      { nom: "GitHub", icone: siGithub, usage: "Dépôts et revues" },
-      { nom: "Gmail", icone: siGmail, usage: "Brouillons et tri" },
+      { nom: "Supabase", icone: siSupabase, usage: "Base de données" },
+      { nom: "Vercel", icone: siVercel, usage: "Déploiements" },
+      { nom: "GitHub", icone: siGithub, usage: "Dépôts" },
+      { nom: "Gmail", icone: siGmail, usage: "Emails" },
       { nom: "Google Agenda", icone: siGooglecalendar, usage: "Rendez-vous" },
       { nom: "Google Drive", icone: siGoogledrive, usage: "Documents" },
-      { nom: "Figma", icone: siFigma, usage: "Maquettes vers code" },
-      { nom: "Linear", icone: siLinear, usage: "Suivi des tâches" },
-      { nom: "n8n", icone: siN8n, usage: "Workflows pilotés par l'agent" },
-      { nom: "Shopify", icone: siShopify, usage: "Boutiques en ligne" },
-      { nom: "Chrome", icone: siGooglechrome, usage: "Navigation et tests réels" },
-      { nom: "21st.dev", monogramme: "21", usage: "Composants d'interface" },
+      { nom: "Figma", icone: siFigma, usage: "Maquettes" },
+      { nom: "Linear", icone: siLinear, usage: "Tâches" },
+      { nom: "n8n", icone: siN8n, usage: "Workflows" },
+      { nom: "Chrome", icone: siGooglechrome, usage: "Navigation" },
+      { nom: "21st.dev", image: "/logos/21st.png", usage: "Composants" },
+      { nom: "Higgsfield", image: "/logos/higgsfield.png", usage: "Génération" },
     ],
   },
 ];
@@ -539,66 +424,64 @@ export const SKILLS: { nom: string; categorie: CategorieSkill; role: string }[] 
   { nom: "menage-disque", categorie: "Poste", role: "Libérer de la place sans rien casser." },
 ];
 
-/**
- * Le logo de l'outil au cœur de chaque skill : on reconnaît le sujet d'un
- * coup d'œil dans le catalogue. Sans outil évident, un monogramme.
- */
-const LOGO_SKILL: Record<string, Pick<Outil, "icone" | "monogramme">> = {
-  "orca-agents": { monogramme: "Or" },
+/** Le logo de l'outil au cœur de chaque skill : on reconnaît le sujet d'un coup d'œil. */
+const LOGO_SKILL: Record<string, Pick<Outil, "icone" | "image">> = {
+  "orca-agents": { image: ORCA.image },
   "reprendre-projet": { icone: siGit },
   "bilan-activite": { icone: siClaude },
-  "idees-fonctionnalites": { monogramme: "Id" },
-  jev: { monogramme: "%" },
+  "idees-fonctionnalites": { icone: siClaude },
+  jev: { icone: siClaude },
   "prof-code": { icone: siTypescript },
   "site-a-z": { icone: siNextdotjs },
   "demarrer-projet": { icone: siGithub },
   "supabase-projet": { icone: siSupabase },
   "vercel-prod": { icone: siVercel },
   "domaine-dns": { icone: siCloudflare },
-  "audit-mobile": { monogramme: "Pw" },
+  "audit-mobile": { icone: siPlaywright },
   "seo-local": { icone: siGooglesearchconsole },
   "nettoyer-projet": { icone: siNpm },
   "portfolio-projet": { icone: siReact },
-  "photos-web": { icone: siSharp },
+  "photos-web": { icone: siGooglephotos },
   "ui-rgm": { icone: siTailwindcss },
   "analyser-repo": { icone: siGithub },
   "alerte-securite": { icone: siNodedotjs },
-  "audit-securite-site": { monogramme: "Sc" },
+  "audit-securite-site": { icone: siLetsencrypt },
   "audit-projets": { icone: siGit },
-  "poser-secret": { monogramme: "🔑" },
+  "poser-secret": { icone: siGnubash },
   "vps-sante": { icone: siUbuntu },
   "bot-telegram": { icone: siTelegram },
   "envoyer-telegram": { icone: siTelegram },
-  "video-rgm": { icone: siElevenlabs },
-  "devis-freelance": { monogramme: "€" },
+  "video-rgm": { image: HYPERFRAMES.image },
+  "devis-freelance": { icone: siGooglesheets },
   "message-client": { icone: siWhatsapp },
   "retours-client": { icone: siLinear },
   "signature-mail": { icone: siGmail },
-  "courrier-officiel": { monogramme: "Lt" },
+  "courrier-officiel": { icone: siGmail },
   "esp32-arduino": { icone: siEspressif },
   "kicad-projet": { icone: siKicad },
-  "dimensionnement-pv": { monogramme: "PV" },
+  "dimensionnement-pv": { icone: siPython },
   "blender-solaire": { icone: siBlender },
   "rapport-tp": { icone: siMarkdown },
   "fiche-revision": { icone: siObsidian },
-  "candidature-stage": { monogramme: "CV" },
+  "candidature-stage": { icone: siGoogle },
   "depannage-pc": { icone: siIntel },
-  "menage-disque": { monogramme: "Go" },
+  "menage-disque": { icone: siPython },
 };
 
 /** Ce que le catalogue (composant client) reçoit : des tracés, pas la bibliothèque. */
-export type LogoLeger = { d?: string; couleur?: string; monogramme?: string };
+export type LogoLeger = { d?: string; couleur?: string; image?: string };
 
-function logoLeger(outil?: Pick<Outil, "icone" | "monogramme">): LogoLeger {
+function logoLeger(outil?: Pick<Outil, "icone" | "image">): LogoLeger {
   if (outil?.icone) return { d: outil.icone.path, couleur: `#${outil.icone.hex}` };
-  return { monogramme: outil?.monogramme ?? "Sk" };
+  return { image: outil?.image ?? undefined };
 }
 
 export const SKILLS_AFFICHAGE = SKILLS.map((skill) => ({ ...skill, logo: logoLeger(LOGO_SKILL[skill.nom]) }));
 
 /**
  * Les skills écrites par d'autres que j'utilise au quotidien. Le lien n'est
- * donné que lorsque la source a été vérifiée ; sinon, l'auteur seul.
+ * donné que lorsque la source a été vérifiée. Pour un auteur seul, le logo de
+ * GitHub plutôt que sa photo de profil.
  */
 export const COLLECTIONS_TIERS: {
   nom: string;
@@ -612,24 +495,24 @@ export const COLLECTIONS_TIERS: {
     nom: "HyperFrames",
     auteur: "HeyGen",
     source: null,
-    outil: { nom: "HyperFrames", monogramme: "Hf", usage: "" },
-    role: "Des vidéos écrites en HTML et rendues en MP4 : la base de mes vidéos TikTok.",
+    outil: { ...HYPERFRAMES, usage: "" },
+    role: "Vidéos en HTML, rendues en MP4.",
     skills: ["hyperframes", "hyperframes-cli", "hyperframes-registry", "media-use"],
   },
   {
     nom: "brag",
     auteur: "Latent Spaces",
     source: "https://github.com/latent-spaces/brag",
-    outil: { nom: "brag", monogramme: "Br", usage: "" },
-    role: "Une vidéo de lancement tirée du code d'un projet, avec musique et effets sonores.",
+    outil: { nom: "Latent Spaces", image: "/logos/brag.png", usage: "" },
+    role: "Une vidéo de lancement tirée du code.",
     skills: ["brag", "brag-slim"],
   },
   {
     nom: "Taste Skill",
     auteur: "Leonxlnx",
     source: "https://github.com/Leonxlnx/taste-skill",
-    outil: { nom: "Taste Skill", monogramme: "Ts", usage: "" },
-    role: "Des interfaces qui ne ressemblent pas à un modèle : directions de design, refontes, chartes.",
+    outil: { nom: "GitHub", icone: siGithub, usage: "" },
+    role: "Directions de design et refontes.",
     skills: ["design-taste-frontend", "high-end-visual-design", "minimalist-ui", "redesign-existing-projects", "brandkit", "image-to-code"],
   },
   {
@@ -637,7 +520,7 @@ export const COLLECTIONS_TIERS: {
     auteur: "Matt Pocock",
     source: "https://github.com/mattpocock/skills",
     outil: { nom: "TypeScript", icone: siTypescript, usage: "" },
-    role: "Méthode d'ingénieur : tests d'abord, diagnostic de bugs, revue de code, modélisation.",
+    role: "Tests d'abord, diagnostic, revue de code.",
     skills: ["tdd", "diagnosing-bugs", "code-review", "prototype", "domain-modeling", "grilling", "writing-for-agents"],
   },
   {
@@ -645,23 +528,23 @@ export const COLLECTIONS_TIERS: {
     auteur: "Romuald Członkowski",
     source: "https://github.com/czlonkowski/n8n-skills",
     outil: { nom: "n8n", icone: siN8n, usage: "" },
-    role: "Construire et valider des workflows n8n sans se tromper d'expression ni de nœud.",
+    role: "Des workflows n8n sans erreur.",
     skills: ["n8n-workflow-patterns", "n8n-node-configuration", "n8n-expression-syntax", "n8n-code-javascript", "n8n-code-python", "n8n-validation-expert", "n8n-mcp-tools-expert"],
   },
   {
     nom: "Design engineering",
     auteur: "Emil Kowalski",
     source: "https://github.com/emilkowalski/skills",
-    outil: { nom: "Emil Kowalski", monogramme: "Ek", usage: "" },
-    role: "Le soin du détail dans les animations et les composants.",
+    outil: { nom: "GitHub", icone: siGithub, usage: "" },
+    role: "Le détail des animations et des composants.",
     skills: ["emil-design-eng"],
   },
   {
     nom: "Better UI",
     auteur: "Jakub Krehel",
     source: "https://github.com/jakubkrehel/skills",
-    outil: { nom: "Jakub Krehel", monogramme: "Jk", usage: "" },
-    role: "Rayons concentriques, alignement optique, profondeur des surfaces.",
+    outil: { nom: "GitHub", icone: siGithub, usage: "" },
+    role: "Rayons, alignement optique, profondeur.",
     skills: ["better-ui"],
   },
   {
@@ -669,7 +552,7 @@ export const COLLECTIONS_TIERS: {
     auteur: "Anthropic",
     source: "https://github.com/anthropics/claude-plugins-official",
     outil: { nom: "Anthropic", icone: siAnthropic, usage: "" },
-    role: "Revue de sécurité, design d'interface, création de skills et documents bureautiques.",
+    role: "Sécurité, design, documents, création de skills.",
     skills: ["frontend-design", "security-guidance", "skill-creator", "code-review", "docx", "pdf", "xlsx", "pptx"],
   },
   {
@@ -677,15 +560,15 @@ export const COLLECTIONS_TIERS: {
     auteur: "Figma",
     source: null,
     outil: { nom: "Figma", icone: siFigma, usage: "" },
-    role: "De la maquette au code, et du code vers des bibliothèques de composants.",
+    role: "De la maquette au code.",
     skills: ["figma-use", "figma-design-to-code", "figma-code-connect", "figma-generate-library"],
   },
   {
     nom: "Motion et transitions",
     auteur: "transitions.dev et la communauté",
     source: null,
-    outil: { nom: "Motion", monogramme: "Mo", usage: "" },
-    role: "Durées, courbes et entrées-sorties calibrées ; audit des animations.",
+    outil: { nom: "Motion", image: "/logos/motion.png", usage: "" },
+    role: "Durées, courbes, audit des animations.",
     skills: ["transitions-dev", "transitions-polish", "design-motion-principles", "motion-design"],
   },
   {
@@ -693,15 +576,15 @@ export const COLLECTIONS_TIERS: {
     auteur: "Stripe",
     source: null,
     outil: { nom: "Stripe", icone: siStripe, usage: "" },
-    role: "Provisionner base, hébergement ou e-mails depuis le terminal.",
+    role: "Provisionner des services depuis le terminal.",
     skills: ["stripe-projects"],
   },
   {
     nom: "Bklit UI",
     auteur: "Bklit",
     source: null,
-    outil: { nom: "Bklit", monogramme: "Bk", usage: "" },
-    role: "Les graphiques des tableaux de bord d'administration.",
+    outil: { nom: "Bklit", image: "/logos/bklit.png", usage: "" },
+    role: "Graphiques des tableaux de bord.",
     skills: ["bklit-ui"],
   },
 ];

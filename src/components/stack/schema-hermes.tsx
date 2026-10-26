@@ -102,9 +102,11 @@ export function SchemaHermes({ entrees, sorties }: { entrees: Outil[]; sorties: 
 function AgentHermes() {
   return (
     <div className="flex flex-col items-center gap-2.5">
-      <span className="relative grid size-[clamp(72px,13vw,104px)] place-items-center rounded-[28%] bg-bleu-600 text-[clamp(1.25rem,2.6vw,1.75rem)] font-semibold tracking-tight text-white shadow-[0_24px_60px_-18px_var(--bleu-600)]">
+      <span className="relative grid size-[clamp(72px,13vw,104px)] place-items-center shadow-[0_24px_60px_-18px_var(--bleu-600)]">
         <span aria-hidden="true" className="absolute inset-0 animate-ping-paced rounded-[28%] bg-bleu-500/35" />
-        <span className="relative">He</span>
+        {/* Le logo de Nous Research, l'éditeur de Hermes Agent. */}
+        {/* eslint-disable-next-line @next/next/no-img-element -- logo de 96 px, déjà léger. */}
+        <img src="/logos/hermes.png" alt="Hermes Agent" width={104} height={104} className="relative size-full rounded-[28%] border border-border/70" />
       </span>
       <span className="text-sm font-semibold whitespace-nowrap">Agent Hermes</span>
     </div>

@@ -9,7 +9,7 @@ type Skill = {
   nom: string;
   categorie: string;
   role: string;
-  logo: { d?: string; couleur?: string; monogramme?: string };
+  logo: { d?: string; couleur?: string; image?: string };
 };
 
 /** Le logo de l'outil de la skill, dans une petite tuile. */
@@ -18,14 +18,15 @@ function LogoSkill({ logo }: { logo: Skill["logo"] }) {
   // Noir ou presque blanc : on suit la couleur du texte, lisible dans les deux thèmes.
   const neutre = lum < 0.12 || lum > 0.85;
   return (
-    <span className="grid size-9 shrink-0 place-items-center rounded-xl border border-border/70 bg-background">
+    <span className="grid size-9 shrink-0 place-items-center overflow-hidden rounded-xl border border-border/70 bg-background">
       {logo.d ? (
         <svg viewBox="0 0 24 24" aria-hidden="true" className={cn("size-[18px]", neutre && "fill-foreground")} style={neutre ? undefined : { fill: logo.couleur }}>
           <path d={logo.d} />
         </svg>
-      ) : (
-        <span aria-hidden="true" className="text-xs font-semibold text-bleu-700 dark:text-bleu-300">{logo.monogramme}</span>
-      )}
+      ) : logo.image ? (
+        // eslint-disable-next-line @next/next/no-img-element -- logo de 96 px, déjà léger.
+        <img src={logo.image} alt="" width={36} height={36} className="size-full object-cover" />
+      ) : null}
     </span>
   );
 }

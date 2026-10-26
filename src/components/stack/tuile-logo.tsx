@@ -9,9 +9,11 @@ import { cn } from "@/lib/utils";
  * gardent leur couleur. Les marques noires suivent la couleur du texte pour
  * ne pas disparaître en thème sombre.
  *
- * Sans logo libre (Orca, Hermes, Codex…), un monogramme bleu : honnête, et
- * jamais un faux logo dessiné à la main.
+ * Trois sources, dans cet ordre : le tracé Simple Icons, le logo officiel en
+ * image (`public/logos/`, pour les outils absents de Simple Icons), et en
+ * dernier recours un monogramme — jamais un faux logo dessiné à la main.
  */
+
 /** Luminance perçue (0 à 1) : comparer le code hexadécimal comme un nombre
  *  classait le bleu de Telegram parmi les marques noires. */
 function luminance(hex: string) {
@@ -36,7 +38,7 @@ export function TuileLogo({
   return (
     <span
       className={cn(
-        "grid shrink-0 place-items-center rounded-[28%] border border-border/70 bg-background",
+        "grid shrink-0 place-items-center overflow-hidden rounded-[28%] border border-border/70 bg-background",
         "shadow-[0_1px_2px_rgb(0_0_0/0.05),0_10px_28px_-14px_rgb(0_0_0/0.22)]",
         className,
       )}
@@ -51,6 +53,11 @@ export function TuileLogo({
         >
           <path d={outil.icone.path} />
         </svg>
+      ) : outil.image ? (
+        // Le logo officiel occupe toute la tuile : c'est déjà une pastille
+        // avec son propre fond.
+        // eslint-disable-next-line @next/next/no-img-element -- 96 px, déjà optimisé.
+        <img src={outil.image} alt={outil.nom} width={96} height={96} className="size-full object-cover" />
       ) : (
         <span
           role="img"

@@ -55,10 +55,10 @@ export const metadata: Metadata = metadonnees({
 const ICONES_REGLES = [ShieldCheck, KeyRound, UserCheck];
 
 const GOOGLE_ETAPES = [
-  "Un projet dans la Google Cloud Console, avec les seules API utiles activées.",
-  "Un écran de consentement OAuth et un identifiant client dédié au service.",
-  "Le client autorise en trente secondes depuis son téléphone ; les jetons restent côté serveur.",
-  "L'agent lit et écrit dans l'agenda par un pont MCP, jamais avec un mot de passe.",
+  "Un projet Google Cloud, seules les API utiles activées.",
+  "Un écran de consentement OAuth et un identifiant dédié.",
+  "Le client autorise depuis son téléphone ; les jetons restent côté serveur.",
+  "L'agent passe par un pont MCP, jamais par un mot de passe.",
 ];
 
 function IconeMarque({ chemin, className }: { chemin: string; className?: string }) {
@@ -108,7 +108,7 @@ export default function PageStack() {
 
               <p className="mx-auto mt-6 max-w-xl text-lg leading-relaxed text-balance text-muted-foreground sm:text-xl lg:mx-0">
                 <TexteAnime effet="highlight" by="word" duree={1.2} delai={0.3}>
-                  {`Les outils, les règles et les ${SKILLS.length} skills qui me permettent de faire travailler Claude, Codex et Hermes sur de vrais projets — et de le prouver.`}
+                  {`Claude, Codex et Hermes au travail, cadrés par ${SKILLS.length} skills.`}
                 </TexteAnime>
               </p>
 
@@ -159,7 +159,7 @@ export default function PageStack() {
         <TitreSection
           surtitre="Le principe"
           titre="Trois règles, sur chaque projet"
-          sousTitre="Un agent IA est rapide. Il devient fiable quand il sait ce qu'il doit prouver et où il doit s'arrêter."
+          sousTitre="Rapide, et fiable."
         />
         <ul className="mt-12 grid gap-4 md:grid-cols-3">
           {REGLES.map((regle, index) => {
@@ -187,7 +187,7 @@ export default function PageStack() {
               centre={false}
               surtitre="Le parcours"
               titre="D'une demande à la production, en six étapes"
-              sousTitre="Ce qui se passe réellement quand je confie un chantier à des agents, et ce que je vérifie entre chaque étape."
+              sousTitre="Chaque étape vérifiée avant la suivante."
             />
           </div>
 
@@ -229,7 +229,7 @@ export default function PageStack() {
           <TitreSection
             surtitre="En production"
             titre="Hermes Agent, chez le client"
-            sousTitre="Des agents qui travaillent tous les jours pour une entreprise : ils reçoivent les demandes là où elles arrivent et agissent dans les outils de l'équipe."
+            sousTitre="Des agents qui travaillent tous les jours pour une entreprise."
           />
           <Apparait className="mt-12">
             <SchemaHermes entrees={SCHEMA_HERMES.entrees} sorties={SCHEMA_HERMES.sorties} />
@@ -252,7 +252,7 @@ export default function PageStack() {
         <TitreSection
           surtitre="Intégrations"
           titre="Branché sur les outils de l'équipe"
-          sousTitre="Les agents vont là où l'entreprise travaille déjà, par les API officielles."
+          sousTitre="Par les API officielles."
         />
         <div className="mt-12 grid gap-5 lg:grid-cols-2">
           <Apparait>
@@ -274,7 +274,7 @@ export default function PageStack() {
                 ))}
               </ol>
               <p className="mt-6 text-sm leading-relaxed text-muted-foreground">
-                Search Console sert aussi au référencement : les campagnes SEO se pilotent sur les vraies requêtes, pas sur des estimations.
+                Search Console : le SEO piloté sur les vraies requêtes.
               </p>
             </div>
           </Apparait>
@@ -301,7 +301,7 @@ export default function PageStack() {
         <TitreSection
           surtitre="La stack"
           titre={`${nombreOutils} outils, chacun à sa place`}
-          sousTitre="Rien ici n'est décoratif : chaque outil tourne dans un projet livré ou dans une skill écrite."
+          sousTitre="Uniquement ce que j'utilise."
         />
         {/* Des colonnes plutôt qu'une grille : les catégories n'ont pas la même
             longueur, une grille laisserait des trous sous les plus courtes. */}
@@ -310,7 +310,7 @@ export default function PageStack() {
             <Apparait key={categorie.titre} delai={(index % 2) * 70} className="mb-5 break-inside-avoid">
               <div className="rounded-3xl border border-border/70 bg-background p-6 sm:p-7">
                 <h3 className="text-xl font-semibold">{categorie.titre}</h3>
-                <p className="mt-1.5 text-muted-foreground">{categorie.texte}</p>
+                {categorie.texte && <p className="mt-1.5 text-muted-foreground">{categorie.texte}</p>}
                 <ul className="mt-6 grid grid-cols-1 gap-x-4 gap-y-3.5 sm:grid-cols-2">
                   {categorie.outils.map((outil) => (
                     <li key={outil.nom} className="flex items-center gap-3">
@@ -336,7 +336,7 @@ export default function PageStack() {
         <TitreSection
           surtitre="Les skills"
           titre={`${SKILLS.length} procédures écrites pour mes agents`}
-          sousTitre="Chaque fois qu'un problème a coûté du temps, la leçon finit dans une skill. Les agents les chargent d'eux-mêmes quand la tâche s'y prête."
+          sousTitre="Chaque erreur corrigée devient une procédure."
         />
         <div className="mt-10">
           <CatalogueSkills skills={SKILLS_AFFICHAGE} depot={DEPOT_SKILLS} />
@@ -360,7 +360,7 @@ export default function PageStack() {
         <TitreSection
           surtitre="Et celles des autres"
           titre={`${NOMBRE_SKILLS_TIERS} skills de la communauté que j'utilise`}
-          sousTitre="Pas besoin de tout réécrire : je m'appuie aussi sur le travail d'éditeurs et de designers reconnus, choisi pour sa qualité et relu avant installation."
+          sousTitre="Choisies pour leur qualité, relues avant installation."
         />
         <ul className="mt-12 grid gap-4 md:grid-cols-2 lg:grid-cols-3">
           {COLLECTIONS_TIERS.map((collection, index) => {
