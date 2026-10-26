@@ -16,6 +16,7 @@ import { Garanties } from "@/components/sections/garanties";
 import { Hero } from "@/components/sections/hero";
 import { RealisationsVedette } from "@/components/sections/realisations-vedette";
 import { Services } from "@/components/sections/services";
+import { StackAgents } from "@/components/sections/stack-agents";
 import { SupervisionDirect } from "@/components/sections/supervision-direct";
 import { listerOffres } from "@/lib/donnees";
 import { metadonnees } from "@/lib/seo";
@@ -32,7 +33,7 @@ export const metadata: Metadata = metadonnees({
  *
  * L'ordre des sections suit la question que se pose le visiteur, dans l'ordre
  * où il se la pose : qu'est-ce que c'est → qui vous a déjà fait confiance → qu'est-ce que vous faites → est-ce
- * que vous savez le faire → qui est derrière → comment ça se passe → combien
+ * que vous savez le faire → avec quels outils → qui est derrière → comment ça se passe → combien
  * je perds aujourd'hui → combien ça coûte → pourquoi vous plutôt qu'une
  * agence → qu'est-ce qui me protège → et après la livraison → est-ce que d'autres ont été contents →
  * et mes doutes → on y va.
@@ -67,6 +68,7 @@ export default async function Accueil() {
       <Clients />
       <Services />
       <RealisationsVedette />
+      <StackAgents />
       {/* Seule « Qui est derrière » repose sur un panneau opaque : sur les
           autres sections, un panneau en plus doublait les cartes existantes. */}
       <div className="px-3 sm:px-6">

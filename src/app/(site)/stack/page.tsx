@@ -300,10 +300,12 @@ export default function PageStack() {
           titre={`${nombreOutils} outils, chacun à sa place`}
           sousTitre="Rien ici n'est décoratif : chaque outil tourne dans un projet livré ou dans une skill écrite."
         />
-        <div className="mt-12 grid gap-5 md:grid-cols-2">
+        {/* Des colonnes plutôt qu'une grille : les catégories n'ont pas la même
+            longueur, une grille laisserait des trous sous les plus courtes. */}
+        <div className="mt-12 gap-5 md:columns-2">
           {CATEGORIES_STACK.map((categorie, index) => (
-            <Apparait key={categorie.titre} delai={(index % 2) * 70}>
-              <div className="h-full rounded-3xl border border-border/70 bg-background p-6 sm:p-7">
+            <Apparait key={categorie.titre} delai={(index % 2) * 70} className="mb-5 break-inside-avoid">
+              <div className="rounded-3xl border border-border/70 bg-background p-6 sm:p-7">
                 <h3 className="text-xl font-semibold">{categorie.titre}</h3>
                 <p className="mt-1.5 text-muted-foreground">{categorie.texte}</p>
                 <ul className="mt-6 grid grid-cols-1 gap-x-4 gap-y-3.5 sm:grid-cols-2">
