@@ -36,7 +36,7 @@ function luminance(hex: string) {
 }
 
 /**
- * Les 39 skills, filtrables par catégorie.
+ * Les skills, filtrables par catégorie.
  *
  * Un filtre plutôt qu'une longue liste : un recruteur cherche « sécurité » ou
  * « agents », pas la skill numéro 27. Le filtre ne retire rien du HTML rendu

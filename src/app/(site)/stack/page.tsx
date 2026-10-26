@@ -38,7 +38,7 @@ import { cn } from "@/lib/utils";
 export const metadata: Metadata = metadonnees({
   titre: "Ma stack — agents IA, skills et outils",
   description:
-    "Comment je fais travailler des agents IA sans perdre la main : 39 skills Claude Code, des agents Hermes en production, Google Cloud, bots Telegram, et toute la stack React.",
+    "Comment je fais travailler des agents IA sans perdre la main : 40 skills Claude Code, des agents Hermes en production, Google Cloud, bots Telegram, et toute la stack React.",
   chemin: "/stack",
 });
 

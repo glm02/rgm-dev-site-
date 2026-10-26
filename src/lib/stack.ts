@@ -120,7 +120,7 @@ export type Outil = {
 export const DEPOT_SKILLS = "https://github.com/glm02/skills-claude-code";
 
 export const CHIFFRES = [
-  { valeur: "39", libelle: "skills Claude Code écrites et versionnées" },
+  { valeur: "40", libelle: "skills Claude Code écrites et versionnées" },
   { valeur: "56", libelle: "skills métier pour les agents en production" },
   { valeur: "6", libelle: "étapes, chacune vérifiée avant la suivante" },
 ] as const;
@@ -177,7 +177,7 @@ export const ETAPES_AGENTS: {
     texte:
       "L'agent charge la procédure adaptée : les étapes, les pièges déjà rencontrés, et la preuve attendue. Chaque erreur qui a coûté du temps finit dans une skill — c'est ce qui rend les agents fiables d'un projet à l'autre.",
     outils: [
-      { nom: "Skills", monogramme: "Sk", usage: "39 procédures écrites" },
+      { nom: "Skills", monogramme: "Sk", usage: "40 procédures écrites" },
       { nom: "Obsidian", icone: siObsidian, usage: "Le coffre qui documente les skills" },
     ],
   },
@@ -257,7 +257,7 @@ export const CATEGORIES_STACK: { titre: string; texte: string; outils: Outil[] }
     titre: "IA et agents",
     texte: "Les agents qui écrivent, vérifient et travaillent en production.",
     outils: [
-      { nom: "Claude Code", icone: siClaude, usage: "Environnement principal, 39 skills maison" },
+      { nom: "Claude Code", icone: siClaude, usage: "Environnement principal, 40 skills maison" },
       { nom: "API Claude", icone: siAnthropic, usage: "Le SDK dans les agents sur mesure" },
       { nom: "Codex", monogramme: "Cx", usage: "Sous-agents en parallèle" },
       { nom: "Orca", monogramme: "Or", usage: "Orchestration des workers" },
@@ -513,6 +513,7 @@ export const SKILLS: { nom: string; categorie: CategorieSkill; role: string }[] 
   { nom: "nettoyer-projet", categorie: "Web", role: "Retirer fichiers, dépendances et composants inutilisés." },
   { nom: "portfolio-projet", categorie: "Web", role: "Ajouter un projet au portfolio." },
   { nom: "photos-web", categorie: "Web", role: "Retirer le GPS des photos, redimensionner, convertir en WebP." },
+  { nom: "ui-rgm", categorie: "Web", role: "Reproduire l'interface de ce site : composants, fond animé, verre dépoli et liquide." },
   { nom: "analyser-repo", categorie: "Sécurité", role: "Quarantaine et analyse de tout dépôt externe avant de l'exécuter." },
   { nom: "alerte-securite", categorie: "Sécurité", role: "Une faille circule : sommes-nous concernés ? Vérifier, corriger." },
   { nom: "audit-securite-site", categorie: "Sécurité", role: "Pentest léger : admin, API, Supabase, en-têtes, secrets." },
@@ -559,6 +560,7 @@ const LOGO_SKILL: Record<string, Pick<Outil, "icone" | "monogramme">> = {
   "nettoyer-projet": { icone: siNpm },
   "portfolio-projet": { icone: siReact },
   "photos-web": { icone: siSharp },
+  "ui-rgm": { icone: siTailwindcss },
   "analyser-repo": { icone: siGithub },
   "alerte-securite": { icone: siNodedotjs },
   "audit-securite-site": { monogramme: "Sc" },
