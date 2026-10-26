@@ -2,7 +2,7 @@ import { BorderBeam } from "@appica/ui-react/border-beam";
 import { Badge } from "@appica/ui-react/badge";
 import { Button } from "@appica/ui-react/button";
 import type { Metadata } from "next";
-import { ArrowDown, ArrowRight, KeyRound, ShieldCheck, UserCheck } from "lucide-react";
+import { ArrowDown, ArrowRight, ArrowUpRight, KeyRound, ShieldCheck, UserCheck } from "lucide-react";
 import { siGithub, siGooglecalendar, siGooglecloud, siGmail, siGooglesearchconsole, siTelegram } from "simple-icons";
 
 import { Apparait } from "@/components/commun/apparait";
@@ -28,6 +28,9 @@ import {
   REGLES,
   SCHEMA_HERMES,
   SKILLS,
+  SKILLS_AFFICHAGE,
+  COLLECTIONS_TIERS,
+  NOMBRE_SKILLS_TIERS,
   TELEGRAM,
 } from "@/lib/stack";
 import { cn } from "@/lib/utils";
@@ -336,7 +339,7 @@ export default function PageStack() {
           sousTitre="Chaque fois qu'un problème a coûté du temps, la leçon finit dans une skill. Les agents les chargent d'eux-mêmes quand la tâche s'y prête."
         />
         <div className="mt-10">
-          <CatalogueSkills skills={SKILLS} depot={DEPOT_SKILLS} />
+          <CatalogueSkills skills={SKILLS_AFFICHAGE} depot={DEPOT_SKILLS} />
         </div>
         <div className="mt-10 flex justify-center">
           <a
@@ -350,6 +353,65 @@ export default function PageStack() {
             <ArrowRight className="size-4 transition-[translate] duration-150 ease-out group-hover:translate-x-0.5" aria-hidden="true" />
           </a>
         </div>
+      </section>
+
+      {/* ---------- Les skills des autres ---------- */}
+      <section className="conteneur py-16 sm:py-20">
+        <TitreSection
+          surtitre="Et celles des autres"
+          titre={`${NOMBRE_SKILLS_TIERS} skills de la communauté que j'utilise`}
+          sousTitre="Pas besoin de tout réécrire : je m'appuie aussi sur le travail d'éditeurs et de designers reconnus, choisi pour sa qualité et relu avant installation."
+        />
+        <ul className="mt-12 grid gap-4 md:grid-cols-2 lg:grid-cols-3">
+          {COLLECTIONS_TIERS.map((collection, index) => {
+            const contenu = (
+              <>
+                <span className="flex items-center gap-3.5">
+                  <TuileLogo outil={collection.outil} className="size-12 text-sm" />
+                  <span className="min-w-0">
+                    <span className="block text-lg leading-tight font-semibold">{collection.nom}</span>
+                    <span className="block text-sm text-muted-foreground">par {collection.auteur}</span>
+                  </span>
+                  {collection.source && (
+                    <ArrowUpRight
+                      className="ml-auto size-4 shrink-0 opacity-0 transition-[opacity,translate] duration-200 ease-out group-hover:translate-x-0.5 group-hover:-translate-y-0.5 group-hover:opacity-100"
+                      aria-hidden="true"
+                    />
+                  )}
+                </span>
+                <span className="mt-4 block leading-relaxed">{collection.role}</span>
+                <span className="mt-4 flex flex-wrap gap-1.5">
+                  {collection.skills.map((nom) => (
+                    <code key={nom} className="rounded-md bg-bleu-50 px-2 py-0.5 font-mono text-xs text-bleu-800 dark:bg-bleu-950 dark:text-bleu-200">
+                      {nom}
+                    </code>
+                  ))}
+                </span>
+              </>
+            );
+            const classe =
+              "group flex h-full flex-col rounded-3xl border border-border/70 bg-background p-6 transition-[border-color,box-shadow,translate] duration-200 ease-out";
+            return (
+              <Apparait key={collection.nom} as="li" delai={(index % 3) * 60}>
+                {collection.source ? (
+                  <a
+                    href={collection.source}
+                    target="_blank"
+                    rel="noreferrer"
+                    className={cn(
+                      classe,
+                      "hover:-translate-y-0.5 hover:border-bleu-300 hover:shadow-[0_14px_40px_-20px_var(--bleu-600)] focus-visible:ring-3 focus-visible:ring-ring/40 focus-visible:outline-none dark:hover:border-bleu-700",
+                    )}
+                  >
+                    {contenu}
+                  </a>
+                ) : (
+                  <div className={classe}>{contenu}</div>
+                )}
+              </Apparait>
+            );
+          })}
+        </ul>
       </section>
 
       <AppelAction

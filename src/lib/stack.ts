@@ -3,8 +3,10 @@ import "server-only";
 import {
   siAnthropic,
   siArduino,
+  siAxios,
   siBaseui,
   siBlender,
+  siBrevo,
   siCaddy,
   siCheerio,
   siClaude,
@@ -12,7 +14,10 @@ import {
   siContabo,
   siCss,
   siD3,
+  siDatefns,
+  siDiscord,
   siDocker,
+  siDotenv,
   siElevenlabs,
   siEslint,
   siEspressif,
@@ -25,20 +30,26 @@ import {
   siGmail,
   siGoogleanalytics,
   siGooglecalendar,
+  siGooglechrome,
   siGooglecloud,
+  siGoogledrive,
   siGooglemaps,
   siGooglesearchconsole,
   siGooglesheets,
   siGsap,
   siHtml5,
+  siIntel,
   siJavascript,
+  siJsonwebtokens,
   siKeycloak,
   siKicad,
   siLeaflet,
   siLetsencrypt,
+  siLinear,
   siLucide,
   siMantine,
   siMaplibre,
+  siMarkdown,
   siMediapipe,
   siMeta,
   siModelcontextprotocol,
@@ -46,6 +57,7 @@ import {
   siN8n,
   siNextdotjs,
   siNodedotjs,
+  siNpm,
   siObsidian,
   siOxc,
   siPhosphoricons,
@@ -65,6 +77,7 @@ import {
   siSentry,
   siShadcnui,
   siSharp,
+  siShopify,
   siStripe,
   siSupabase,
   siTailwindcss,
@@ -308,7 +321,6 @@ export const CATEGORIES_STACK: { titre: string; texte: string; outils: Outil[] }
       { nom: "Python", icone: siPython, usage: "Données, audits, ponts MCP" },
       { nom: "FastAPI", icone: siFastapi, usage: "API Python" },
       { nom: "Pydantic", icone: siPydantic, usage: "Validation côté Python" },
-      { nom: "Resend", icone: siResend, usage: "Emails transactionnels" },
       { nom: "Upstash", icone: siUpstash, usage: "Limitation de débit" },
       { nom: "Stripe", icone: siStripe, usage: "Paiement en ligne" },
       { nom: "Sharp", icone: siSharp, usage: "Images optimisées" },
@@ -348,6 +360,18 @@ export const CATEGORIES_STACK: { titre: string; texte: string; outils: Outil[] }
     ],
   },
   {
+    titre: "Emails et messages",
+    texte: "Chaque demande, rappel ou alerte arrive là où on la lira.",
+    outils: [
+      { nom: "Resend", icone: siResend, usage: "Emails transactionnels" },
+      { nom: "Brevo", icone: siBrevo, usage: "SMS et campagnes" },
+      { nom: "Nodemailer", monogramme: "Nm", usage: "Envoi SMTP" },
+      { nom: "ImapFlow", monogramme: "Im", usage: "Lecture d'une boîte mail" },
+      { nom: "Slack", monogramme: "Sl", usage: "Notifications d'équipe" },
+      { nom: "Discord", icone: siDiscord, usage: "Alertes et communautés" },
+    ],
+  },
+  {
     titre: "Bots et automatisation",
     texte: "Les scripts qui tournent seuls et préviennent quand il le faut.",
     outils: [
@@ -384,6 +408,40 @@ export const CATEGORIES_STACK: { titre: string; texte: string; outils: Outil[] }
       { nom: "Arduino", icone: siArduino, usage: "arduino-cli" },
       { nom: "ESP32", icone: siEspressif, usage: "Objets connectés" },
       { nom: "Obsidian", icone: siObsidian, usage: "Documentation des skills" },
+    ],
+  },
+  {
+    titre: "Bibliothèques",
+    texte: "Les petites briques qui évitent de réinventer, choisies une par une.",
+    outils: [
+      { nom: "date-fns", icone: siDatefns, usage: "Dates en français" },
+      { nom: "Axios", icone: siAxios, usage: "Appels HTTP" },
+      { nom: "dotenv", icone: siDotenv, usage: "Configuration hors du code" },
+      { nom: "Sonner", monogramme: "So", usage: "Notifications à l'écran" },
+      { nom: "Embla", monogramme: "Em", usage: "Carrousels tactiles" },
+      { nom: "cmdk", monogramme: "⌘", usage: "Palette de commandes" },
+      { nom: "PDFKit", monogramme: "Pd", usage: "Devis et factures en PDF" },
+      { nom: "ExcelJS", monogramme: "Xl", usage: "Exports tableur" },
+      { nom: "DOMPurify", monogramme: "Dp", usage: "Contenu nettoyé avant affichage" },
+      { nom: "JWT", icone: siJsonwebtokens, usage: "Jetons d'accès signés" },
+    ],
+  },
+  {
+    titre: "Connecteurs MCP",
+    texte: "Les services que mes agents pilotent directement, sans copier-coller.",
+    outils: [
+      { nom: "Supabase", icone: siSupabase, usage: "Tables, migrations, journaux" },
+      { nom: "Vercel", icone: siVercel, usage: "Déploiements et erreurs" },
+      { nom: "GitHub", icone: siGithub, usage: "Dépôts et revues" },
+      { nom: "Gmail", icone: siGmail, usage: "Brouillons et tri" },
+      { nom: "Google Agenda", icone: siGooglecalendar, usage: "Rendez-vous" },
+      { nom: "Google Drive", icone: siGoogledrive, usage: "Documents" },
+      { nom: "Figma", icone: siFigma, usage: "Maquettes vers code" },
+      { nom: "Linear", icone: siLinear, usage: "Suivi des tâches" },
+      { nom: "n8n", icone: siN8n, usage: "Workflows pilotés par l'agent" },
+      { nom: "Shopify", icone: siShopify, usage: "Boutiques en ligne" },
+      { nom: "Chrome", icone: siGooglechrome, usage: "Navigation et tests réels" },
+      { nom: "21st.dev", monogramme: "21", usage: "Composants d'interface" },
     ],
   },
 ];
@@ -479,3 +537,171 @@ export const SKILLS: { nom: string; categorie: CategorieSkill; role: string }[] 
   { nom: "depannage-pc", categorie: "Poste", role: "Diagnostiquer et réparer un problème Windows." },
   { nom: "menage-disque", categorie: "Poste", role: "Libérer de la place sans rien casser." },
 ];
+
+/**
+ * Le logo de l'outil au cœur de chaque skill : on reconnaît le sujet d'un
+ * coup d'œil dans le catalogue. Sans outil évident, un monogramme.
+ */
+const LOGO_SKILL: Record<string, Pick<Outil, "icone" | "monogramme">> = {
+  "orca-agents": { monogramme: "Or" },
+  "reprendre-projet": { icone: siGit },
+  "bilan-activite": { icone: siClaude },
+  "idees-fonctionnalites": { monogramme: "Id" },
+  jev: { monogramme: "%" },
+  "prof-code": { icone: siTypescript },
+  "site-a-z": { icone: siNextdotjs },
+  "demarrer-projet": { icone: siGithub },
+  "supabase-projet": { icone: siSupabase },
+  "vercel-prod": { icone: siVercel },
+  "domaine-dns": { icone: siCloudflare },
+  "audit-mobile": { monogramme: "Pw" },
+  "seo-local": { icone: siGooglesearchconsole },
+  "nettoyer-projet": { icone: siNpm },
+  "portfolio-projet": { icone: siReact },
+  "photos-web": { icone: siSharp },
+  "analyser-repo": { icone: siGithub },
+  "alerte-securite": { icone: siNodedotjs },
+  "audit-securite-site": { monogramme: "Sc" },
+  "audit-projets": { icone: siGit },
+  "poser-secret": { monogramme: "🔑" },
+  "vps-sante": { icone: siUbuntu },
+  "bot-telegram": { icone: siTelegram },
+  "envoyer-telegram": { icone: siTelegram },
+  "video-rgm": { icone: siElevenlabs },
+  "devis-freelance": { monogramme: "€" },
+  "message-client": { icone: siWhatsapp },
+  "retours-client": { icone: siLinear },
+  "signature-mail": { icone: siGmail },
+  "courrier-officiel": { monogramme: "Lt" },
+  "esp32-arduino": { icone: siEspressif },
+  "kicad-projet": { icone: siKicad },
+  "dimensionnement-pv": { monogramme: "PV" },
+  "blender-solaire": { icone: siBlender },
+  "rapport-tp": { icone: siMarkdown },
+  "fiche-revision": { icone: siObsidian },
+  "candidature-stage": { monogramme: "CV" },
+  "depannage-pc": { icone: siIntel },
+  "menage-disque": { monogramme: "Go" },
+};
+
+/** Ce que le catalogue (composant client) reçoit : des tracés, pas la bibliothèque. */
+export type LogoLeger = { d?: string; couleur?: string; monogramme?: string };
+
+function logoLeger(outil?: Pick<Outil, "icone" | "monogramme">): LogoLeger {
+  if (outil?.icone) return { d: outil.icone.path, couleur: `#${outil.icone.hex}` };
+  return { monogramme: outil?.monogramme ?? "Sk" };
+}
+
+export const SKILLS_AFFICHAGE = SKILLS.map((skill) => ({ ...skill, logo: logoLeger(LOGO_SKILL[skill.nom]) }));
+
+/**
+ * Les skills écrites par d'autres que j'utilise au quotidien. Le lien n'est
+ * donné que lorsque la source a été vérifiée ; sinon, l'auteur seul.
+ */
+export const COLLECTIONS_TIERS: {
+  nom: string;
+  auteur: string;
+  source: string | null;
+  outil: Outil;
+  role: string;
+  skills: string[];
+}[] = [
+  {
+    nom: "HyperFrames",
+    auteur: "HeyGen",
+    source: null,
+    outil: { nom: "HyperFrames", monogramme: "Hf", usage: "" },
+    role: "Des vidéos écrites en HTML et rendues en MP4 : la base de mes vidéos TikTok.",
+    skills: ["hyperframes", "hyperframes-cli", "hyperframes-registry", "media-use"],
+  },
+  {
+    nom: "brag",
+    auteur: "Latent Spaces",
+    source: "https://github.com/latent-spaces/brag",
+    outil: { nom: "brag", monogramme: "Br", usage: "" },
+    role: "Une vidéo de lancement tirée du code d'un projet, avec musique et effets sonores.",
+    skills: ["brag", "brag-slim"],
+  },
+  {
+    nom: "Taste Skill",
+    auteur: "Leonxlnx",
+    source: "https://github.com/Leonxlnx/taste-skill",
+    outil: { nom: "Taste Skill", monogramme: "Ts", usage: "" },
+    role: "Des interfaces qui ne ressemblent pas à un modèle : directions de design, refontes, chartes.",
+    skills: ["design-taste-frontend", "high-end-visual-design", "minimalist-ui", "redesign-existing-projects", "brandkit", "image-to-code"],
+  },
+  {
+    nom: "Skills de Matt Pocock",
+    auteur: "Matt Pocock",
+    source: "https://github.com/mattpocock/skills",
+    outil: { nom: "TypeScript", icone: siTypescript, usage: "" },
+    role: "Méthode d'ingénieur : tests d'abord, diagnostic de bugs, revue de code, modélisation.",
+    skills: ["tdd", "diagnosing-bugs", "code-review", "prototype", "domain-modeling", "grilling", "writing-for-agents"],
+  },
+  {
+    nom: "n8n skills",
+    auteur: "Romuald Członkowski",
+    source: "https://github.com/czlonkowski/n8n-skills",
+    outil: { nom: "n8n", icone: siN8n, usage: "" },
+    role: "Construire et valider des workflows n8n sans se tromper d'expression ni de nœud.",
+    skills: ["n8n-workflow-patterns", "n8n-node-configuration", "n8n-expression-syntax", "n8n-code-javascript", "n8n-code-python", "n8n-validation-expert", "n8n-mcp-tools-expert"],
+  },
+  {
+    nom: "Design engineering",
+    auteur: "Emil Kowalski",
+    source: "https://github.com/emilkowalski/skills",
+    outil: { nom: "Emil Kowalski", monogramme: "Ek", usage: "" },
+    role: "Le soin du détail dans les animations et les composants.",
+    skills: ["emil-design-eng"],
+  },
+  {
+    nom: "Better UI",
+    auteur: "Jakub Krehel",
+    source: "https://github.com/jakubkrehel/skills",
+    outil: { nom: "Jakub Krehel", monogramme: "Jk", usage: "" },
+    role: "Rayons concentriques, alignement optique, profondeur des surfaces.",
+    skills: ["better-ui"],
+  },
+  {
+    nom: "Plugins officiels",
+    auteur: "Anthropic",
+    source: "https://github.com/anthropics/claude-plugins-official",
+    outil: { nom: "Anthropic", icone: siAnthropic, usage: "" },
+    role: "Revue de sécurité, design d'interface, création de skills et documents bureautiques.",
+    skills: ["frontend-design", "security-guidance", "skill-creator", "code-review", "docx", "pdf", "xlsx", "pptx"],
+  },
+  {
+    nom: "Figma",
+    auteur: "Figma",
+    source: null,
+    outil: { nom: "Figma", icone: siFigma, usage: "" },
+    role: "De la maquette au code, et du code vers des bibliothèques de composants.",
+    skills: ["figma-use", "figma-design-to-code", "figma-code-connect", "figma-generate-library"],
+  },
+  {
+    nom: "Motion et transitions",
+    auteur: "transitions.dev et la communauté",
+    source: null,
+    outil: { nom: "Motion", monogramme: "Mo", usage: "" },
+    role: "Durées, courbes et entrées-sorties calibrées ; audit des animations.",
+    skills: ["transitions-dev", "transitions-polish", "design-motion-principles", "motion-design"],
+  },
+  {
+    nom: "Stripe Projects",
+    auteur: "Stripe",
+    source: null,
+    outil: { nom: "Stripe", icone: siStripe, usage: "" },
+    role: "Provisionner base, hébergement ou e-mails depuis le terminal.",
+    skills: ["stripe-projects"],
+  },
+  {
+    nom: "Bklit UI",
+    auteur: "Bklit",
+    source: null,
+    outil: { nom: "Bklit", monogramme: "Bk", usage: "" },
+    role: "Les graphiques des tableaux de bord d'administration.",
+    skills: ["bklit-ui"],
+  },
+];
+
+export const NOMBRE_SKILLS_TIERS = COLLECTIONS_TIERS.reduce((n, c) => n + c.skills.length, 0);

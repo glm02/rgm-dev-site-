@@ -5,7 +5,35 @@ import * as React from "react";
 
 import { cn } from "@/lib/utils";
 
-type Skill = { nom: string; categorie: string; role: string };
+type Skill = {
+  nom: string;
+  categorie: string;
+  role: string;
+  logo: { d?: string; couleur?: string; monogramme?: string };
+};
+
+/** Le logo de l'outil de la skill, dans une petite tuile. */
+function LogoSkill({ logo }: { logo: Skill["logo"] }) {
+  const lum = logo.couleur ? luminance(logo.couleur) : 0.5;
+  // Noir ou presque blanc : on suit la couleur du texte, lisible dans les deux thèmes.
+  const neutre = lum < 0.12 || lum > 0.85;
+  return (
+    <span className="grid size-9 shrink-0 place-items-center rounded-xl border border-border/70 bg-background">
+      {logo.d ? (
+        <svg viewBox="0 0 24 24" aria-hidden="true" className={cn("size-[18px]", neutre && "fill-foreground")} style={neutre ? undefined : { fill: logo.couleur }}>
+          <path d={logo.d} />
+        </svg>
+      ) : (
+        <span aria-hidden="true" className="text-xs font-semibold text-bleu-700 dark:text-bleu-300">{logo.monogramme}</span>
+      )}
+    </span>
+  );
+}
+
+function luminance(hex: string) {
+  const [r, g, b] = [1, 3, 5].map((i) => parseInt(hex.slice(i, i + 2), 16) / 255);
+  return 0.2126 * r + 0.7152 * g + 0.0722 * b;
+}
 
 /**
  * Les 39 skills, filtrables par catégorie.
@@ -77,7 +105,10 @@ export function CatalogueSkills({ skills, depot }: { skills: Skill[]; depot: str
               )}
             >
               <span className="flex items-center justify-between gap-3">
-                <code className="font-mono text-[15px] font-semibold text-bleu-700 dark:text-bleu-300">/{skill.nom}</code>
+                <span className="flex min-w-0 items-center gap-3">
+                  <LogoSkill logo={skill.logo} />
+                  <code className="truncate font-mono text-[15px] font-semibold text-bleu-700 dark:text-bleu-300">/{skill.nom}</code>
+                </span>
                 <ArrowUpRight
                   className="size-4 shrink-0 opacity-0 transition-[opacity,translate] duration-200 ease-out group-hover:translate-x-0.5 group-hover:-translate-y-0.5 group-hover:opacity-100"
                   aria-hidden="true"
