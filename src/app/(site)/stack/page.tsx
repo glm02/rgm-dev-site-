@@ -379,7 +379,7 @@ export default function PageStack() {
                 id: "codex",
                 nom: "Codex",
                 logo: { d: siOpenai.path, couleur: `#${siOpenai.hex}` },
-                dossier: "~/.codex/skills/",
+                dossier: "~/.agents/skills/",
                 utiliser: "Relancez Codex : la skill est proposée dès que la tâche correspond.",
               },
               {
