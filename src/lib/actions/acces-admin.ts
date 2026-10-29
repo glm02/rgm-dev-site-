@@ -5,6 +5,7 @@ import { redirect } from "next/navigation";
 
 import { clientServeur } from "@/lib/supabase/serveur";
 import { clientService } from "@/lib/supabase/service";
+import { CHAMP_TURNSTILE, verifierTurnstile } from "@/lib/turnstile";
 
 export type EtatAccesAdmin = { erreur?: string };
 
@@ -36,6 +37,12 @@ export async function connexionAdmin(
   const attendu = (process.env.ADMIN_PASSWORD ?? "").trim();
   if (!attendu) {
     return { erreur: "ADMIN_PASSWORD n'est pas défini sur le serveur." };
+  }
+
+  // Avant le mot de passe : chaque essai d'un robot doit d'abord passer
+  // Cloudflare, ce qui rend la force brute impraticable.
+  if (!(await verifierTurnstile(donnees.get(CHAMP_TURNSTILE), "acces-admin"))) {
+    return { erreur: "Vérification anti-robot non validée. Réessayez." };
   }
 
   const saisi = String(donnees.get("mot_de_passe") ?? "");

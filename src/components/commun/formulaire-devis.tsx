@@ -5,6 +5,7 @@ import { usePathname } from "next/navigation";
 import { ArrowRight, Check, Loader2 } from "lucide-react";
 import * as React from "react";
 
+import { Turnstile } from "@/components/commun/turnstile";
 import { envoyerDemandeDevis, type EtatDevis } from "@/lib/actions/devis";
 
 // Ici et pas dans `actions/devis.ts` : un fichier « use server » ne peut
@@ -123,6 +124,8 @@ export function FormulaireDevis({ className }: { className?: string }) {
         placeholder="Ce que vous faites, ce dont vous avez besoin, et ce qui vous ferait dire que le projet est réussi. Trois phrases suffisent pour commencer."
         aide="Plus vous êtes précis, plus mon retour le sera."
       />
+
+      <Turnstile action="devis" reinitialiser={etat} />
 
       <div className="flex flex-col gap-4 pt-1 sm:flex-row sm:items-center sm:justify-between">
         <p className="text-xs leading-relaxed text-muted-foreground">

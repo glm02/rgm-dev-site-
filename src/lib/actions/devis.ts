@@ -4,6 +4,7 @@ import { z } from "zod";
 
 import { clientServeur } from "@/lib/supabase/serveur";
 import { notifierDemandeDevis } from "@/lib/notifications";
+import { CHAMP_TURNSTILE, verifierTurnstile } from "@/lib/turnstile";
 
 /**
  * La demande de devis.
@@ -60,7 +61,7 @@ export async function envoyerDemandeDevis(
   const brut = Object.fromEntries(donnees.entries());
   const valeurs = Object.fromEntries(
     Object.entries(brut)
-      .filter(([cle]) => cle !== "site_web")
+      .filter(([cle]) => cle !== "site_web" && cle !== CHAMP_TURNSTILE)
       .map(([cle, valeur]) => [cle, String(valeur)]),
   );
 
@@ -71,6 +72,17 @@ export async function envoyerDemandeDevis(
       statut: "erreur",
       message: "Il reste quelque chose à corriger.",
       erreurs: z.flattenError(analyse.error).fieldErrors as Record<string, string[]>,
+      valeurs,
+    };
+  }
+
+  // Après la validation : une faute de frappe ne coûte pas un appel à
+  // Cloudflare. Le widget redemande un jeton à chaque réponse du serveur.
+  if (!(await verifierTurnstile(donnees.get(CHAMP_TURNSTILE), "devis"))) {
+    return {
+      statut: "erreur",
+      message:
+        "La vérification anti-robot n'a pas abouti. Patientez une seconde qu'elle se valide, puis renvoyez.",
       valeurs,
     };
   }

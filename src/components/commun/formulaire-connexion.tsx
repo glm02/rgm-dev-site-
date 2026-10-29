@@ -4,6 +4,7 @@ import { useSearchParams } from "next/navigation";
 import { ArrowRight, Check, Loader2, Mail } from "lucide-react";
 import * as React from "react";
 
+import { Turnstile, turnstileConfigure } from "@/components/commun/turnstile";
 import { clientNavigateur } from "@/lib/supabase/navigateur";
 import { urlDeRetour } from "@/lib/supabase/config";
 import { cn } from "@/lib/utils";
@@ -46,6 +47,13 @@ export function FormulaireConnexion({
     erreurUrl ? (MESSAGES_ERREUR[erreurUrl] ?? "La connexion a échoué.") : null,
   );
 
+  // Le jeton Turnstile part avec la demande : c'est Supabase qui le vérifie
+  // (protection captcha du projet), car la clé anon est publique et un robot
+  // pourrait appeler l'API d'authentification sans passer par ce formulaire.
+  const [jeton, setJeton] = React.useState<string | null>(null);
+  const [essai, setEssai] = React.useState(0);
+  const captcha = jeton ? { captchaToken: jeton } : {};
+
   const supabase = clientNavigateur();
   const indisponible = supabase === null;
 
@@ -69,9 +77,11 @@ export function FormulaireConnexion({
     const { error } = await supabase.auth.signInWithPassword({
       email: email.trim(),
       password: motDePasse,
+      options: captcha,
     });
 
     if (error) {
+      setEssai((n) => n + 1);
       // Même message pour un email inconnu et un mauvais mot de passe : on ne
       // dit pas à un inconnu quelles adresses ont un compte.
       setErreur(
@@ -93,6 +103,10 @@ export function FormulaireConnexion({
   async function envoyerLien(evenement: React.FormEvent) {
     evenement.preventDefault();
     if (!supabase || etat === "envoi") return;
+    if (turnstileConfigure() && !jeton) {
+      setErreur("Patientez une seconde que la vérification anti-robot se valide.");
+      return;
+    }
 
     setErreur(null);
     setEtat("envoi");
@@ -104,10 +118,11 @@ export function FormulaireConnexion({
 
     const { error } = await supabase.auth.signInWithOtp({
       email: email.trim(),
-      options: { emailRedirectTo: redirection },
+      options: { emailRedirectTo: redirection, ...captcha },
     });
 
     if (error) {
+      setEssai((n) => n + 1);
       // Le quota d'emails de Supabase est vite atteint : le dire franchement
       // plutôt que de laisser croire à une adresse mal saisie.
       setErreur(
@@ -262,6 +277,8 @@ export function FormulaireConnexion({
             />
           </div>
         )}
+
+        <Turnstile action="connexion" reinitialiser={essai} onJeton={setJeton} />
 
         <button
           type="submit"

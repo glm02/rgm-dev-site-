@@ -3,6 +3,7 @@
 import { ArrowRight, Loader2 } from "lucide-react";
 import * as React from "react";
 
+import { Turnstile } from "@/components/commun/turnstile";
 import { connexionAdmin } from "@/lib/actions/acces-admin";
 import { cn } from "@/lib/utils";
 
@@ -36,6 +37,8 @@ export function FormulaireAccesAdmin() {
           )}
         />
       </div>
+
+      <Turnstile action="acces-admin" reinitialiser={etat} />
 
       <button
         type="submit"
