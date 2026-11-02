@@ -27,6 +27,10 @@ const eslintConfig = defineConfig([
     "out/**",
     "build/**",
     "next-env.d.ts",
+    // Kit Stageshow (MIT), copié tel quel depuis benjitaylor/skills : on ne
+    // réécrit pas du code tiers pour nos règles, on le garde identique à la
+    // source pour pouvoir le mettre à jour.
+    "src/components/stageshow/kit/**",
   ]),
 ]);
 

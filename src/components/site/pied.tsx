@@ -2,6 +2,7 @@ import Link from "next/link";
 import { Mail, MapPin } from "lucide-react";
 
 import { Logo } from "./logo";
+import { SceneLogoVerre } from "./scene-logo-verre";
 import { NAVIGATION_PIED, SITE, VILLES } from "@/lib/site";
 
 /**
@@ -22,42 +23,56 @@ function MarqueGithub({ className }: { className?: string }) {
 /**
  * Le pied de page.
  *
+ * En haut, la scène du logo en verre au-dessus d'un paysage de nuit. Le haut
+ * du bloc part de la couleur de la page (blanc en clair, noir en sombre) pour
+ * que la section précédente se fonde dans le ciel ; le bas finit en noir pour
+ * enchaîner sur les liens.
+ *
  * Il porte aussi une partie du référencement local : la liste des villes n'est
  * pas du remplissage, c'est la zone d'intervention réelle, reprise telle
- * quelle dans le JSON-LD de l'entreprise.
+ * quelle dans le JSON-LD de l'entreprise. Tous les liens restent, regroupés en
+ * deux colonnes.
  */
 export function Pied() {
   const annee = new Date().getFullYear();
+  const groupes = Object.entries(NAVIGATION_PIED);
+  const colonnes = [groupes.slice(0, 2), groupes.slice(2)];
 
   return (
-    // Fond plein, pas translucide : sur l'accueil, la nappe de points fixe
-    // passait au travers et brouillait les liens.
-    <footer className="relative mt-24 border-t border-border bg-background">
-      <div className="conteneur-large py-14">
-        <div className="grid gap-10 md:grid-cols-[minmax(0,1.4fr)_repeat(4,minmax(0,1fr))] md:gap-8">
-          <div className="max-w-xs">
-            <Logo />
-            <p className="mt-4 text-sm leading-relaxed text-muted-foreground">
-              {SITE.promesse}
-            </p>
+    <footer className="relative mt-24 bg-black text-white">
+      <div className="relative h-[460px] overflow-hidden sm:h-[600px]">
+        <SceneLogoVerre />
+        <div
+          aria-hidden="true"
+          className="pointer-events-none absolute inset-x-0 top-0 h-48 bg-linear-to-b from-background to-transparent"
+        />
+        <div
+          aria-hidden="true"
+          className="pointer-events-none absolute inset-x-0 bottom-0 h-40 bg-linear-to-b from-transparent to-black"
+        />
+      </div>
 
-            <div className="mt-5 flex flex-col gap-2.5 text-sm">
-              <a
-                href={`mailto:${SITE.email}`}
-                className="inline-flex w-fit items-center gap-2 text-muted-foreground transition-colors duration-150 ease-out hover:text-foreground"
-              >
-                <Mail className="size-4" strokeWidth={1.5} />
-                {SITE.email}
-              </a>
-              <span className="inline-flex items-center gap-2 text-muted-foreground">
-                <MapPin className="size-4" strokeWidth={1.5} />
+      <div className="conteneur-large pt-6 pb-12">
+        <div className="grid gap-12 md:grid-cols-[minmax(0,1fr)_minmax(0,1.6fr)]">
+          <div className="flex max-w-sm flex-col items-start">
+            <Logo className="[&>span:last-child]:text-white" />
+            <a
+              href={`mailto:${SITE.email}`}
+              className="mt-6 inline-flex w-fit items-center gap-2 text-lg font-medium text-white underline-offset-4 hover:underline"
+            >
+              <Mail className="size-5" strokeWidth={1.5} aria-hidden="true" />
+              {SITE.email}
+            </a>
+            <div className="mt-4 flex flex-col gap-2.5 text-sm text-white">
+              <span className="inline-flex items-center gap-2">
+                <MapPin className="size-4" strokeWidth={1.5} aria-hidden="true" />
                 {SITE.ville}, {SITE.region}
               </span>
               <a
                 href={SITE.github}
                 target="_blank"
                 rel="noreferrer"
-                className="inline-flex w-fit items-center gap-2 text-muted-foreground transition-colors duration-150 ease-out hover:text-foreground"
+                className="inline-flex w-fit items-center gap-2 underline-offset-4 hover:underline"
               >
                 <MarqueGithub className="size-4" />
                 github.com/glm02
@@ -65,45 +80,44 @@ export function Pied() {
             </div>
           </div>
 
-          {Object.entries(NAVIGATION_PIED).map(([titre, liens]) => (
-            <nav key={titre} aria-label={titre}>
-              <h2 className="text-xs font-semibold tracking-wider text-foreground uppercase">
-                {titre}
-              </h2>
-              <ul className="mt-4 space-y-2.5">
-                {liens.map((lien) => (
-                  <li key={lien.href}>
-                    <Link
-                      href={lien.href}
-                      className="text-sm text-muted-foreground transition-colors duration-150 ease-out hover:text-foreground"
-                    >
-                      {lien.libelle}
-                    </Link>
-                  </li>
+          <div className="grid grid-cols-2 gap-x-6 gap-y-10">
+            {colonnes.map((colonne, index) => (
+              <div key={index} className="flex flex-col gap-10">
+                {colonne.map(([titre, liens]) => (
+                  <nav key={titre} aria-label={titre}>
+                    <h2 className="text-xs font-semibold tracking-wider text-bleu-300 uppercase">
+                      {titre}
+                    </h2>
+                    <ul className="mt-4 space-y-2.5">
+                      {liens.map((lien) => (
+                        <li key={lien.href}>
+                          <Link
+                            href={lien.href}
+                            className="text-sm text-white underline-offset-4 transition-colors duration-150 ease-out hover:text-bleu-300"
+                          >
+                            {lien.libelle}
+                          </Link>
+                        </li>
+                      ))}
+                    </ul>
+                  </nav>
                 ))}
-              </ul>
-            </nav>
-          ))}
+              </div>
+            ))}
+          </div>
         </div>
 
-        <div className="filet-bleu my-10" />
+        <div className="my-10 h-px bg-white/15" />
 
-        <div className="flex flex-col gap-5">
-          <p className="text-sm text-muted-foreground">
-            <span className="font-medium text-foreground">Zone d&apos;intervention</span>{" "}
-            — {VILLES.join(", ")} et toute la métropole lyonnaise, dans un rayon de{" "}
-            {SITE.rayonKm} km. Le travail à distance est possible partout en France.
+        <div className="flex flex-col gap-5 text-sm text-white">
+          <p>
+            <span className="font-semibold">Zone d&apos;intervention</span> —{" "}
+            {VILLES.join(", ")} et toute la métropole lyonnaise, dans un rayon de{" "}
+            {SITE.rayonKm} km. Travail à distance possible partout en France.
           </p>
-
-          <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
-            <p className="text-sm text-muted-foreground">
-              © {annee} {SITE.nom}. Tous droits réservés.
-            </p>
-            <p className="text-sm text-muted-foreground">
-              Ce site est construit avec Next.js, Supabase et Tailwind CSS — et son code
-              est le premier exemple de ce que je livre.
-            </p>
-          </div>
+          <p>
+            © {annee} {SITE.nom}. Tous droits réservés.
+          </p>
         </div>
       </div>
     </footer>

@@ -1,0 +1,223 @@
+/* Démo « devis préparé par un agent ». Adapté de l'exemple payout-flow du kit
+   Stageshow (MIT). Toutes les règles sont propres à cette démo. */
+.dda {
+  & .ss-stage {
+    /* Le bleu du site comme seul accent, et du noir pour le texte secondaire :
+       pas de gris, il ne se lit pas sur le blanc. */
+    --ss-accent: #2563eb;
+    --ss-accent-soft: rgba(37, 99, 235, 0.1);
+    --ss-text: #2a2a2e;
+    --ss-text-strong: #111113;
+    --dda-ease: cubic-bezier(0.45, 0, 0.1, 1);
+    overflow: hidden;
+    border-radius: 20px;
+    background: #f5f8ff;
+    font: 12px/1.4 var(--ss-font);
+    color: var(--ss-text-strong);
+  }
+
+  .dda-halo {
+    position: absolute;
+    inset: 0;
+    background: radial-gradient(50% 60% at 100% 0%, rgba(37, 99, 235, 0.16), transparent 70%);
+  }
+
+  .dda-fort { font-weight: 600; }
+
+  .dda-tete { display: flex; align-items: center; gap: 10px; }
+
+  .dda-pastille {
+    display: grid;
+    place-items: center;
+    width: 28px;
+    height: 28px;
+    border-radius: 8px;
+    background: var(--ss-ink-2);
+    color: var(--ss-text-strong);
+  }
+  .dda-pastille--bleu { background: var(--ss-accent-soft); color: var(--ss-accent); }
+
+  /* La demande arrive au centre, puis glisse de côté pour laisser la place. */
+  .dda-demande {
+    position: absolute;
+    top: 40px;
+    left: 170px;
+    display: grid;
+    gap: 10px;
+    width: 300px;
+    height: 400px;
+    padding: 22px 22px 0;
+    border-radius: 12px;
+    background: var(--ss-surface);
+    box-shadow: var(--ss-shadow-hero);
+    opacity: 0;
+    --dda-x: 0px;
+    --dda-y: 24px;
+    transform: translate(var(--dda-x), var(--dda-y));
+    align-content: start;
+    will-change: transform;
+    transition: opacity 0.9s ease, transform 1.2s var(--dda-ease);
+  }
+  .dda-demande[data-in] { opacity: 1; --dda-y: 0px; }
+  .dda-demande[data-cote] { --dda-x: -130px; }
+
+  .dda-sous-titre {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-top: 14px;
+    padding-bottom: 6px;
+    border-bottom: 1px solid var(--ss-line);
+  }
+
+  .dda-champ {
+    display: grid;
+    grid-template-columns: 56px 1fr;
+    align-items: center;
+    gap: 10px;
+    height: 38px;
+    border-bottom: 1px solid var(--ss-line-faint);
+    position: relative;
+    transform: translateY(10px);
+    opacity: 0;
+    will-change: transform;
+    transition: opacity 0.7s ease, transform 0.9s var(--dda-ease);
+  }
+  .dda-champ[data-in] {
+    opacity: 1;
+    transform: translateY(0);
+    transition-timing-function: ease, cubic-bezier(0.25, 0.8, 0.25, 1);
+  }
+  .dda-libelle { font-weight: 500; }
+  .dda-valeur { font-weight: 600; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+
+  /* Le devis arrive du côté où il finit, un temps après la demande. */
+  .dda-devis {
+    position: absolute;
+    top: 40px;
+    left: 364px;
+    display: grid;
+    gap: 16px;
+    width: 236px;
+    padding: 20px;
+    border-radius: 12px;
+    background: var(--ss-raised);
+    box-shadow: var(--ss-shadow-satellite);
+    opacity: 0;
+    transform: translateX(32px);
+    will-change: transform;
+    transition: opacity 0.8s ease 0.2s, transform 1.1s var(--dda-ease) 0.2s;
+  }
+  .dda-devis[data-in] {
+    opacity: 1;
+    transform: translateX(0);
+    transition-timing-function: ease, cubic-bezier(0.25, 0.8, 0.25, 1);
+  }
+  .dda-devis > * {
+    position: relative;
+    transform: translateY(8px);
+    opacity: 0;
+    will-change: transform;
+    transition: opacity 0.6s ease, transform 0.9s var(--dda-ease);
+    transition-delay: calc(0.45s + var(--i) * 70ms);
+  }
+  .dda-devis[data-in] > * {
+    opacity: 1;
+    transform: translateY(0);
+    transition-timing-function: ease, cubic-bezier(0.25, 0.8, 0.25, 1);
+  }
+
+  .dda-montant {
+    font-size: 24px;
+    font-weight: 600;
+    letter-spacing: -0.02em;
+    font-variant-numeric: tabular-nums;
+  }
+
+  .dda-lignes { display: grid; }
+  .dda-ligne {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    height: 34px;
+    border-top: 1px solid var(--ss-line-faint);
+    font-variant-numeric: tabular-nums;
+  }
+
+  .dda-bouton {
+    display: grid;
+    height: 36px;
+    margin-top: 2px;
+    border-radius: 9px;
+    background: var(--ss-accent);
+    color: #fff;
+    font-weight: 500;
+    position: relative;
+    isolation: isolate;
+  }
+  /* Le bouton passe au bleu foncé une fois envoyé : on reste dans le bleu,
+     pas de seconde couleur d'accent. */
+  .dda-bouton::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    z-index: -1;
+    border-radius: inherit;
+    background: #1e3a8a;
+    opacity: 0;
+    transition: opacity 0.2s ease;
+  }
+  .dda-bouton[data-envoye]::before { opacity: 1; }
+
+  .dda-etat {
+    display: flex;
+    grid-area: 1 / 1;
+    align-items: center;
+    justify-self: center;
+    gap: 7px;
+    opacity: 0;
+    filter: blur(2px);
+    position: relative;
+    transform: translateY(4px);
+    will-change: transform;
+    transition: opacity 0.18s ease, filter 0.18s ease, transform 0.18s ease;
+  }
+  .dda-etat[data-on] {
+    opacity: 1;
+    filter: none;
+    transform: translateY(0);
+    transition: opacity 0.35s ease 0.12s, filter 0.35s ease 0.12s, transform 0.5s cubic-bezier(0.25, 0.8, 0.25, 1) 0.12s;
+  }
+
+  .dda-statut { font-size: 11px; font-weight: 500; text-align: center; }
+
+  .dda-note {
+    position: absolute;
+    padding: 5px 9px;
+    border-radius: 7px;
+    background: var(--ss-accent);
+    color: #fff;
+    font-size: 11px;
+    font-weight: 500;
+    opacity: 0;
+    transform: translateY(8px);
+    will-change: transform;
+    transition: opacity 0.6s ease, transform 0.9s var(--dda-ease);
+  }
+  .dda-note[data-in] {
+    opacity: 1;
+    transform: translateY(0);
+    transition-timing-function: ease, cubic-bezier(0.25, 0.8, 0.25, 1);
+  }
+
+  /* Sur téléphone, le devis passe sous la demande ; le texte garde sa taille. */
+  & .ss-stage[data-layout='compact'] .dda-demande { left: 16px; top: 24px; width: 326px; height: 640px; }
+  & .ss-stage[data-layout='compact'] .dda-demande[data-cote] { --dda-x: 0px; }
+  & .ss-stage[data-layout='compact'] .dda-devis { left: 40px; top: 302px; width: 302px; }
+}
+
+.dda-bouton .ss-check__ring { stroke: rgb(255 255 255 / 0.45); }
+.dda-bouton .ss-check__arc { stroke: #fff; }
+.dda-bouton .ss-check__fill { fill: #fff; }
+.dda-bouton .ss-check__tick { stroke: #1e3a8a; }
+.dda-bouton .ss-swap { text-box: trim-both cap alphabetic; }

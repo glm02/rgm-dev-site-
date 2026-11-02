@@ -6,12 +6,10 @@ import { siGithub } from "simple-icons";
 import { Apparait } from "@/components/commun/apparait";
 import { TitreSection } from "@/components/commun/titre-section";
 import { Marquee } from "@/components/marquee";
-import { OrbiteStack } from "@/components/stack/orbite-stack";
+import { DemoDevisAgent } from "@/components/stageshow/demo-devis-agent";
 import { TuileLogo } from "@/components/stack/tuile-logo";
 import {
   DEPOT_SKILLS,
-  ORBITE_EXTERIEURE,
-  ORBITE_INTERIEURE,
   REGLES,
   SKILLS,
   TOUS_LES_OUTILS,
@@ -85,7 +83,12 @@ export function StackAgents() {
             </div>
           </div>
 
-          <OrbiteStack interieure={ORBITE_INTERIEURE} exterieure={ORBITE_EXTERIEURE} />
+          {/* Un agent à l'œuvre plutôt qu'une orbite de logos : les outils
+              défilent déjà dessous, ce qui manquait, c'est de voir le résultat.
+              Démo construite avec le kit Stageshow. */}
+          <div className="min-w-0">
+            <DemoDevisAgent />
+          </div>
         </div>
 
         {/* Tous les outils, en deux rangées qui défilent en sens opposés.
