@@ -4,8 +4,6 @@ import * as React from "react";
 
 import { cn } from "@/lib/utils";
 
-/** Le paysage nocturne posé derrière le logo, cadré en « cover » et calé en bas. */
-const IMAGE_FOND = "/images/pied-nuit.webp";
 /** Un tour complet en 16 s : assez lent pour qu'on suive les reflets sur les arêtes. */
 const DUREE_TOUR = 16;
 /** Au-delà de 1,75, la transmission coûte cher pour une différence invisible. */
@@ -21,8 +19,9 @@ const PIXEL_RATIO_MAX = 1.75;
  *
  * Le verre ne se voit que par ce qu'il reflète et ce qu'il laisse passer :
  * d'où le « studio » invisible (bandes blanches en haut, bande cuivrée sur le
- * côté, panneau bleu dessous) qui ne sert qu'à dessiner les arêtes, et le
- * paysage en fond, que la transmission déforme à travers les chevrons.
+ * côté, panneau bleu dessous) qui ne sert qu'à dessiner les arêtes. Le fond
+ * est transparent : le logo flotte directement sur la page (le paysage de nuit
+ * d'origine a été retiré à la demande de Rafael).
  */
 export function SceneLogoVerre({ className }: { className?: string }) {
   const conteneurRef = React.useRef<HTMLDivElement>(null);
@@ -52,7 +51,12 @@ export function SceneLogoVerre({ className }: { className?: string }) {
 
       let renderer: import("three").WebGLRenderer;
       try {
-        renderer = new THREE.WebGLRenderer({ antialias: true, powerPreference: "high-performance" });
+        renderer = new THREE.WebGLRenderer({
+          alpha: true,
+          antialias: true,
+          premultipliedAlpha: true,
+          powerPreference: "high-performance",
+        });
       } catch (erreur) {
         console.warn("[scene-logo-verre] WebGL impossible", erreur);
         return;
@@ -61,14 +65,14 @@ export function SceneLogoVerre({ className }: { className?: string }) {
       renderer.toneMapping = THREE.ACESFilmicToneMapping;
       renderer.toneMappingExposure = 1;
       renderer.outputColorSpace = THREE.SRGBColorSpace;
+      renderer.setClearColor(0x000000, 0);
       const canvas = renderer.domElement;
       canvas.style.cssText = "display:block;width:100%;height:100%";
       canvas.setAttribute("aria-hidden", "true");
       conteneur.appendChild(canvas);
 
+      // Pas de `scene.background` : le canvas reste transparent.
       const scene = new THREE.Scene();
-      // Repli tant que l'image n'est pas là (ou si elle manque) : un bleu nuit.
-      scene.background = new THREE.Color(0x050b1f);
 
       const camera = new THREE.PerspectiveCamera(30, 1, 0.1, 100);
       camera.position.set(0, 0, 10);
@@ -119,12 +123,17 @@ export function SceneLogoVerre({ className }: { className?: string }) {
       const groupe = new THREE.Group();
       scene.add(groupe);
 
+      // Sur fond transparent, un verre incolore disparaît dans la page blanche.
+      // Le verre est donc teinté dans la masse au bleu du site : plus il est
+      // épais à un endroit, plus il fonce, ce qui dessine le volume.
       const materiau = new THREE.MeshPhysicalMaterial({
-        color: 0xffffff,
+        color: 0x60a5fa,
         transmission: 1,
         roughness: 0,
         metalness: 0,
-        thickness: 0.25,
+        thickness: 1.2,
+        attenuationColor: new THREE.Color(0x2563eb),
+        attenuationDistance: 1.6,
         ior: 1.33,
         clearcoat: 1,
         clearcoatRoughness: 0,
@@ -167,39 +176,6 @@ export function SceneLogoVerre({ className }: { className?: string }) {
         console.warn("[scene-logo-verre] Logo introuvable", erreur);
       }
 
-      // --- Le paysage en fond, cadré en cover et calé en bas -------------
-      let texture: import("three").Texture | undefined;
-      function cadrerFond() {
-        const image = texture?.image as HTMLImageElement | undefined;
-        if (!texture || !image?.width) return;
-        const aspectEcran = conteneur!.clientWidth / Math.max(conteneur!.clientHeight, 1);
-        const aspectImage = image.width / image.height;
-        if (aspectEcran > aspectImage) {
-          // Écran plus large que l'image : on coupe en haut, jamais en bas.
-          texture.repeat.set(1, aspectImage / aspectEcran);
-          texture.offset.set(0, 0);
-        } else {
-          texture.repeat.set(aspectEcran / aspectImage, 1);
-          texture.offset.set((1 - aspectEcran / aspectImage) / 2, 0);
-        }
-      }
-      new THREE.TextureLoader().load(
-        IMAGE_FOND,
-        (t) => {
-          if (annule) {
-            t.dispose();
-            return;
-          }
-          t.colorSpace = THREE.SRGBColorSpace;
-          texture = t;
-          cadrerFond();
-          scene.background = t;
-          if (reduireMouvement || !visible) rendre(0);
-        },
-        undefined,
-        () => console.warn("[scene-logo-verre] Image de fond introuvable"),
-      );
-
       // --- Taille, rendu, boucle -----------------------------------------
       function redimensionner() {
         const largeur = conteneur!.clientWidth;
@@ -209,7 +185,6 @@ export function SceneLogoVerre({ className }: { className?: string }) {
         // Sur téléphone, on recule la caméra pour que le logo ne déborde pas.
         camera.position.z = camera.aspect < 1 ? 10 / Math.max(camera.aspect, 0.55) : 10;
         camera.updateProjectionMatrix();
-        cadrerFond();
       }
 
       function rendre(temps: number) {
@@ -261,7 +236,6 @@ export function SceneLogoVerre({ className }: { className?: string }) {
         observateurTaille.disconnect();
         geometrie?.dispose();
         materiau.dispose();
-        texture?.dispose();
         environnement.dispose();
         renderer.dispose();
         renderer.forceContextLoss();

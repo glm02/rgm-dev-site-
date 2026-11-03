@@ -39,20 +39,16 @@ export function Pied() {
   const colonnes = [groupes.slice(0, 2), groupes.slice(2)];
 
   return (
-    <footer className="relative mt-24 bg-black text-white">
-      <div className="relative h-[460px] overflow-hidden sm:h-[600px]">
+    // La scène du logo n'a pas de fond : elle repose sur la couleur de la page.
+    // Le noir ne commence qu'avec les liens, coins arrondis pour que la
+    // jonction ait l'air voulue et non coupée.
+    <footer className="relative mt-24">
+      <div className="relative h-[380px] sm:h-[520px]">
         <SceneLogoVerre />
-        <div
-          aria-hidden="true"
-          className="pointer-events-none absolute inset-x-0 top-0 h-48 bg-linear-to-b from-background to-transparent"
-        />
-        <div
-          aria-hidden="true"
-          className="pointer-events-none absolute inset-x-0 bottom-0 h-40 bg-linear-to-b from-transparent to-black"
-        />
       </div>
 
-      <div className="conteneur-large pt-6 pb-12">
+      <div className="rounded-t-[2rem] bg-black text-white">
+      <div className="conteneur-large pt-14 pb-12">
         <div className="grid gap-12 md:grid-cols-[minmax(0,1fr)_minmax(0,1.6fr)]">
           <div className="flex max-w-sm flex-col items-start">
             <Logo className="[&>span:last-child]:text-white" />
@@ -119,6 +115,7 @@ export function Pied() {
             © {annee} {SITE.nom}. Tous droits réservés.
           </p>
         </div>
+      </div>
       </div>
     </footer>
   );
