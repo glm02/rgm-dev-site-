@@ -247,6 +247,8 @@
   --font-sans: var(--font-sans);
   --font-mono: var(--font-mono);
   --font-heading: var(--font-sans);
+  --font-marqueur: var(--font-marqueur);
+  --font-titre: "SF Pro Display", -apple-system, BlinkMacSystemFont, var(--font-sans), sans-serif;
 
   /* L'échelle de bleu, disponible en utilitaire : bg-bleu-600, text-bleu-700… */
   --color-bleu-50: var(--bleu-50);
@@ -399,37 +401,33 @@
   --bleu-900: oklch(0.359 0.131 259);
   --bleu-950: oklch(0.256 0.090 261);
 
-  --background: oklch(1 0 0);
-  --foreground: oklch(0.175 0.012 258);
+  /* Valeurs reprises telles quelles des variables du fichier Figma
+     « RGM DEV WEBSITE » (collections Couleurs et Primitives). */
+  --background: #ffffff;
+  --foreground: #1a1a1a;
 
-  --card: oklch(1 0 0);
+  --card: #ffffff;
   --card-foreground: var(--foreground);
-  --popover: oklch(1 0 0);
+  --popover: #ffffff;
   --popover-foreground: var(--foreground);
 
-  --primary: var(--bleu-600);
-  --primary-foreground: oklch(0.99 0.003 256);
+  --primary: #405ce5;
+  --primary-foreground: #ffffff;
 
-  /* Les surfaces secondaires portent une trace de bleu plutôt qu'un gris pur :
-     c'est ce qui fait qu'un site bleu et blanc n'a pas l'air d'un site gris
-     avec des boutons bleus. */
-  --secondary: oklch(0.970 0.009 256);
-  --secondary-foreground: var(--bleu-900);
-  --muted: oklch(0.970 0.009 256);
-  /* Le texte secondaire est noir, pas gris : sur fond blanc — et plus encore
-     avec la nappe de points qui passe derrière — un gris moyen ne se lisait
-     pas. La hiérarchie passe par la taille et la graisse, pas par la couleur.
-     (En thème sombre, le secondaire reste plus clair que le fond, c'est
-     l'inverse qui se lit mal.) */
-  --muted-foreground: oklch(0.2 0.013 258);
-  --accent: var(--bleu-50);
-  --accent-foreground: var(--bleu-800);
+  --secondary: #fafafa;
+  --secondary-foreground: var(--foreground);
+  --muted: #fafafa;
+  /* Texte secondaire noir, pas gris : demande de Rafael, la hiérarchie passe
+     par la taille et la graisse. */
+  --muted-foreground: #1a1a1a;
+  --accent: #eef1fd;
+  --accent-foreground: #0b2880;
 
-  --destructive: oklch(0.577 0.245 27.325);
+  --destructive: #e7000b;
 
-  --border: oklch(0.918 0.011 256);
-  --input: oklch(0.918 0.011 256);
-  --ring: var(--bleu-500);
+  --border: #e5e5e6;
+  --input: #e5e5e6;
+  --ring: #405ce5;
 
   --chart-1: var(--bleu-600);
   --chart-2: var(--bleu-400);

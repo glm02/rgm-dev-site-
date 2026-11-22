@@ -1,5 +1,4 @@
-import { Entete } from "@/components/site/entete";
-import { Pied } from "@/components/site/pied";
+import { PiedDePage } from "@/components/rgm/pied-de-page";
 import { JsonLd } from "@/components/commun/json-ld";
 import { noteGlobale } from "@/lib/donnees";
 import { jsonLdEntreprise, jsonLdSiteEtAuteur } from "@/lib/seo";
@@ -29,13 +28,11 @@ export default async function LayoutSite({ children }: LayoutProps<"/">) {
         Aller au contenu
       </a>
 
-      <Entete />
-
       <main id="contenu" className="flex-1">
         {children}
       </main>
 
-      <Pied />
+      <PiedDePage />
     </>
   );
 }

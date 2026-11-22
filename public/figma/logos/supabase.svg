@@ -1,0 +1,10 @@
+<svg preserveAspectRatio="none" overflow="visible" style="display: block;" width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+<g id="Logo supabase" clip-path="url(#clip0_0_78)">
+<path id="Vector" d="M11.9 1.036C11.885 0.05 10.64 -0.374 10.026 0.399L0.764 12.05C-0.33 13.427 0.65 15.455 2.409 15.455H11.988L12.101 22.965C12.115 23.95 13.36 24.373 13.974 23.601L23.236 11.948C24.329 10.573 23.349 8.545 21.591 8.545H11.949L11.9 1.036Z" fill="#3FCF8E"/>
+</g>
+<defs>
+<clipPath id="clip0_0_78">
+<rect width="24" height="24" fill="white"/>
+</clipPath>
+</defs>
+</svg>

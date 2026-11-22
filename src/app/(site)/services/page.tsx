@@ -1,7 +1,11 @@
 import type { Metadata } from "next";
+import Link from "next/link";
 
-import { AppelAction } from "@/components/sections/appel-action";
-import { Services } from "@/components/sections/services";
+import { BandeauPaysage, TitreHero } from "@/components/rgm/bandeau";
+import { AppelProjet, CARTE_PLATE, ColonnePage, ListeCoches } from "@/components/rgm/blocs-service";
+import type { NomIcone } from "@/components/rgm/icones";
+import { LIENS } from "@/components/rgm/liens";
+import { TuileIcone } from "@/components/rgm/primitives";
 import { metadonnees } from "@/lib/seo";
 import { SITE } from "@/lib/site";
 
@@ -12,21 +16,47 @@ export const metadata: Metadata = metadonnees({
   chemin: "/services",
 });
 
+const SERVICES: { icone: NomIcone; titre: string; texte: string; inclus: string[]; lien: string; bouton: string }[] = [
+  {
+    icone: "discovery",
+    titre: "Sites web",
+    texte: "Un site rapide qui transforme les visites en demandes.",
+    inclus: ["Site vitrine et e-commerce", "Application métier et espace client", "Refonte et référencement local"],
+    lien: LIENS.sitesWeb,
+    bouton: "Découvrir les sites web",
+  },
+  {
+    icone: "workflow",
+    titre: "Automatisation IA",
+    texte: "Agents et workflows reliés à vos outils.",
+    inclus: ["Audit de vos processus", "Workflows n8n et agents Hermes", "Intégrations et validation humaine"],
+    lien: LIENS.automatisation,
+    bouton: "Découvrir l’automatisation IA",
+  },
+];
+
 export default function PageServices() {
   return (
     <>
-      <div className="conteneur pt-14 sm:pt-20">
-        <div className="mx-auto max-w-2xl text-center">
-          <h1 className="text-4xl font-semibold sm:text-5xl">Services</h1>
-          <p className="mt-5 text-lg leading-relaxed text-balance text-muted-foreground">
-            Trois façons de travailler ensemble. Les deux premières créent quelque
-            chose, la troisième fait qu&apos;il continue de tourner.
-          </p>
+      <BandeauPaysage paysage="montagnes" decalage={-66} hauteur={380} hauteurMobile={320}>
+        <TitreHero debut="Services" sousTitre="Sites web et automatisation IA, sur mesure." />
+      </BandeauPaysage>
+      <ColonnePage className="md:pt-20">
+        <div className="flex flex-col gap-4 md:flex-row md:gap-6 md:pb-14">
+          {SERVICES.map((s) => (
+            <div key={s.titre} className={`${CARTE_PLATE} flex flex-1 flex-col items-start gap-4 p-7`}>
+              <TuileIcone nom={s.icone} />
+              <h2 className="text-[26px] leading-[1.4] font-bold md:text-[32px]">{s.titre}</h2>
+              <p className="text-base leading-[1.4]">{s.texte}</p>
+              <ListeCoches items={s.inclus} />
+              <Link href={s.lien} className="inline-flex h-11 items-center rounded-[8px] border border-border bg-white px-4 text-sm font-medium">
+                {s.bouton}
+              </Link>
+            </div>
+          ))}
         </div>
-      </div>
-
-      <Services />
-      <AppelAction />
+        <AppelProjet />
+      </ColonnePage>
     </>
   );
 }

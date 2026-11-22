@@ -2,39 +2,31 @@ import type { Metadata } from "next";
 import Image from "next/image";
 import Link from "next/link";
 import { notFound } from "next/navigation";
-import { ArrowUpRight, CalendarDays, Euro, Timer } from "lucide-react";
 
-import { Apparait } from "@/components/commun/apparait";
-import { CarteAvis } from "@/components/commun/carte-avis";
-import { FilAriane } from "@/components/commun/fil-ariane";
 import { JsonLd } from "@/components/commun/json-ld";
-import { Objet3dProjet } from "@/components/commun/objet-3d-projet";
-import { AppelAction } from "@/components/sections/appel-action";
+import { BandeauPaysage } from "@/components/rgm/bandeau";
+import { FOND_TEXTURE, LOGOS_CLIENTS } from "@/components/rgm/blocs-service";
+import { FICHES, type FicheProjet } from "@/components/rgm/fiches-projets";
+import { Icone } from "@/components/rgm/icones";
+import { LIENS } from "@/components/rgm/liens";
+import { TuileIcone } from "@/components/rgm/primitives";
+import { AppelAction } from "@/components/rgm/sections-accueil";
 import { listerAvis, listerProjets, projetParSlug } from "@/lib/donnees";
 import { duree, fourchetteProjet } from "@/lib/format";
+import type { Projet } from "@/lib/types";
 import { jsonLdFilAriane, jsonLdProjet, metadonnees } from "@/lib/seo";
-import { cn } from "@/lib/utils";
+
+export const revalidate = 300;
 
 export async function generateStaticParams() {
   const projets = await listerProjets();
   return projets.map((projet) => ({ slug: projet.slug }));
 }
 
-export async function generateMetadata({
-  params,
-}: PageProps<"/realisations/[slug]">): Promise<Metadata> {
+export async function generateMetadata({ params }: PageProps<"/realisations/[slug]">): Promise<Metadata> {
   const { slug } = await params;
   const projet = await projetParSlug(slug);
-
-  if (!projet) {
-    return metadonnees({
-      titre: "Projet introuvable",
-      description: "",
-      chemin: `/realisations/${slug}`,
-      horsIndex: true,
-    });
-  }
-
+  if (!projet) return metadonnees({ titre: "Projet introuvable", description: "", chemin: `/realisations/${slug}`, horsIndex: true });
   return metadonnees({
     titre: projet.seo_titre ?? `${projet.titre} — étude de cas`,
     description: projet.seo_description ?? projet.resume,
@@ -43,272 +35,205 @@ export async function generateMetadata({
   });
 }
 
+function ficheDepuisProjet(p: Projet, suivant: string): FicheProjet {
+  const prix = fourchetteProjet(p.prix_min, p.prix_max);
+  return {
+    sousTitre: p.secteur ?? "",
+    resume: p.resume,
+    secteur: p.secteur ?? "",
+    budget: prix ?? undefined,
+    duree: duree(p.duree_jours) ?? undefined,
+    besoin: p.probleme ?? "",
+    solution: p.solution ?? "",
+    resultat: p.resultat ?? undefined,
+    livrables: ["Site sur mesure", "Mise en ligne", "Suivi"],
+    outils: p.stack.map((nom) => ({ nom })),
+    service: { libelle: "Sites web", href: LIENS.sitesWeb },
+    suivant,
+  };
+}
+
+function LienExterne() {
+  return (
+    <svg aria-hidden viewBox="0 0 24 24" width={16} height={16} fill="none" stroke="currentColor" strokeWidth={2} strokeLinecap="round" strokeLinejoin="round">
+      <path d="M15 3h6v6M10 14 21 3M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6" />
+    </svg>
+  );
+}
+
+const PILULE = "inline-flex h-8 items-center gap-1 rounded-full bg-[#171717] px-2.5 text-sm font-medium text-[#fafafa]";
+
 export default async function PageProjet({ params }: PageProps<"/realisations/[slug]">) {
   const { slug } = await params;
   const projet = await projetParSlug(slug);
-
   if (!projet) notFound();
 
-  const avis = await listerAvis({ projetId: projet.id });
+  const [avis, projets] = await Promise.all([listerAvis({ projetId: projet.id }), listerProjets()]);
+  const index = projets.findIndex((p) => p.slug === projet.slug);
+  const suivantParDefaut = projets[(index + 1) % projets.length]?.slug ?? projet.slug;
+  const fiche = FICHES[projet.slug] ?? ficheDepuisProjet(projet, suivantParDefaut);
+  const suivant = projets.find((p) => p.slug === fiche.suivant) ?? projets[(index + 1) % projets.length];
+  const logo = LOGOS_CLIENTS[projet.slug];
 
-  const etapes = [
-    { nom: "Accueil", href: "/" },
-    { nom: "Réalisations", href: "/realisations" },
-    { nom: projet.titre, href: `/realisations/${projet.slug}` },
-  ];
-
-  const prix = fourchetteProjet(projet.prix_min, projet.prix_max);
-  const dureeTexte = duree(projet.duree_jours);
+  const infos = [
+    { libelle: "Secteur", valeur: fiche.secteur },
+    { libelle: "Budget", valeur: fiche.budget },
+    { libelle: "Durée", valeur: fiche.duree },
+  ].filter((i): i is { libelle: string; valeur: string } => Boolean(i.valeur));
 
   const recits = [
-    { titre: "Le problème", texte: projet.probleme },
-    { titre: "Ce que j'ai construit", texte: projet.solution },
-    { titre: "Le résultat", texte: projet.resultat },
-  ].filter((bloc): bloc is { titre: string; texte: string } => Boolean(bloc.texte));
+    { titre: "Le besoin", texte: fiche.besoin },
+    { titre: "La solution", texte: fiche.solution },
+    { titre: "Le résultat", texte: fiche.resultat },
+  ].filter((r): r is { titre: string; texte: string } => Boolean(r.texte));
 
   return (
     <>
       <JsonLd donnees={jsonLdProjet(projet, avis)} />
-      <JsonLd donnees={jsonLdFilAriane(etapes)} />
+      <JsonLd
+        donnees={jsonLdFilAriane([
+          { nom: "Accueil", href: "/" },
+          { nom: "Réalisations", href: LIENS.realisations },
+          { nom: projet.titre, href: `${LIENS.realisations}/${projet.slug}` },
+        ])}
+      />
 
-      <article>
-        <section className="relative overflow-hidden">
-          <div
-            aria-hidden="true"
-            className="halo-bleu pointer-events-none absolute inset-x-0 top-0 h-96"
-          />
+      <BandeauPaysage paysage="nuages" decalage={-126} hauteur={350} hauteurMobile={290} voile="clair">
+        <div className="flex w-full max-w-[1050px] flex-col items-center gap-3 text-center text-white">
+          {logo ? (
+            <span className="flex items-center rounded-[7px] bg-white p-[5px]">
+              {/* eslint-disable-next-line @next/next/no-img-element */}
+              <img src={logo.src} alt="" width={24} height={24} className="size-6 object-contain" />
+            </span>
+          ) : null}
+          <h1 className="font-titre text-[44px] leading-[1.05] font-bold tracking-[-1.76px] md:text-[96px] md:tracking-[-3.84px]">{projet.titre}</h1>
+          <p className="text-base leading-[1.2] md:text-[18px]">{fiche.sousTitre}</p>
+        </div>
+      </BandeauPaysage>
 
-          <div className="conteneur relative pt-8 pb-14">
-            <FilAriane etapes={etapes} />
-
-            <div className="mt-8 grid items-center gap-10 lg:grid-cols-[minmax(0,1.2fr)_minmax(0,1fr)] lg:gap-14">
-              <div className="max-w-2xl">
-                {projet.secteur && (
-                  <p className="text-sm font-semibold tracking-wider text-bleu-600 uppercase dark:text-bleu-400">
-                    {projet.secteur}
-                  </p>
-                )}
-
-                <h1 className="mt-3 text-4xl font-semibold sm:text-5xl">{projet.titre}</h1>
-
-                <p className="mt-5 text-xl leading-relaxed text-balance text-muted-foreground">
-                  {projet.resume}
-                </p>
-
-                {projet.url_live && (
-                  <a
-                    href={projet.url_live}
-                    target="_blank"
-                    rel="noreferrer"
-                    className={cn(
-                      "group mt-7 inline-flex h-11 items-center gap-2 rounded-xl bg-primary px-5",
-                      "text-sm font-medium text-primary-foreground",
-                      "transition-[background-color,scale] duration-150 ease-out",
-                      "hover:bg-bleu-700 active:scale-96 dark:hover:bg-bleu-400",
-                    )}
-                  >
-                    Voir le site en ligne
-                    <ArrowUpRight
-                      className="size-4 transition-[translate] duration-150 ease-out group-hover:-translate-y-0.5 group-hover:translate-x-0.5"
-                      strokeWidth={2}
-                      aria-hidden="true"
-                    />
-                  </a>
-                )}
+      <article className="mx-auto flex w-full max-w-[1232px] flex-col gap-[38px] px-4 pt-10 pb-14 md:pt-[54px]">
+        <section className="flex flex-col gap-[18px]">
+          <h2 className="text-[34px] leading-[1.12] font-bold tracking-[-1.36px] md:text-[42px] md:tracking-[-1.68px]">Le projet</h2>
+          <p className="max-w-[800px] text-[18px] leading-[1.44] md:text-[20px]">{fiche.resume}</p>
+          <div className="flex flex-col gap-3 md:flex-row">
+            {infos.map((i) => (
+              <div key={i.libelle} className="flex flex-1 flex-col gap-1 rounded-[16px] border border-border bg-white px-4 py-[13px] leading-[1.29]">
+                <span className="text-[13px] font-medium">{i.libelle}</span>
+                <span className="text-[22px] font-semibold tracking-[-0.22px]">{i.valeur}</span>
               </div>
-
-              <div className="relative aspect-[4/3] overflow-hidden rounded-3xl border border-border bg-slate-950/95 shadow-2xl">
-                <Objet3dProjet slug={projet.slug} />
-              </div>
-            </div>
-
-            {/* La fiche d'identité du projet. Le budget y figure : c'est la
-                promesse du site, et la masquer ici la viderait de son sens. */}
-            <dl className="mt-12 grid gap-px overflow-hidden rounded-2xl border border-border bg-border sm:grid-cols-3">
-              <Donnee
-                icone={Euro}
-                libelle="Budget"
-                valeur={
-                  // Sans prix renseigné : un projet interne n'a pas de budget
-                  // client ; pour un vrai client, le montant reste à saisir.
-                  prix ?? (/interne/i.test(projet.client_nom ?? "") ? "Projet interne" : "Sur devis")
-                }
-              />
-              <Donnee
-                icone={Timer}
-                libelle="Durée"
-                valeur={dureeTexte ?? "—"}
-              />
-              <Donnee
-                icone={CalendarDays}
-                libelle="Technologies"
-                valeur={`${projet.stack.length} briques`}
-              />
-            </dl>
-
-            {projet.image_couverture && (
-              <Apparait className="mt-10">
-                <ApercuSite
-                  image={projet.image_couverture}
-                  titre={projet.titre}
-                  url={projet.url_live}
-                />
-              </Apparait>
-            )}
+            ))}
           </div>
         </section>
 
-        <section className="conteneur pb-8">
-          <div className="grid gap-12 lg:grid-cols-[minmax(0,2fr)_minmax(0,1fr)]">
-            <div className="space-y-12">
-              {recits.map((bloc, index) => (
-                <Apparait key={bloc.titre} delai={index * 60}>
-                  <h2 className="text-2xl font-semibold sm:text-3xl">{bloc.titre}</h2>
-                  <p className="mt-4 text-[17px] leading-relaxed text-muted-foreground">
-                    {bloc.texte}
-                  </p>
-                </Apparait>
-              ))}
-
-              {recits.length === 0 && (
-                <p className="text-muted-foreground">
-                  L&apos;étude de cas détaillée de ce projet est en cours de rédaction.
-                </p>
-              )}
-            </div>
-
-            <aside className="lg:sticky lg:top-24 lg:self-start">
-              <div className="rounded-2xl border border-border bg-card p-6">
-                <h2 className="text-sm font-semibold tracking-wider uppercase">
-                  Stack technique
-                </h2>
-                <ul className="mt-4 flex flex-wrap gap-1.5">
-                  {projet.stack.map((techno) => (
-                    <li
-                      key={techno}
-                      className="rounded-md bg-secondary px-2.5 py-1.5 text-xs font-medium text-secondary-foreground"
-                    >
-                      {techno}
-                    </li>
-                  ))}
-                </ul>
-
-                {projet.client_nom && (
-                  <>
-                    <h2 className="mt-7 text-sm font-semibold tracking-wider uppercase">
-                      Client
-                    </h2>
-                    <p className="mt-2.5 text-sm text-muted-foreground">
-                      {projet.client_nom}
-                    </p>
-                  </>
-                )}
-
-                <Link
-                  href="/contact"
-                  className={cn(
-                    "mt-7 inline-flex h-11 w-full items-center justify-center rounded-xl",
-                    "border border-border bg-background text-sm font-medium",
-                    "transition-[background-color,scale] duration-150 ease-out",
-                    "hover:bg-secondary active:scale-96",
-                  )}
+        {projet.image_couverture ? (
+          fiche.apercu3d ? (
+            <div className="relative h-[300px] overflow-hidden rounded-[16px] md:h-[590px]" style={{ ...FOND_TEXTURE, perspective: 1480 }}>
+              <div className="absolute inset-0 hidden md:block" style={{ transformStyle: "preserve-3d" }}>
+                <div
+                  className="absolute top-9 left-[7%] h-[524px] w-[72%] overflow-hidden rounded-[16px] border border-border shadow-[0_18px_38px_rgba(6,24,92,0.2)]"
+                  style={{ transform: "translateZ(6px) rotateX(8deg) rotateY(-10deg) rotateZ(-2deg)" }}
                 >
-                  Un projet similaire ?
-                </Link>
+                  <Image src={projet.image_couverture} alt={`Capture du site ${projet.titre}`} fill sizes="860px" className="object-cover object-top" priority />
+                </div>
+                <div
+                  className="absolute top-[400px] left-[66%] flex w-[350px] items-center gap-[13px] rounded-[16px] border border-border bg-white px-[18px] py-[17px] shadow-[0_12px_31px_rgba(6,24,92,0.24)]"
+                  style={{ transform: "translateZ(88px) rotateX(4deg) rotateY(-5deg)" }}
+                >
+                  <TuileIcone nom="edit" />
+                  <div className="flex flex-col items-start gap-1 leading-[1.21]">
+                    <span className="text-[22px] font-semibold">Demande de devis</span>
+                    <span className="text-base">Ramonage</span>
+                    <span className="inline-flex h-[22px] items-center rounded-full bg-secondary px-2 text-xs font-medium">À valider</span>
+                  </div>
+                </div>
               </div>
-            </aside>
+              <div className="absolute inset-4 overflow-hidden rounded-[12px] border border-border md:hidden">
+                <Image src={projet.image_couverture} alt={`Capture du site ${projet.titre}`} fill sizes="100vw" className="object-cover object-top" />
+              </div>
+            </div>
+          ) : (
+            <div className="relative h-[240px] overflow-hidden rounded-[16px] border border-border md:h-[590px]">
+              <Image src={projet.image_couverture} alt={`Capture du site ${projet.titre}`} fill sizes="(min-width: 1232px) 1200px, 100vw" className="object-cover object-top" priority />
+            </div>
+          )
+        ) : null}
+
+        <section className={`grid gap-6 md:gap-[26px] ${recits.length === 3 ? "md:grid-cols-3" : "md:grid-cols-2"}`}>
+          {recits.map((r) => (
+            <div key={r.titre} className="flex flex-col gap-2">
+              <h2 className="text-[24px] leading-[1.29] font-semibold tracking-[-0.54px] md:text-[27px]">{r.titre}</h2>
+              <p className="text-[17px] leading-[1.5]">{r.texte}</p>
+            </div>
+          ))}
+        </section>
+
+        <section className="flex flex-col gap-[17px] rounded-[16px] p-[22px]" style={FOND_TEXTURE}>
+          <h2 className="text-[28px] leading-[1.29] font-bold tracking-[-0.96px] md:text-[32px]">Ce qui a été livré</h2>
+          <div className="flex flex-col gap-3 md:flex-row">
+            {fiche.livrables.map((l) => (
+              <div key={l} className="flex flex-1 items-center gap-2.5 rounded-[16px] border border-border bg-white py-[13px] pr-3 pl-[17px]">
+                <TuileIcone nom="check" />
+                <span className="text-base leading-[1.32] font-medium">{l}</span>
+              </div>
+            ))}
           </div>
         </section>
 
-        {avis.length > 0 && (
-          <section className="conteneur py-16">
-            <h2 className="text-2xl font-semibold sm:text-3xl">
-              Ce qu&apos;en dit le client
-            </h2>
-            <div className="mt-8 grid gap-5 md:grid-cols-2">
-              {avis.map((un, index) => (
-                <Apparait key={un.id} delai={index * 70} className="h-full">
-                  <CarteAvis avis={un} />
-                </Apparait>
-              ))}
-            </div>
-          </section>
-        )}
+        <section className="flex flex-col gap-[9px]">
+          <h2 className="text-[24px] leading-[1.29] font-semibold tracking-[-0.54px] md:text-[27px]">Technologies</h2>
+          <div className="flex flex-wrap gap-[7px]">
+            {fiche.outils.map((o) => (
+              <span key={o.nom} className="inline-flex items-center gap-[5px] rounded-[8px] bg-[#f7f9fe] px-[9px] py-1.5 text-[13px] leading-[1.29] font-medium">
+                {o.logo ? (
+                  // eslint-disable-next-line @next/next/no-img-element
+                  <img src={o.logo} alt="" width={17} height={17} className="size-[17px] object-contain" />
+                ) : o.nom === "JavaScript" ? (
+                  <span aria-hidden className="flex size-[17px] items-end justify-end rounded-[2px] bg-[#f7df1e] pr-[2px] text-[8px] leading-none font-bold text-black">
+                    JS
+                  </span>
+                ) : null}
+                {o.nom}
+              </span>
+            ))}
+          </div>
+        </section>
+
+        <div className="flex flex-wrap items-center justify-between gap-3">
+          {projet.url_live && fiche.apercu3d ? (
+            <a href={projet.url_live} target="_blank" rel="noopener" className={PILULE}>
+              Voir le site
+              <LienExterne />
+            </a>
+          ) : null}
+          <Link href={LIENS.realisations} className={`${PILULE} ${fiche.apercu3d ? "" : "mx-auto"}`}>
+            Toutes les réalisations
+            <LienExterne />
+          </Link>
+        </div>
       </article>
 
-      <AppelAction />
+      <div className="px-2 md:px-3">
+        <AppelAction />
+      </div>
+
+      <nav aria-label="Suite" className="mx-auto flex w-full max-w-[1416px] flex-col gap-4 px-4 pt-10 pb-14 md:flex-row md:px-[108px] md:pt-16 md:pb-20">
+        {[
+          { libelle: "Service", titre: fiche.service.libelle, href: fiche.service.href },
+          ...(suivant ? [{ libelle: "Projet suivant", titre: suivant.titre, href: `${LIENS.realisations}/${suivant.slug}` }] : []),
+        ].map((l) => (
+          <Link
+            key={l.libelle}
+            href={l.href}
+            className="flex flex-1 items-center justify-between rounded-[16px] border border-border bg-white p-6 shadow-[0_1px_2px_rgba(0,0,0,0.04)]"
+          >
+            <span className="flex flex-col gap-1">
+              <span className="text-[13px] font-medium">{l.libelle}</span>
+              <span className="text-[18px] font-semibold">{l.titre}</span>
+            </span>
+            <Icone nom="fleche-droite" taille={20} className="text-primary" />
+          </Link>
+        ))}
+      </nav>
     </>
-  );
-}
-
-function Donnee({
-  icone: Icone,
-  libelle,
-  valeur,
-}: {
-  icone: React.ComponentType<{ className?: string; strokeWidth?: number }>;
-  libelle: string;
-  valeur: string;
-}) {
-  return (
-    <div className="bg-card p-5">
-      <dt className="flex items-center gap-2 text-sm text-muted-foreground">
-        <Icone className="size-4" strokeWidth={1.75} />
-        {libelle}
-      </dt>
-      <dd className="mt-1.5 text-lg font-semibold tabular-nums">{valeur}</dd>
-    </div>
-  );
-}
-
-/**
- * La capture du site, dans un cadre de navigateur.
- *
- * Un visiteur juge d'abord sur pièce : voir le site compte plus que le lire.
- * Le cadre (barre et adresse) dit « c'est un vrai site en ligne », pas une
- * maquette. Cliquable vers le site quand il est en ligne.
- */
-function ApercuSite({ image, titre, url }: { image: string; titre: string; url: string | null }) {
-  const domaine = url ? new URL(url).hostname.replace(/^www\./, "") : null;
-
-  const contenu = (
-    <figure className="overflow-hidden rounded-2xl border border-border bg-card shadow-[0_1px_2px_oklch(0_0_0/0.04),0_24px_48px_-24px_oklch(0_0_0/0.18)]">
-      <div className="flex h-10 items-center gap-3 border-b border-border bg-secondary/60 px-4">
-        <span className="flex gap-1.5" aria-hidden="true">
-          <span className="size-2.5 rounded-full bg-border" />
-          <span className="size-2.5 rounded-full bg-border" />
-          <span className="size-2.5 rounded-full bg-border" />
-        </span>
-        {domaine && (
-          <span className="mx-auto truncate rounded-md bg-background px-3 py-0.5 text-xs font-medium">
-            {domaine}
-          </span>
-        )}
-      </div>
-      <div className="relative aspect-[16/10] bg-secondary">
-        <Image
-          src={image}
-          alt={`Page d'accueil du site ${titre}`}
-          fill
-          priority
-          sizes="(min-width: 1280px) 1200px, 100vw"
-          className="object-cover object-top"
-        />
-      </div>
-    </figure>
-  );
-
-  if (!url) return contenu;
-
-  return (
-    <a
-      href={url}
-      target="_blank"
-      rel="noreferrer"
-      aria-label={`Ouvrir le site ${titre} dans un nouvel onglet`}
-      className="block rounded-2xl transition-[translate] duration-200 ease-out hover:-translate-y-0.5 focus-visible:outline-none focus-visible:ring-3 focus-visible:ring-ring/40"
-    >
-      {contenu}
-    </a>
   );
 }

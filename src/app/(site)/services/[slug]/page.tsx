@@ -1,36 +1,104 @@
 import type { Metadata } from "next";
-import Link from "next/link";
 import { notFound } from "next/navigation";
-import { ArrowRight, Check } from "lucide-react";
 
-import { Apparait } from "@/components/commun/apparait";
-import { CarteOffre } from "@/components/commun/carte-offre";
-import { FilAriane } from "@/components/commun/fil-ariane";
 import { JsonLd } from "@/components/commun/json-ld";
-import { Objet3dService } from "@/components/commun/objet-3d-service";
-import { AppelAction } from "@/components/sections/appel-action";
+import { BandeauPaysage, BoutonDegrade, TitreHero, type NomPaysage } from "@/components/rgm/bandeau";
+import {
+  AppelBesoin,
+  CarteFaq,
+  ColonnePage,
+  ExempleEtBudget,
+  Marqueur,
+  ParcoursDevis,
+  Prestations,
+  type Prestation,
+} from "@/components/rgm/blocs-service";
+import { LIENS } from "@/components/rgm/liens";
+import { Logo } from "@/components/rgm/primitives";
 import { listerOffres, listerServices, serviceParSlug } from "@/lib/donnees";
 import { jsonLdFilAriane, jsonLdService, metadonnees } from "@/lib/seo";
-import { cn } from "@/lib/utils";
 
-/**
- * Les pages service sont les cibles des campagnes Google Ads : elles doivent
- * exister à l'avance en statique, pas être rendues à la demande. D'où la
- * génération des chemins au build.
- */
+type ContenuService = {
+  paysage: NomPaysage;
+  decalage: number;
+  hauteur: number;
+  hauteurMobile: number;
+  hero: { debut?: string; marqueur: string; sousTitre: string; taille?: number; tailleMarqueur?: number; aLaLigne?: boolean; logos?: string[] };
+  parcours?: boolean;
+  titrePrestations: React.ReactNode;
+  prestations: Prestation[];
+  exemple: string;
+  budget: { libelle: string; prix: string };
+  faq: { q: string; r: string }[];
+  appel: { texte: string; avecPaysage?: boolean };
+};
+
+const CONTENUS: Record<string, ContenuService> = {
+  "sites-web": {
+    paysage: "chaine-alpine",
+    decalage: -130,
+    hauteur: 365,
+    hauteurMobile: 310,
+    hero: { debut: "Sites", marqueur: "web", sousTitre: "Vitrine, e-commerce et refonte." },
+    titrePrestations: "Ce que vous pouvez mettre en place",
+    prestations: [
+      { visuel: { icone: "category" }, titre: "Site vitrine", texte: "Présentez vos services et recevez vos demandes de devis." },
+      { visuel: { icone: "category" }, titre: "Site sur mesure", texte: "Ajoutez une réservation, un catalogue ou un espace client." },
+      { visuel: { icone: "workflow" }, titre: "Refonte", texte: "Améliorez l’expérience mobile, la vitesse et le référencement." },
+    ],
+    exemple: "Un site par métier et un outil de suivi des demandes de devis.",
+    budget: { libelle: "Site vitrine · 2 à 3 semaines", prix: "1 500 à 3 000 €" },
+    faq: [
+      { q: "Pourrai-je modifier le site ?", r: "Oui. Vous modifiez vos contenus depuis le back-office." },
+      { q: "Le référencement est-il prévu ?", r: "Oui. Le référencement local est travaillé dès la structure du site." },
+      { q: "Que se passe-t-il après la mise en ligne ?", r: "Un forfait peut couvrir la surveillance, les sauvegardes et les mises à jour." },
+    ],
+    appel: { texte: "Présentez votre activité et les fonctions attendues." },
+  },
+  "automatisation-ia": {
+    paysage: "sommet-et-nuages",
+    decalage: -78,
+    hauteur: 470,
+    hauteurMobile: 405,
+    hero: {
+      debut: "Automatisation",
+      marqueur: "Agents IA",
+      sousTitre: "Un agent sur mesure, connecté à vos outils.",
+      tailleMarqueur: 69,
+      aLaLigne: true,
+      logos: ["/figma/logos/hermes.png", "/figma/logos/openbot.png", "/figma/logos/n8n.svg"],
+    },
+    parcours: true,
+    titrePrestations: (
+      <>
+        <Marqueur>Agents</Marqueur>, workflows et audit
+      </>
+    ),
+    prestations: [
+      { visuel: { logos: ["/figma/logos/hermes.png", "/figma/logos/openbot.png"] }, titre: "Agent sur mesure", texte: "Hermes ou OpenBot, avec vos règles." },
+      { visuel: { logos: ["/figma/logos/n8n.svg"] }, titre: "Workflow n8n", texte: "Reliez vos outils et automatisez leurs échanges." },
+      { visuel: { icone: "search" }, titre: "Audit des tâches", texte: "Repérez les tâches à déléguer." },
+    ],
+    exemple: "Devis, planning et relances.",
+    budget: { libelle: "Audit d’automatisation · 1 semaine", prix: "600 à 900 €" },
+    faq: [
+      { q: "Par quoi commence-t-on ?", r: "Par un audit des tâches répétitives et du temps qu’elles prennent." },
+      { q: "L’agent peut-il utiliser mes outils ?", r: "Oui, selon les accès et intégrations que vous autorisez." },
+      { q: "Puis-je valider les actions sensibles ?", r: "Oui. Une validation peut précéder l’envoi d’un devis ou d’un message." },
+    ],
+    appel: { texte: "Quelle tâche voulez-vous déléguer ?", avecPaysage: true },
+  },
+};
+
 export async function generateStaticParams() {
   const services = await listerServices();
   return services.map((service) => ({ slug: service.slug }));
 }
 
-export async function generateMetadata({
-  params,
-}: PageProps<"/services/[slug]">): Promise<Metadata> {
+export async function generateMetadata({ params }: PageProps<"/services/[slug]">): Promise<Metadata> {
   const { slug } = await params;
   const service = await serviceParSlug(slug);
-
   if (!service) return metadonnees({ titre: "Service introuvable", description: "", chemin: `/services/${slug}`, horsIndex: true });
-
   return metadonnees({
     titre: service.seo_titre ?? service.titre,
     description: service.seo_description ?? service.accroche,
@@ -41,156 +109,74 @@ export async function generateMetadata({
 export default async function PageService({ params }: PageProps<"/services/[slug]">) {
   const { slug } = await params;
   const service = await serviceParSlug(slug);
-
   if (!service) notFound();
 
-  const toutesLesOffres = await listerOffres();
-  const offres = toutesLesOffres.filter((offre) => offre.service_id === service.id);
-
+  const offres = (await listerOffres()).filter((offre) => offre.service_id === service.id);
   const etapes = [
     { nom: "Accueil", href: "/" },
     { nom: "Services", href: "/services" },
     { nom: service.titre, href: `/services/${service.slug}` },
   ];
 
+  const c: ContenuService = CONTENUS[slug] ?? {
+    paysage: "montagnes",
+    decalage: -66,
+    hauteur: 380,
+    hauteurMobile: 320,
+    hero: { marqueur: service.titre, sousTitre: service.accroche },
+    titrePrestations: "Les formules",
+    prestations: offres.slice(0, 3).map((o) => ({ visuel: { icone: "shield" }, titre: o.nom, texte: o.description ?? "" })),
+    exemple: "Un site surveillé, sauvegardé et mis à jour.",
+    budget: { libelle: offres[0]?.nom ?? service.titre, prix: offres[0] ? `${offres[0].prix_min} à ${offres[0].prix_max} €` : "Sur devis" },
+    faq: [],
+    appel: { texte: "Présentez votre activité et les fonctions attendues." },
+  };
+
   return (
     <>
       <JsonLd donnees={jsonLdService(service, offres)} />
       <JsonLd donnees={jsonLdFilAriane(etapes)} />
-
-      <section className="relative overflow-hidden">
-        <div
-          aria-hidden="true"
-          className="halo-bleu pointer-events-none absolute inset-x-0 top-0 h-96"
+      {c.faq.length > 0 ? (
+        <JsonLd
+          donnees={{
+            "@context": "https://schema.org",
+            "@type": "FAQPage",
+            mainEntity: c.faq.map((f) => ({ "@type": "Question", name: f.q, acceptedAnswer: { "@type": "Answer", text: f.r } })),
+          }}
         />
+      ) : null}
 
-        <div className="conteneur relative pt-8 pb-16 sm:pb-20">
-          <FilAriane etapes={etapes} />
-
-          <div className="mt-8 grid items-center gap-10 lg:grid-cols-[minmax(0,1.2fr)_minmax(0,1fr)] lg:gap-14">
-            <div className="max-w-2xl">
-              <h1 className="text-4xl font-semibold sm:text-5xl">{service.titre}</h1>
-
-              <p className="mt-5 text-xl leading-relaxed text-balance text-muted-foreground">
-                {service.accroche}
-              </p>
-
-              {service.description && (
-                <p className="mt-6 max-w-2xl text-[17px] leading-relaxed text-muted-foreground">
-                  {service.description}
-                </p>
-              )}
-
-              <div className="mt-9 flex flex-col gap-3 sm:flex-row">
-                <Link
-                  href={`/contact?service=${encodeURIComponent(service.titre)}`}
-                  className={cn(
-                    "group inline-flex h-12 items-center justify-center gap-2 rounded-xl bg-primary px-6",
-                    "text-[15px] font-medium text-primary-foreground",
-                    "shadow-[0_1px_2px_oklch(0_0_0/0.10),0_10px_30px_-12px_var(--bleu-600)]",
-                    "transition-[background-color,scale] duration-150 ease-out",
-                    "hover:bg-bleu-700 active:scale-96 dark:hover:bg-bleu-400",
-                  )}
-                >
-                  Demander un devis
-                  <ArrowRight
-                    className="size-4 transition-[translate] duration-150 ease-out group-hover:translate-x-0.5"
-                    strokeWidth={2}
-                    aria-hidden="true"
-                  />
-                </Link>
-
-                <Link
-                  href="/realisations"
-                  className={cn(
-                    "inline-flex h-12 items-center justify-center rounded-xl border border-border bg-background px-6",
-                    "text-[15px] font-medium",
-                    "transition-[background-color,scale] duration-150 ease-out",
-                    "hover:bg-secondary active:scale-96",
-                  )}
-                >
-                  Voir des exemples
-                </Link>
-              </div>
-            </div>
-
-            <div className="relative aspect-[4/3] overflow-hidden rounded-3xl border border-border bg-slate-950/95 shadow-2xl">
-              <Objet3dService slug={service.slug} />
-            </div>
-          </div>
-        </div>
-      </section>
-
-      {offres.length > 0 && (
-        <section className="border-y border-border bg-secondary/30 py-20 sm:py-24">
-          <div className="conteneur">
-            <div className="mx-auto max-w-2xl text-center">
-              <h2 className="text-3xl font-semibold sm:text-4xl">
-                Les formules {service.titre.toLowerCase()}
-              </h2>
-              <p className="mt-4 text-lg text-balance text-muted-foreground">
-                Prix HT indicatifs. Le devis devient ferme une fois le périmètre écrit.
-              </p>
-            </div>
-
-            <div
-              className={cn(
-                "mt-16 grid gap-5",
-                offres.length === 1 && "mx-auto max-w-md",
-                offres.length === 2 && "mx-auto max-w-3xl md:grid-cols-2",
-                offres.length >= 3 && "md:grid-cols-3",
-              )}
-            >
-              {offres.map((offre, index) => (
-                <Apparait key={offre.id} delai={index * 70} className="h-full">
-                  <CarteOffre offre={offre} />
-                </Apparait>
+      <BandeauPaysage paysage={c.paysage} decalage={c.decalage} hauteur={c.hauteur} hauteurMobile={c.hauteurMobile}>
+        <TitreHero
+          debut={c.hero.debut}
+          marqueur={c.hero.marqueur}
+          sousTitre={c.hero.sousTitre}
+          taille={c.hero.taille}
+          tailleMarqueur={c.hero.tailleMarqueur}
+          marqueurALaLigne={c.hero.aLaLigne}
+        >
+          <BoutonDegrade href={`${LIENS.contact}?service=${encodeURIComponent(service.titre)}`} className="mt-3">
+            Demander un devis
+          </BoutonDegrade>
+          {c.hero.logos ? (
+            <div className="flex gap-2">
+              {c.hero.logos.map((l) => (
+                <span key={l} className="flex size-8 items-center justify-center rounded-[8px] bg-white">
+                  <Logo src={l} taille={20} className="object-contain" />
+                </span>
               ))}
             </div>
-          </div>
-        </section>
-      )}
+          ) : null}
+        </TitreHero>
+      </BandeauPaysage>
 
-      <section className="conteneur py-20 sm:py-24">
-        <div className="mx-auto grid max-w-4xl gap-10 md:grid-cols-2">
-          <Apparait>
-            <h2 className="text-2xl font-semibold">Ce qui est toujours compris</h2>
-            <ul className="mt-6 space-y-3.5">
-              {[
-                "Un interlocuteur unique, du premier appel à la mise en ligne",
-                "Le code vous appartient, sur votre dépôt",
-                "Rendu serveur et temps de chargement mesurés",
-                "Accessible au clavier et sur mobile",
-                "Aucun abonnement obligatoire à un outil tiers",
-              ].map((ligne) => (
-                <li key={ligne} className="flex gap-2.5 text-[15px]">
-                  <Check
-                    className="mt-1 size-4 shrink-0 text-bleu-600 dark:text-bleu-400"
-                    strokeWidth={2.25}
-                    aria-hidden="true"
-                  />
-                  <span className="leading-relaxed">{ligne}</span>
-                </li>
-              ))}
-            </ul>
-          </Apparait>
-
-          <Apparait delai={70}>
-            <h2 className="text-2xl font-semibold">Ce que je ne fais pas</h2>
-            <p className="mt-6 text-[15px] leading-relaxed text-muted-foreground">
-              Je ne prends pas de projet dont je ne suis pas certain de pouvoir tenir le
-              délai, je ne facture pas une refonte quand une correction suffit, et je ne
-              vends pas d&apos;IA là où une règle de trois ferait l&apos;affaire.
-            </p>
-            <p className="mt-4 text-[15px] leading-relaxed text-muted-foreground">
-              Si votre besoin sort de mon périmètre, je vous le dis au premier appel et,
-              quand je le peux, je vous oriente vers quelqu&apos;un de mieux placé.
-            </p>
-          </Apparait>
-        </div>
-      </section>
-
-      <AppelAction />
+      <ColonnePage>
+        {c.parcours ? <ParcoursDevis /> : null}
+        <Prestations titre={c.titrePrestations} items={c.prestations} />
+        <ExempleEtBudget exemple={c.exemple} lienExemple={`${LIENS.realisations}/atout-travaux`} libelleBudget={c.budget.libelle} prix={c.budget.prix} />
+        {c.faq.length > 0 ? <CarteFaq questions={c.faq} /> : null}
+        <AppelBesoin texte={c.appel.texte} avecPaysage={c.appel.avecPaysage} />
+      </ColonnePage>
     </>
   );
 }
