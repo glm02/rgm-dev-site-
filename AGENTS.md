@@ -170,6 +170,10 @@ politiques **RLS** — pas par une simple vérification côté client.
 
 **Bleu et blanc. Et ça doit être parfait.**
 
+Toute nouvelle page ou écran se dessine d'abord dans le Figma « RGM DEV
+WEBSITE » (skill `maquette-figma`) ; plan des pages dans `03 · Architecture`,
+règles détaillées et datées dans `docs/design-system.md`.
+
 - Fond blanc dominant, bleu comme unique couleur d'accent, **texte en noir** —
   y compris le texte secondaire : pas de gris, il ne se lit pas sur le blanc
   (demande explicite de Rafael). La hiérarchie passe par la taille et la
