@@ -344,7 +344,7 @@ export function AppelAction() {
     <div className="mx-auto w-full max-w-[1416px]">
       <div className="relative flex flex-col items-center gap-6 overflow-hidden rounded-[20px] py-16 md:rounded-[24px] md:py-24">
         <Image src="/figma/images/nuages.webp" alt="" fill sizes="100vw" className="object-cover" style={{ objectPosition: "50% 30%" }} />
-        <h2 className="relative text-[40px] font-bold tracking-[-1.2px] text-white md:text-[56px] md:tracking-[-1.68px]">
+        <h2 className="relative text-[40px] font-bold tracking-[-1.2px] text-white [text-shadow:0_2px_14px_rgba(4,14,64,0.5)] md:text-[56px] md:tracking-[-1.68px]">
           Un <span className="font-marqueur font-normal tracking-normal">projet</span> ?
         </h2>
         <BoutonPilule href={LIENS.contact} style="noir" fleche className="relative">
