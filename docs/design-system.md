@@ -28,6 +28,7 @@ Charte commune : skill `charte-rgm`. Kit de code : skill `ui-rgm`.
 - Chaque marque citée a son logo, jamais deux fois le même logo dans un bloc. Une bande de logos répétés fait remplissage. (2026-11-22)
 
 ## Blocs
+- Navigation : trois colonnes égales (logo, pilule de menu, actions), la pilule centrée sur la page. Avec un simple « espace entre », elle se décalait vers la gauche car les actions sont plus larges que le logo. (2026-11-23)
 - Bandeau photo : carte arrondie 24, marge 12, paysage bleu tramé + voile, navigation en verre dessus ; hauteur 282 (légal) à 470 px (Automatisation). (2026-11-22)
 - Page intérieure : colonne 1200 px, 52 px entre blocs, cartes rayon 16 bordure 1 px, padding 28. (2026-11-22)
 - Fin de page : un appel à l'action (« Échangeons sur votre besoin » ou « Un projet ? »). Aucune page sans suite. (2026-11-22)

@@ -111,8 +111,8 @@ export function Navigation() {
   }, [services]);
 
   return (
-    <nav aria-label="Navigation principale" className="relative z-20 flex w-full items-center justify-between">
-      <Link href={LIENS.accueil} className="inline-flex items-center text-[20px] font-bold tracking-[-0.6px] text-white max-md:min-h-11 md:text-[22px] md:tracking-[-0.66px]">
+    <nav aria-label="Navigation principale" className="relative z-20 flex w-full items-center justify-between md:grid md:grid-cols-[1fr_auto_1fr]">
+      <Link href={LIENS.accueil} className="inline-flex items-center justify-self-start text-[20px] font-bold tracking-[-0.6px] text-white max-md:min-h-11 md:text-[22px] md:tracking-[-0.66px]">
         RGM DEV
       </Link>
 
@@ -143,7 +143,7 @@ export function Navigation() {
         ) : null}
       </div>
 
-      <div className="hidden items-start gap-2 md:flex">
+      <div className="hidden items-start gap-2 justify-self-end md:flex">
         <Link href={LIENS.espaceClient} className="inline-flex h-7 items-center rounded-full px-2.5 text-xs font-medium text-white hover:bg-white/10">
           Espace client
         </Link>
