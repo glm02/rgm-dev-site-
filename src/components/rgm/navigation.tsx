@@ -78,10 +78,10 @@ function MenuMobile({ ouvert, fermer }: { ouvert: boolean; fermer: () => void })
           </Link>
         ))}
         <div className="flex flex-col gap-2.5 pt-4">
-          <Link href={LIENS.contact} onClick={fermer} className="inline-flex h-9 items-center justify-center rounded-full bg-[#0a0a0d] text-sm font-medium text-white">
+          <Link href={LIENS.contact} onClick={fermer} className="inline-flex h-11 items-center justify-center rounded-full bg-[#0a0a0d] text-sm font-medium text-white">
             Demander un devis
           </Link>
-          <Link href={LIENS.espaceClient} onClick={fermer} className="inline-flex h-9 items-center justify-center rounded-full border border-border bg-white text-sm font-medium text-[#0a0a0d]">
+          <Link href={LIENS.espaceClient} onClick={fermer} className="inline-flex h-11 items-center justify-center rounded-full border border-border bg-white text-sm font-medium text-[#0a0a0d]">
             Espace client
           </Link>
         </div>
@@ -112,7 +112,7 @@ export function Navigation() {
 
   return (
     <nav aria-label="Navigation principale" className="relative z-20 flex w-full items-center justify-between">
-      <Link href={LIENS.accueil} className="text-[20px] font-bold tracking-[-0.6px] text-white md:text-[22px] md:tracking-[-0.66px]">
+      <Link href={LIENS.accueil} className="inline-flex items-center text-[20px] font-bold tracking-[-0.6px] text-white max-md:min-h-11 md:text-[22px] md:tracking-[-0.66px]">
         RGM DEV
       </Link>
 
@@ -156,7 +156,7 @@ export function Navigation() {
         type="button"
         onClick={() => setMobile(true)}
         aria-label="Ouvrir le menu"
-        className="inline-flex size-9 items-center justify-center rounded-full bg-[rgba(10,10,13,0.35)] text-white backdrop-blur-[16px] md:hidden"
+        className="inline-flex size-11 items-center justify-center rounded-full bg-[rgba(10,10,13,0.35)] text-white backdrop-blur-[16px] md:hidden"
       >
         <Icone nom="menu" taille={16} />
       </button>

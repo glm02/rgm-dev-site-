@@ -101,7 +101,7 @@ export default async function PageArticle({ params }: PageProps<"/blog/[slug]">)
           <h2 className="text-[40px] font-bold tracking-[-1.68px] md:text-[56px]">
             Un <span className="font-marqueur font-normal tracking-normal">projet</span> ?
           </h2>
-          <Link href={LIENS.contact} className="inline-flex h-9 items-center gap-1 rounded-full bg-white px-2.5 text-sm font-medium text-[#0a0a0d]">
+          <Link href={LIENS.contact} className="inline-flex h-9 items-center gap-1 rounded-full bg-white px-2.5 text-sm font-medium text-[#0a0a0d] transition-transform duration-150 active:scale-[0.97] motion-reduce:transform-none max-md:min-h-11">
             Demander un devis gratuit
             <Icone nom="fleche-droite" taille={16} />
           </Link>

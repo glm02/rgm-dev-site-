@@ -23,7 +23,7 @@ export function GrilleRealisations({ projets }: { projets: CarteRealisation[] })
   return (
     <div className="flex flex-col gap-10">
       <Tabs value={filtre} onValueChange={(v) => setFiltre(v as Filtre)}>
-        <TabsList>
+        <TabsList className="max-md:!h-[52px]">
           {(Object.keys(FILTRES) as Filtre[]).map((f) => (
             <TabsTrigger key={f} value={f}>
               {FILTRES[f]}
@@ -35,7 +35,7 @@ export function GrilleRealisations({ projets }: { projets: CarteRealisation[] })
         {visibles.map((p) => {
           const logo = LOGOS_CLIENTS[p.slug];
           return (
-            <Link key={p.id} href={`${LIENS.realisations}/${p.slug}`} className="group flex flex-col gap-3.5">
+            <Link key={p.id} href={`${LIENS.realisations}/${p.slug}`} className="group flex flex-col gap-3.5 transition-transform duration-200 ease-out hover:-translate-y-0.5 motion-reduce:transform-none">
               <div className="relative h-[220px] w-full overflow-hidden rounded-[16px] border border-border bg-muted md:h-[260px]">
                 {p.image_couverture ? (
                   <Image

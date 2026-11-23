@@ -41,6 +41,15 @@ Charte commune : skill `charte-rgm`. Kit de code : skill `ui-rgm`.
 - Les titres de héros sont centrés et passent à la ligne en restant centrés. Un titre aligné à gauche a été vu sur Contact. (2026-11-23)
 - Texte blanc sur photo de nuages : ombre `0 2px 14px rgba(4,14,64,.5)`. Le blanc disparaissait sur un nuage blanc. (2026-11-23)
 
+## Interaction (grille taste-skill, appliquée le 2026-11-23)
+- En mobile, tout lien ou bouton hors texte courant fait au moins 44 px de haut (`max-md:min-h-11`), champs de formulaire compris. 16 à 28 cibles par page étaient trop petites. (2026-11-23)
+- Le contenu du héros entre une fois au chargement (`rgm-entree`, 300 ms), rien d'autre n'apparaît au défilement. Une page doit vivre sans s'animer partout. (2026-11-23)
+- Boutons : léger enfoncement au clic (`active:scale-[0.97]`). Cartes cliquables : soulevées de 2 px au survol, photo agrandie à 1,02. Lien fléché : la flèche avance de 2 px. Tout s'arrête avec « réduire les animations ». (2026-11-23)
+
+## En attente de décision (taste-skill)
+- « Une section par écran » : nos héros font 0,33 à 0,54 écran et beaucoup de sections moins d'un écran. L'appliquer refait la mise en page validée ; à trancher par Rafaël, maquette Figma d'abord. (2026-11-23)
+- « Un seul couple de boutons » : 4 à 5 styles de bouton par page (pilule noire, pilule blanche, dégradé, contour, lien). À trancher par Rafaël. (2026-11-23)
+
 ## Contrôlé par l'audit (`audit-figma.js`)
 - hauteurs de bouton : 28, 32, 36, 40, 44 ; rayons : 8, 9, 10, 999
 - trait d'icône : 1,5 × taille / 24, tolérance 0,3

@@ -239,7 +239,7 @@ export function BadgeSecondaire({ children }: { children: React.ReactNode }) {
 
 export function CarteProjet({ projet, hauteurImage = 260 }: { projet: Projet; hauteurImage?: number }) {
   return (
-    <Link href={`${LIENS.realisations}/${projet.slug}`} className="group flex flex-1 flex-col gap-3.5">
+    <Link href={`${LIENS.realisations}/${projet.slug}`} className="group flex flex-1 flex-col gap-3.5 transition-transform duration-200 ease-out hover:-translate-y-0.5 motion-reduce:transform-none">
       <div
         className="relative w-full overflow-hidden rounded-[16px] border border-border bg-muted"
         style={{ height: hauteurImage }}

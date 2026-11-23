@@ -12,10 +12,10 @@ export function PiedDePage() {
         </div>
         <div className="grid grid-cols-2 gap-x-6 gap-y-7 md:flex md:gap-14">
           {COLONNES_PIED.map((c) => (
-            <div key={c.titre} className="flex flex-col gap-3">
+            <div key={c.titre} className="flex flex-col gap-3 max-md:gap-0">
               <span className="text-[13px] font-semibold text-foreground">{c.titre}</span>
               {c.liens.map((l) => (
-                <Link key={l.libelle} href={l.href} className="text-sm text-foreground hover:underline">
+                <Link key={l.libelle} href={l.href} className="inline-flex items-center text-sm text-foreground hover:underline max-md:min-h-11">
                   {l.libelle}
                 </Link>
               ))}

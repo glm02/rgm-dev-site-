@@ -72,7 +72,7 @@ export function Bandeau({
           />
         )}
         <Navigation />
-        <div className="relative z-10 flex w-full flex-1 flex-col items-center">
+        <div className="rgm-entree relative z-10 flex w-full flex-1 flex-col items-center">
           {children}
         </div>
       </header>
@@ -203,7 +203,7 @@ export function BandeauPaysage({
           />
         </div>
         <Navigation />
-        <div className="relative z-10 flex h-[calc(var(--h-m)-52px)] w-full flex-col items-center justify-center md:h-[calc(var(--h-d)-72px)]">
+        <div className="rgm-entree relative z-10 flex h-[calc(var(--h-m)-52px)] w-full flex-col items-center justify-center md:h-[calc(var(--h-d)-72px)]">
           {children}
         </div>
       </header>
@@ -225,7 +225,7 @@ export function BoutonDegrade({
     <a
       href={href}
       className={cn(
-        "inline-flex h-11 min-h-11 items-center justify-center rounded-[8px] px-4 text-sm font-medium text-white",
+        "inline-flex h-11 min-h-11 items-center justify-center rounded-[8px] px-4 text-sm font-medium text-white transition-[transform,background-color,color] duration-150 ease-out active:scale-[0.97] motion-reduce:transform-none",
         className,
       )}
       style={{

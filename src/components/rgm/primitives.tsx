@@ -66,12 +66,12 @@ export function LienFleche({ href, children, className }: { href: string; childr
     <Link
       href={href}
       className={cn(
-        "inline-flex h-8 items-center gap-1 rounded-[10px] px-2.5 text-sm font-medium text-primary underline-offset-4 hover:underline",
+        "group/lien inline-flex h-8 items-center gap-1 rounded-[10px] px-2.5 text-sm font-medium text-primary underline-offset-4 hover:underline max-md:min-h-11",
         className,
       )}
     >
       {children}
-      <IconeSvg nom="fleche-droite" taille={16} />
+      <IconeSvg nom="fleche-droite" taille={16} className="transition-transform duration-150 group-hover/lien:translate-x-0.5 motion-reduce:transform-none" />
     </Link>
   );
 }
@@ -104,7 +104,7 @@ export function BoutonPilule({
     <Link
       href={href}
       className={cn(
-        "inline-flex shrink-0 items-center justify-center gap-1 rounded-full px-2.5 font-medium whitespace-nowrap transition-colors focus-visible:ring-3 focus-visible:ring-ring/50 focus-visible:outline-none",
+        "inline-flex shrink-0 items-center justify-center gap-1 rounded-full px-2.5 font-medium whitespace-nowrap focus-visible:ring-3 focus-visible:ring-ring/50 focus-visible:outline-none transition-[transform,background-color,color] duration-150 ease-out active:scale-[0.97] motion-reduce:transform-none max-md:min-h-11",
         taille === "lg" ? "h-9 text-sm" : "h-7 text-xs",
         STYLES_BOUTON[style],
         className,

@@ -52,7 +52,7 @@ export function CarteArticle({ article, grande, className }: { article: Article;
   return (
     <Link
       href={`${LIENS.blog}/${article.slug}`}
-      className={cn("group flex rounded-[16px] border border-border bg-white p-5 transition-colors hover:border-primary/40", className)}
+      className={cn("group flex rounded-[16px] border border-border bg-white p-5 hover:border-primary/40 transition-[transform,border-color] duration-200 ease-out hover:-translate-y-0.5 motion-reduce:transform-none", className)}
     >
       <span className="flex w-full items-center gap-3.5">
         <span className={cn("flex flex-1 flex-col", grande ? "gap-2" : "gap-[5px]")}>

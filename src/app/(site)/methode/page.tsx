@@ -95,7 +95,7 @@ export default function PageMethode() {
         <section className={`${SECTION} items-start rounded-[24px]`} style={FOND_TEXTURE}>
           <h2 className="text-[24px] font-semibold">Ce que vous avez à la fin</h2>
           <p className="-mt-4 text-sm">Le site en ligne, le code source, un back-office et une documentation.</p>
-          <Link href={LIENS.contact} className="inline-flex h-10 items-center rounded-[8px] px-2.5 text-sm font-medium text-white" style={BOUTON}>
+          <Link href={LIENS.contact} className="inline-flex h-10 items-center rounded-[8px] px-2.5 text-sm font-medium text-white transition-transform duration-150 active:scale-[0.97] motion-reduce:transform-none max-md:min-h-11" style={BOUTON}>
             Demander un devis
           </Link>
         </section>
@@ -154,7 +154,7 @@ export default function PageMethode() {
             </div>
           ))}
         </div>
-        <Link href={LIENS.contact} className="inline-flex h-10 w-fit items-center rounded-[8px] px-2.5 text-xs font-medium text-white" style={BOUTON}>
+        <Link href={LIENS.contact} className="inline-flex h-10 w-fit items-center rounded-[8px] px-2.5 text-xs font-medium text-white transition-transform duration-150 active:scale-[0.97] motion-reduce:transform-none max-md:min-h-11" style={BOUTON}>
           Demander un devis
         </Link>
       </section>

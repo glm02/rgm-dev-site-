@@ -61,7 +61,7 @@ function LienExterne() {
   );
 }
 
-const PILULE = "inline-flex h-8 items-center gap-1 rounded-full bg-[#171717] px-2.5 text-sm font-medium text-[#fafafa]";
+const PILULE = "inline-flex h-8 items-center gap-1 rounded-full bg-[#171717] px-2.5 text-sm font-medium text-[#fafafa] transition-[transform,background-color,color] duration-150 ease-out active:scale-[0.97] motion-reduce:transform-none max-md:min-h-11";
 
 export default async function PageProjet({ params }: PageProps<"/realisations/[slug]">) {
   const { slug } = await params;
@@ -224,7 +224,7 @@ export default async function PageProjet({ params }: PageProps<"/realisations/[s
           <Link
             key={l.libelle}
             href={l.href}
-            className="flex flex-1 items-center justify-between rounded-[16px] border border-border bg-white p-6 shadow-[0_1px_2px_rgba(0,0,0,0.04)]"
+            className="flex flex-1 items-center justify-between rounded-[16px] border border-border bg-white p-6 transition-transform duration-200 ease-out hover:-translate-y-0.5 motion-reduce:transform-none shadow-[0_1px_2px_rgba(0,0,0,0.04)]"
           >
             <span className="flex flex-col gap-1">
               <span className="text-[13px] font-medium">{l.libelle}</span>

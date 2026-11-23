@@ -125,7 +125,7 @@ export function FormulaireDevis({ className }: { className?: string }) {
       <button
         type="submit"
         disabled={enCours}
-        className="inline-flex h-9 w-full items-center justify-center gap-1 rounded-full px-2.5 text-sm font-medium text-[#fafafa] transition-opacity duration-150 disabled:opacity-70"
+        className="inline-flex h-9 w-full items-center justify-center gap-1 rounded-full px-2.5 text-sm font-medium text-[#fafafa] transition-[opacity,transform] duration-150 active:scale-[0.98] disabled:opacity-70 motion-reduce:transform-none max-md:h-11"
         style={{
           backgroundImage:
             "url(/figma/images/texture-bouton.png), linear-gradient(176deg, #2244bb 8.1%, #2453cd 39.8%, #2460de 69.9%, #1d54d5 89.4%)",
@@ -219,7 +219,7 @@ function Champ({
     erreurs
       ? "border-destructive focus-visible:border-destructive focus-visible:ring-destructive/25"
       : "border-input focus-visible:border-ring",
-    multiligne ? "h-[140px] resize-y py-2 leading-relaxed" : "h-8",
+    multiligne ? "h-[140px] resize-y py-2 leading-relaxed" : "h-8 max-md:h-11",
   );
 
   return (
@@ -293,7 +293,7 @@ function Liste({
         name={nom}
         defaultValue={etat.valeurs?.[nom] ?? ""}
         className={cn(
-          "h-9 w-full rounded-[8px] border border-input bg-white px-2.5 text-sm",
+          "h-9 w-full rounded-[8px] border border-input bg-white px-2.5 text-sm max-md:h-11",
           "transition-[border-color,box-shadow] duration-150 ease-out",
           "focus-visible:border-ring focus-visible:outline-none focus-visible:ring-3 focus-visible:ring-ring/40",
         )}

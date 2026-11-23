@@ -119,7 +119,7 @@ function CarteOffre({ offre }: { offre: Offre }) {
       <Link
         href={`${LIENS.contact}?service=${encodeURIComponent(offre.nom)}`}
         className={cn(
-          "inline-flex h-8 w-full items-center justify-center rounded-full text-sm font-medium",
+          "inline-flex h-8 w-full items-center justify-center rounded-full text-sm font-medium transition-transform duration-150 active:scale-[0.98] motion-reduce:transform-none max-md:min-h-11",
           offre.recommande ? "text-[#fafafa]" : "border border-border bg-white",
         )}
         style={offre.recommande ? DEGRADE_BOUTON : undefined}
