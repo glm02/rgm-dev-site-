@@ -1,145 +1,161 @@
 import type { Metadata } from "next";
+import Link from "next/link";
+import { cn } from "cn";
 
-import { Apparait } from "@/components/commun/apparait";
-import { CarteOffre } from "@/components/commun/carte-offre";
-import { JsonLd } from "@/components/commun/json-ld";
-import { AppelAction } from "@/components/sections/appel-action";
-import { offresParService } from "@/lib/donnees";
-import { jsonLdFaq, metadonnees } from "@/lib/seo";
-import { cn } from "@/lib/utils";
+import { BandeauPaysage } from "@/components/rgm/bandeau";
+import { Marqueur } from "@/components/rgm/blocs-service";
+import { Icone } from "@/components/rgm/icones";
+import { LIENS } from "@/components/rgm/liens";
+import { LienFleche } from "@/components/rgm/primitives";
+import { AppelAction } from "@/components/rgm/sections-accueil";
+import { metadonnees } from "@/lib/seo";
 
 export const metadata: Metadata = metadonnees({
   titre: "Tarifs — création de site web et automatisation IA",
   description:
-    "Les prix affichés : site vitrine à partir de 1 500 €, site sur mesure, automatisation de processus, agents IA, maintenance mensuelle. Devis ferme sous 48 h.",
+    "Les prix affichés : site vitrine à partir de 1 500 €, site sur mesure, automatisation de processus, agents IA. Devis ferme sous 48 h.",
   chemin: "/tarifs",
 });
 
-/**
- * Les questions qu'on pose vraiment avant de signer.
- *
- * Elles alimentent aussi le balisage `FAQPage`, qui peut faire apparaître les
- * réponses directement dans les résultats Google. Les réponses sont donc
- * écrites pour être lues hors du site, sans le contexte de la page.
- */
-const QUESTIONS = [
+type Ligne = string | { texte: string; logos: string[] };
+type Offre = { nom: string; prix: string; delai: string; inclus: Ligne[]; recommande?: boolean };
+
+const GROUPES: { debut: string; marqueur: string; lien: { libelle: string; href: string }; offres: Offre[] }[] = [
   {
-    question: "Pourquoi afficher les prix alors que personne ne le fait ?",
-    reponse:
-      "Parce que le contraire fait perdre du temps à tout le monde. Un client qui a 1 500 € et un prestataire qui travaille à partir de 8 000 € s'en rendent compte au troisième rendez-vous. Autant le savoir tout de suite.",
+    debut: "Sites",
+    marqueur: "web",
+    lien: { libelle: "Voir les sites web", href: LIENS.sitesWeb },
+    offres: [
+      { nom: "Site vitrine", prix: "1 500 – 3 000 €", delai: "2 à 3 semaines", inclus: ["Jusqu’à 8 pages", "Design sur mesure", "Référencement local", "Formulaire de devis"] },
+      {
+        nom: "Site sur mesure",
+        prix: "3 500 – 9 000 €",
+        delai: "4 à 8 semaines",
+        recommande: true,
+        inclus: ["Maquettes et cahier des charges", "Fonctionnalités métier", "Espace client ou back-office", "Connexion à vos outils"],
+      },
+      { nom: "Refonte", prix: "2 000 – 5 000 €", delai: "3 à 5 semaines", inclus: ["Audit technique et SEO", "Référencement conservé", "Mobile d’abord", "Vitesse mesurée avant / après"] },
+    ],
   },
   {
-    question: "Le prix annoncé peut-il augmenter en cours de projet ?",
-    reponse:
-      "Non. Les fourchettes de cette page servent à situer le budget ; une fois le périmètre écrit et signé, le prix est ferme. Si vous demandez quelque chose en plus en cours de route, c'est un avenant chiffré à part, que vous acceptez ou non.",
-  },
-  {
-    question: "Comment se passe le paiement ?",
-    reponse:
-      "30 % à la commande, 40 % à la validation de la maquette, 30 % à la mise en ligne. Pour les forfaits mensuels, c'est prélevé chaque mois et résiliable à tout moment.",
-  },
-  {
-    question: "À qui appartient le code ?",
-    reponse:
-      "À vous. Le dépôt est sur votre compte GitHub, l'hébergement sur votre compte Vercel, la base sur votre compte Supabase. Vous pouvez reprendre le projet avec un autre prestataire du jour au lendemain, sans rien avoir à racheter.",
-  },
-  {
-    question: "Travaillez-vous en dehors de Lyon ?",
-    reponse:
-      "Oui. Je me déplace dans un rayon de 80 km autour de Lyon pour les rendez-vous, et je travaille à distance partout en France. La visioconférence marche très bien pour le suivi de projet.",
-  },
-  {
-    question: "Combien de temps faut-il pour automatiser un processus ?",
-    reponse:
-      "Deux à quatre semaines pour un processus complet, une semaine pour l'audit préalable. Le plus long n'est jamais le développement : c'est de comprendre exactement ce que fait votre équipe aujourd'hui, étape par étape.",
+    debut: "Automatisation",
+    marqueur: "IA",
+    lien: { libelle: "Voir l’automatisation IA", href: LIENS.automatisation },
+    offres: [
+      {
+        nom: "Audit d’automatisation",
+        prix: "600 – 900 €",
+        delai: "1 semaine",
+        inclus: ["Entretiens avec vos équipes", "Tâches répétitives repérées", "Plan chiffré et priorisé", "Déduit du projet"],
+      },
+      {
+        nom: "Automatisation d’un processus",
+        prix: "1 200 – 4 000 €",
+        delai: "2 à 4 semaines",
+        recommande: true,
+        inclus: [
+          { texte: "Workflow n8n ou agent IA", logos: ["/figma/logos/n8n.svg"] },
+          "Connexion à vos outils",
+          "Tableau de bord de suivi",
+          "Un mois d’ajustements",
+        ],
+      },
+      {
+        nom: "Agent IA sur mesure",
+        prix: "2 500 – 8 000 €",
+        delai: "4 à 6 semaines",
+        inclus: [
+          "Branché sur vos données",
+          "Validation humaine",
+          { texte: "Telegram, WhatsApp ou mail", logos: ["/figma/logos/telegram.svg", "/figma/logos/whatsapp.svg"] },
+          "Trois mois de suivi",
+        ],
+      },
+    ],
   },
 ];
 
-export default async function PageTarifs() {
-  const groupes = await offresParService();
+const DEGRADE_BOUTON = {
+  backgroundImage:
+    "url(/figma/images/texture-bouton.png), linear-gradient(166.1deg, #2244bb 8.1%, #2453cd 39.8%, #2460de 69.9%, #1d54d5 89.4%)",
+  backgroundSize: "100px 100px, auto",
+} as const;
 
+function CarteOffre({ offre }: { offre: Offre }) {
+  return (
+    <div
+      className={cn(
+        "flex flex-1 flex-col items-start gap-5 rounded-[16px] bg-white p-7 shadow-[0_1px_2px_rgba(0,0,0,0.04)]",
+        offre.recommande ? "border-2 border-primary" : "border border-border",
+      )}
+    >
+      <div className="flex flex-col items-start">
+        {offre.recommande ? (
+          <span className="inline-flex h-[22px] items-center rounded-full bg-primary px-2 text-xs font-medium text-primary-foreground">Recommandé</span>
+        ) : null}
+        <h3 className="text-[18px] font-semibold">{offre.nom}</h3>
+      </div>
+      <div className="flex flex-col gap-1">
+        <p className="text-[32px] font-bold tracking-[-0.96px]">{offre.prix}</p>
+        <p className="text-sm">{offre.delai}</p>
+      </div>
+      <ul className="flex flex-1 flex-col gap-2.5 pt-1">
+        {offre.inclus.map((l) => {
+          const texte = typeof l === "string" ? l : l.texte;
+          return (
+            <li key={texte} className="flex items-center gap-2 text-sm">
+              <Icone nom="check" taille={16} />
+              {typeof l !== "string"
+                ? l.logos.map((src) => (
+                    // eslint-disable-next-line @next/next/no-img-element
+                    <img key={src} src={src} alt="" width={17} height={17} className="-mr-[3px] size-[17px]" />
+                  ))
+                : null}
+              {texte}
+            </li>
+          );
+        })}
+      </ul>
+      <Link
+        href={`${LIENS.contact}?service=${encodeURIComponent(offre.nom)}`}
+        className={cn(
+          "inline-flex h-8 w-full items-center justify-center rounded-full text-sm font-medium",
+          offre.recommande ? "text-[#fafafa]" : "border border-border bg-white",
+        )}
+        style={offre.recommande ? DEGRADE_BOUTON : undefined}
+      >
+        Demander un devis
+      </Link>
+    </div>
+  );
+}
+
+export default function PageTarifs() {
   return (
     <>
-      <JsonLd donnees={jsonLdFaq(QUESTIONS)} />
+      <BandeauPaysage paysage="chaine-alpine" decalage={-138} hauteur={350} hauteurMobile={290}>
+        <h1 className="font-marqueur text-[56px] leading-[1.05] text-white md:text-[87px]">Tarifs</h1>
+      </BandeauPaysage>
 
-      <section className="relative overflow-hidden">
-        <div
-          aria-hidden="true"
-          className="halo-bleu pointer-events-none absolute inset-x-0 top-0 h-96"
-        />
-
-        <div className="conteneur relative pt-14 sm:pt-20">
-          <div className="mx-auto max-w-2xl text-center">
-            <h1 className="text-4xl font-semibold sm:text-5xl">Tarifs</h1>
-            <p className="mt-5 text-lg leading-relaxed text-balance text-muted-foreground">
-              Des fourchettes honnêtes, pas des prix d&apos;appel. Elles situent le
-              budget ; le devis, lui, est ferme une fois le périmètre écrit.
-            </p>
+      {GROUPES.map((g) => (
+        <section key={g.debut} className="mx-auto flex w-full max-w-[1416px] flex-col gap-8 px-4 pt-12 pb-6 md:px-[108px] md:pt-[72px]">
+          <div className="flex flex-wrap items-center justify-between gap-2">
+            <h2 className="text-[30px] font-bold tracking-[-1.2px] md:text-[40px]">
+              {g.debut} <Marqueur taille={38}>{g.marqueur}</Marqueur>
+            </h2>
+            <LienFleche href={g.lien.href}>{g.lien.libelle}</LienFleche>
           </div>
-        </div>
-      </section>
-
-      {groupes.map(({ service, offres }, indexGroupe) => {
-        if (offres.length === 0) return null;
-
-        return (
-          <section
-            key={service.id}
-            className={cn(
-              "py-16 sm:py-20",
-              indexGroupe % 2 === 1 && "border-y border-border bg-secondary/30",
-            )}
-          >
-            <div className="conteneur">
-              <Apparait>
-                <h2 className="text-2xl font-semibold sm:text-3xl">{service.titre}</h2>
-                <p className="mt-3 max-w-2xl text-muted-foreground">
-                  {service.accroche}
-                </p>
-              </Apparait>
-
-              <div
-                className={cn(
-                  "mt-14 grid gap-5",
-                  offres.length === 1 && "max-w-md",
-                  offres.length === 2 && "md:grid-cols-2",
-                  offres.length >= 3 && "md:grid-cols-3",
-                )}
-              >
-                {offres.map((offre, index) => (
-                  <Apparait key={offre.id} delai={index * 70} className="h-full">
-                    <CarteOffre offre={offre} />
-                  </Apparait>
-                ))}
-              </div>
-            </div>
-          </section>
-        );
-      })}
-
-      <section className="conteneur py-16 sm:py-20">
-        <div className="mx-auto max-w-3xl">
-          <Apparait>
-            <h2 className="text-3xl font-semibold sm:text-4xl">Questions fréquentes</h2>
-          </Apparait>
-
-          <dl className="mt-10 divide-y divide-border border-y border-border">
-            {QUESTIONS.map((entree, index) => (
-              <Apparait key={entree.question} delai={index * 40} className="py-6">
-                <dt className="text-lg font-semibold">{entree.question}</dt>
-                <dd className="mt-2.5 leading-relaxed text-muted-foreground">
-                  {entree.reponse}
-                </dd>
-              </Apparait>
+          <div className="flex flex-col gap-6 md:flex-row md:items-stretch">
+            {g.offres.map((o) => (
+              <CarteOffre key={o.nom} offre={o} />
             ))}
-          </dl>
-        </div>
-      </section>
+          </div>
+        </section>
+      ))}
 
-      <AppelAction
-        titre="Un doute sur le budget ?"
-        texte="Décrivez votre projet en trois lignes. Je vous dis dans quelle fourchette il tombe, et si ce n'est pas réaliste je vous le dis aussi."
-      />
+      <div className="px-2 pt-14 md:px-3 md:pt-[100px]">
+        <AppelAction />
+      </div>
     </>
   );
 }

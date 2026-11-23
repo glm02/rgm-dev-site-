@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 
+import { PageLegale } from "@/components/rgm/page-legale";
 import { JURIDIQUE, SITE } from "@/lib/site";
 import { metadonnees } from "@/lib/seo";
 
@@ -28,15 +29,13 @@ export default function PageMentionsLegales() {
   ].filter((ligne): ligne is [string, string] => Boolean(ligne[1]));
 
   return (
-    <div className="conteneur py-16 sm:py-20">
-      <div className="mx-auto max-w-3xl">
-        <h1 className="text-4xl font-semibold sm:text-5xl">Mentions légales</h1>
+    <PageLegale titre="Mentions légales" paysage="chaine-alpine" decalage={-172}>
 
         <Bloc titre="Éditeur du site">
-          <dl className="divide-y divide-border rounded-xl border border-border">
+          <dl className="divide-y divide-border rounded-[16px] border border-border">
             {editeur.map(([cle, valeur]) => (
               <div key={cle} className="grid gap-1 px-5 py-3.5 sm:grid-cols-[14rem_1fr]">
-                <dt className="text-sm text-muted-foreground">{cle}</dt>
+                <dt className="text-sm font-medium">{cle}</dt>
                 <dd className="text-[15px]">{valeur}</dd>
               </div>
             ))}
@@ -69,22 +68,21 @@ export default function PageMentionsLegales() {
         <Bloc titre="Données personnelles">
           <p>
             Le traitement des données est décrit dans la{" "}
-            <a href="/confidentialite" className="font-medium text-bleu-700 underline underline-offset-4 dark:text-bleu-300">
+            <a href="/confidentialite" className="font-medium">
               politique de confidentialité
             </a>
             .
           </p>
         </Bloc>
-      </div>
-    </div>
+    </PageLegale>
   );
 }
 
 function Bloc({ titre, children }: { titre: string; children: React.ReactNode }) {
   return (
-    <section className="mt-12">
-      <h2 className="text-xl font-semibold">{titre}</h2>
-      <div className="mt-4 space-y-4 leading-relaxed text-muted-foreground">{children}</div>
+    <section className="flex flex-col gap-2">
+      <h2>{titre}</h2>
+      <div className="space-y-3 leading-[1.4]">{children}</div>
     </section>
   );
 }

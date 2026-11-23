@@ -1,4 +1,5 @@
 import { BorderBeam } from "@appica/ui-react/border-beam";
+import { BandeauPaysage } from "@/components/rgm/bandeau";
 import { Badge } from "@appica/ui-react/badge";
 import { Button } from "@appica/ui-react/button";
 import type { Metadata } from "next";
@@ -82,6 +83,9 @@ export default function PageStack() {
   return (
     <>
       <JsonLd donnees={jsonLdFilAriane(etapes)} />
+      <BandeauPaysage paysage="chaine-alpine" decalage={-138} hauteur={350} hauteurMobile={290}>
+        <h1 className="font-marqueur text-[56px] leading-[1.05] text-white md:text-[87px]">Stack</h1>
+      </BandeauPaysage>
 
       {/* ---------- En-tête ---------- */}
       <section className="relative isolate overflow-hidden">
@@ -105,9 +109,9 @@ export default function PageStack() {
                 </Badge>
               </BorderBeam>
 
-              <h1 className="mt-7 text-[2.1rem] leading-[1.06] font-semibold tracking-[-0.03em] text-balance sm:text-5xl sm:leading-[1.04] lg:text-[3.4rem]">
+              <h2 className="mt-7 text-[2.1rem] leading-[1.06] font-semibold tracking-[-0.03em] text-balance sm:text-5xl sm:leading-[1.04] lg:text-[3.4rem]">
                 Des agents IA qui livrent, <Surligne delai={0.15}>un humain qui garde la main</Surligne>.
-              </h1>
+              </h2>
 
               <p className="mx-auto mt-6 max-w-xl text-lg leading-relaxed text-balance text-muted-foreground sm:text-xl lg:mx-0">
                 <TexteAnime effet="highlight" by="word" duree={1.2} delai={0.3}>

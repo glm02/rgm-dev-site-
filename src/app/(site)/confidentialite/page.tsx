@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 
+import { PageLegale } from "@/components/rgm/page-legale";
 import { SITE } from "@/lib/site";
 import { metadonnees } from "@/lib/seo";
 
@@ -43,34 +44,32 @@ const TRAITEMENTS = [
 
 export default function PageConfidentialite() {
   return (
-    <div className="conteneur py-16 sm:py-20">
-      <div className="mx-auto max-w-3xl">
-        <h1 className="text-4xl font-semibold sm:text-5xl">Politique de confidentialité</h1>
-        <p className="mt-5 text-lg leading-relaxed text-muted-foreground">
+    <PageLegale titre="Confidentialité" paysage="nuages" decalage={-160}>
+        <p className="text-[18px] leading-[1.4]">
           Ce site collecte le strict nécessaire pour vous répondre et suivre vos
           projets. Rien n&apos;est revendu, rien n&apos;est transmis à des fins
           publicitaires.
         </p>
 
-        <div className="mt-12 space-y-5">
+        <div className="space-y-5">
           {TRAITEMENTS.map((t) => (
-            <section key={t.titre} className="rounded-2xl border border-border bg-card p-6">
+            <section key={t.titre} className="rounded-[16px] border border-border bg-white p-6">
               <h2 className="text-lg font-semibold">{t.titre}</h2>
               <dl className="mt-4 grid gap-3 text-[15px] sm:grid-cols-[9rem_1fr]">
-                <dt className="text-muted-foreground">Données</dt>
+                <dt>Données</dt>
                 <dd>{t.donnees}</dd>
-                <dt className="text-muted-foreground">Pourquoi</dt>
+                <dt>Pourquoi</dt>
                 <dd>{t.finalite}</dd>
-                <dt className="text-muted-foreground">Base légale</dt>
+                <dt>Base légale</dt>
                 <dd>{t.base}</dd>
-                <dt className="text-muted-foreground">Conservation</dt>
+                <dt>Conservation</dt>
                 <dd>{t.duree}</dd>
               </dl>
             </section>
           ))}
         </div>
 
-        <section className="mt-12 space-y-4 leading-relaxed text-muted-foreground">
+        <section className="mt-12 space-y-4 leading-relaxed">
           <h2 className="text-xl font-semibold text-foreground">Sous-traitants</h2>
           <p>
             Vercel (hébergement), Supabase (base de données et authentification),
@@ -90,14 +89,13 @@ export default function PageConfidentialite() {
           <p>
             Vous pouvez accéder à vos données, les rectifier, les supprimer, vous
             opposer à leur traitement ou en demander la portabilité en écrivant à{" "}
-            <a href={`mailto:${SITE.email}`} className="font-medium text-bleu-700 underline underline-offset-4 dark:text-bleu-300">
+            <a href={`mailto:${SITE.email}`} className="font-medium">
               {SITE.email}
             </a>
             . Réponse sous un mois. En cas de désaccord, vous pouvez saisir la CNIL
             (cnil.fr).
           </p>
         </section>
-      </div>
-    </div>
+    </PageLegale>
   );
 }

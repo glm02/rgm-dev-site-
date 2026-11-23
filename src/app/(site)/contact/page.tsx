@@ -1,12 +1,12 @@
-import { BorderBeam } from "@appica/ui-react/border-beam";
 import type { Metadata } from "next";
 import { Suspense } from "react";
-import { Clock, Mail, MapPin, ShieldCheck } from "lucide-react";
 
 import { FormulaireDevis } from "@/components/commun/formulaire-devis";
 import { Skeleton } from "@/components/ui/skeleton";
+import { BandeauPaysage } from "@/components/rgm/bandeau";
+import type { NomIcone } from "@/components/rgm/icones";
+import { TuileIcone } from "@/components/rgm/primitives";
 import { metadonnees } from "@/lib/seo";
-import { SITE } from "@/lib/site";
 
 export const metadata: Metadata = metadonnees({
   titre: "Contact — demander un devis",
@@ -15,96 +15,36 @@ export const metadata: Metadata = metadonnees({
   chemin: "/contact",
 });
 
-const REPERES = [
-  {
-    icone: Clock,
-    titre: "Réponse sous 48 h",
-    texte: "Ouvrées. Et si je ne peux pas prendre le projet, je vous le dis tout de suite.",
-  },
-  {
-    icone: ShieldCheck,
-    titre: "Sans engagement",
-    texte: "Le premier échange et le devis sont gratuits. Vous ne signez rien avant d'avoir tout lu.",
-  },
-  {
-    icone: MapPin,
-    titre: `${SITE.ville} et à distance`,
-    texte: `Rendez-vous sur place dans un rayon de ${SITE.rayonKm} km, visioconférence partout ailleurs.`,
-  },
+const INFOS: { icone: NomIcone; texte: string }[] = [
+  { icone: "location", texte: "Lyon et Auvergne-Rhône-Alpes" },
+  { icone: "wallet", texte: "Prix affichés, devis gratuit" },
+  { icone: "message", texte: "Réponse par email" },
 ];
 
 export default function PageContact() {
   return (
     <>
-      <section className="relative overflow-hidden">
-        <div
-          aria-hidden="true"
-          className="halo-bleu pointer-events-none absolute inset-x-0 top-0 h-80"
-        />
+      <BandeauPaysage paysage="nuages" decalage={-126} hauteur={350} hauteurMobile={290} voile="clair">
+        <h1 className="text-center font-titre text-[44px] leading-[1.05] font-bold tracking-[-1.76px] text-white md:text-[73px] md:tracking-[-2.92px]">
+          Demander <span className="font-marqueur font-normal tracking-normal md:text-[66px]">un devis</span>
+        </h1>
+      </BandeauPaysage>
 
-        <div className="conteneur relative pt-14 pb-12 sm:pt-20">
-          <div className="mx-auto max-w-2xl text-center">
-            <h1 className="text-4xl font-semibold sm:text-5xl">Parlons de votre projet</h1>
-            <p className="mt-5 text-lg leading-relaxed text-balance text-muted-foreground">
-              Dites-moi ce que vous faites et ce dont vous avez besoin. Je vous réponds
-              avec un périmètre écrit, un prix ferme et un délai — pas avec une
-              plaquette.
+      {/* Après l'envoi, la confirmation prend toute la largeur : la carte et les infos s'effacent. */}
+      <section className="mx-auto flex w-full max-w-[1416px] flex-col gap-8 px-4 pt-10 pb-16 md:flex-row md:gap-[51px] md:pt-[72px] md:pr-[108px] md:pb-[120px] md:pl-[219px] [&:has([role=status])>aside]:hidden">
+        <div className="rounded-[16px] border border-border bg-white p-5 md:w-[582px] md:shrink-0 md:p-8 has-[[role=status]]:w-full has-[[role=status]]:border-0">
+          <Suspense fallback={<SqueletteFormulaire />}>
+            <FormulaireDevis />
+          </Suspense>
+        </div>
+        <aside className="flex flex-col gap-5 md:pt-8">
+          {INFOS.map((i) => (
+            <p key={i.texte} className="flex items-center gap-3 text-[15px] font-medium">
+              <TuileIcone nom={i.icone} />
+              {i.texte}
             </p>
-          </div>
-        </div>
-      </section>
-
-      <section className="conteneur pb-20">
-        <div className="grid gap-10 lg:grid-cols-[minmax(0,1.6fr)_minmax(0,1fr)] lg:gap-14">
-          {/* Le contour lumineux apparaît quand on survole ou touche le
-              formulaire : il accompagne la saisie sans distraire avant. */}
-          <BorderBeam
-            length={18}
-            thickness={1.5}
-            speed={4}
-            revealOn={["hover", "press"]}
-            className="rounded-2xl"
-          >
-          <div className="rounded-2xl border border-border bg-card p-6 sm:p-8">
-            {/* `useSearchParams` impose une frontière Suspense : sans elle, la
-                page entière deviendrait dynamique et perdrait son rendu
-                statique — donc une partie de sa vitesse, donc du SEO. */}
-            <Suspense fallback={<SqueletteFormulaire />}>
-              <FormulaireDevis />
-            </Suspense>
-          </div>
-          </BorderBeam>
-
-          <aside className="space-y-4">
-            {REPERES.map(({ icone: Icone, titre, texte }) => (
-              <div
-                key={titre}
-                className="flex gap-4 rounded-2xl border border-border bg-secondary/30 p-5"
-              >
-                <span className="grid size-10 shrink-0 place-items-center rounded-xl bg-bleu-50 text-bleu-600 dark:bg-bleu-900/40 dark:text-bleu-300">
-                  <Icone className="size-5" strokeWidth={1.75} aria-hidden="true" />
-                </span>
-                <div>
-                  <h2 className="text-sm font-semibold">{titre}</h2>
-                  <p className="mt-1.5 text-sm leading-relaxed text-muted-foreground">
-                    {texte}
-                  </p>
-                </div>
-              </div>
-            ))}
-
-            <div className="rounded-2xl border border-border p-5">
-              <h2 className="text-sm font-semibold">Vous préférez le mail ?</h2>
-              <a
-                href={`mailto:${SITE.email}`}
-                className="mt-2.5 inline-flex items-center gap-2 text-sm text-bleu-700 underline-offset-4 transition-colors duration-150 ease-out hover:underline dark:text-bleu-300"
-              >
-                <Mail className="size-4" strokeWidth={1.75} aria-hidden="true" />
-                {SITE.email}
-              </a>
-            </div>
-          </aside>
-        </div>
+          ))}
+        </aside>
       </section>
     </>
   );
@@ -112,28 +52,17 @@ export default function PageContact() {
 
 function SqueletteFormulaire() {
   return (
-    <div className="space-y-5">
-      <div className="grid gap-5 sm:grid-cols-2">
+    <div className="flex flex-col gap-5">
+      <div className="grid gap-4 sm:grid-cols-2">
         {Array.from({ length: 4 }, (_, index) => (
           <div key={index}>
             <Skeleton className="h-4 w-24" />
-            <Skeleton className="mt-2 h-12 w-full rounded-xl" />
+            <Skeleton className="mt-2 h-8 w-full rounded-[10px]" />
           </div>
         ))}
       </div>
-      <div className="grid gap-5 sm:grid-cols-3">
-        {Array.from({ length: 3 }, (_, index) => (
-          <div key={index}>
-            <Skeleton className="h-4 w-28" />
-            <Skeleton className="mt-2 h-12 w-full rounded-xl" />
-          </div>
-        ))}
-      </div>
-      <div>
-        <Skeleton className="h-4 w-28" />
-        <Skeleton className="mt-2 h-36 w-full rounded-xl" />
-      </div>
-      <Skeleton className="h-12 w-52 rounded-xl" />
+      <Skeleton className="h-[140px] w-full rounded-[10px]" />
+      <Skeleton className="h-9 w-full rounded-full" />
     </div>
   );
 }

@@ -2,10 +2,12 @@
 
 import { useSearchParams } from "next/navigation";
 import { usePathname } from "next/navigation";
-import { ArrowRight, Check, Loader2 } from "lucide-react";
+import Link from "next/link";
+import { Loader2 } from "lucide-react";
 import * as React from "react";
 
 import { Turnstile } from "@/components/commun/turnstile";
+import { TuileIcone } from "@/components/rgm/primitives";
 import { envoyerDemandeDevis, type EtatDevis } from "@/lib/actions/devis";
 
 // Ici et pas dans `actions/devis.ts` : un fichier « use server » ne peut
@@ -60,26 +62,25 @@ export function FormulaireDevis({ className }: { className?: string }) {
   }
 
   return (
-    <form action={action} className={cn("space-y-5", className)} noValidate>
+    <form action={action} className={cn("flex flex-col gap-5", className)} noValidate>
       <ChampsCaches />
 
       {etat.statut === "erreur" && etat.message && (
         <p
           role="alert"
-          className="rounded-xl border border-destructive/30 bg-destructive/10 px-4 py-3 text-sm text-destructive"
+          className="rounded-[10px] border border-destructive/30 bg-destructive/10 px-4 py-3 text-sm text-destructive"
         >
           {etat.message}
         </p>
       )}
 
-      <div className="grid gap-5 sm:grid-cols-2">
+      <div className="grid gap-x-4 gap-y-5 sm:grid-cols-2">
         <Champ
           nom="nom"
           libelle="Votre nom"
           requis
           autoComplete="name"
           etat={etat}
-          placeholder="Marie Dupont"
         />
         <Champ
           nom="email"
@@ -88,7 +89,6 @@ export function FormulaireDevis({ className }: { className?: string }) {
           requis
           autoComplete="email"
           etat={etat}
-          placeholder="marie@entreprise.fr"
         />
         <Champ
           nom="telephone"
@@ -96,21 +96,17 @@ export function FormulaireDevis({ className }: { className?: string }) {
           type="tel"
           autoComplete="tel"
           etat={etat}
-          placeholder="06 12 34 56 78"
-          facultatif
         />
         <Champ
           nom="entreprise"
           libelle="Entreprise"
           autoComplete="organization"
           etat={etat}
-          placeholder="Nom de votre société"
-          facultatif
         />
       </div>
 
-      <div className="grid gap-5 sm:grid-cols-3">
-        <Liste nom="type_projet" libelle="Type de projet" options={TYPES_PROJET} etat={etat} />
+      <div className="grid gap-4 sm:grid-cols-3">
+        <Liste nom="type_projet" libelle="Type de projet *" options={TYPES_PROJET} etat={etat} />
         <Liste nom="budget" libelle="Budget envisagé" options={BUDGETS} etat={etat} />
         <Liste nom="echeance" libelle="Échéance" options={ECHEANCES} etat={etat} />
       </div>
@@ -121,50 +117,36 @@ export function FormulaireDevis({ className }: { className?: string }) {
         requis
         etat={etat}
         multiligne
-        placeholder="Ce que vous faites, ce dont vous avez besoin, et ce qui vous ferait dire que le projet est réussi. Trois phrases suffisent pour commencer."
-        aide="Plus vous êtes précis, plus mon retour le sera."
+        placeholder="Décrivez votre besoin en quelques lignes"
       />
 
       <Turnstile action="devis" reinitialiser={etat} />
 
-      <div className="flex flex-col gap-4 pt-1 sm:flex-row sm:items-center sm:justify-between">
-        <p className="text-xs leading-relaxed text-muted-foreground">
-          Vos données servent uniquement à vous répondre. Elles ne sont ni revendues ni
-          transmises.{" "}
-          <a href="/confidentialite" className="underline underline-offset-2">
-            En savoir plus
-          </a>
-        </p>
-
-        <button
-          type="submit"
-          disabled={enCours}
-          className={cn(
-            "group inline-flex h-12 shrink-0 items-center justify-center gap-2 rounded-xl px-6",
-            "bg-primary text-[15px] font-medium text-primary-foreground",
-            "shadow-[0_1px_2px_oklch(0_0_0/0.10),0_10px_30px_-12px_var(--bleu-600)]",
-            "transition-[background-color,scale,opacity] duration-150 ease-out",
-            "hover:bg-bleu-700 active:scale-96 dark:hover:bg-bleu-400",
-            "disabled:pointer-events-none disabled:opacity-70",
-          )}
-        >
-          {enCours ? (
-            <>
-              <Loader2 className="size-4 animate-spin" strokeWidth={2} aria-hidden="true" />
-              Envoi…
-            </>
-          ) : (
-            <>
-              Envoyer ma demande
-              <ArrowRight
-                className="size-4 transition-[translate] duration-150 ease-out group-hover:translate-x-0.5"
-                strokeWidth={2}
-                aria-hidden="true"
-              />
-            </>
-          )}
-        </button>
-      </div>
+      <button
+        type="submit"
+        disabled={enCours}
+        className="inline-flex h-9 w-full items-center justify-center gap-1 rounded-full px-2.5 text-sm font-medium text-[#fafafa] transition-opacity duration-150 disabled:opacity-70"
+        style={{
+          backgroundImage:
+            "url(/figma/images/texture-bouton.png), linear-gradient(176deg, #2244bb 8.1%, #2453cd 39.8%, #2460de 69.9%, #1d54d5 89.4%)",
+          backgroundSize: "100px 100px, auto",
+        }}
+      >
+        {enCours ? (
+          <>
+            <Loader2 className="size-4 animate-spin" strokeWidth={2} aria-hidden="true" />
+            Envoi…
+          </>
+        ) : (
+          "Envoyer la demande"
+        )}
+      </button>
+      <p className="text-xs">
+        Protection anti-spam · Cloudflare Turnstile ·{" "}
+        <a href="/confidentialite" className="underline underline-offset-2">
+          Vos données
+        </a>
+      </p>
     </form>
   );
 }
@@ -209,7 +191,6 @@ function Champ({
   libelle,
   type = "text",
   requis,
-  facultatif,
   multiligne,
   placeholder,
   aide,
@@ -220,7 +201,6 @@ function Champ({
   libelle: string;
   type?: string;
   requis?: boolean;
-  facultatif?: boolean;
   multiligne?: boolean;
   placeholder?: string;
   aide?: string;
@@ -232,23 +212,21 @@ function Champ({
   const idErreur = erreurs ? `${nom}-erreur` : undefined;
 
   const classes = cn(
-    "w-full rounded-xl border bg-background px-4 text-[15px]",
+    "w-full rounded-[10px] border bg-white px-2.5 text-sm",
     "transition-[border-color,box-shadow] duration-150 ease-out",
-    "placeholder:text-muted-foreground/70",
+    "placeholder:text-[#1a1a1a]/60",
     "focus-visible:outline-none focus-visible:ring-3 focus-visible:ring-ring/40",
     erreurs
       ? "border-destructive focus-visible:border-destructive focus-visible:ring-destructive/25"
       : "border-input focus-visible:border-ring",
-    multiligne ? "min-h-36 resize-y py-3 leading-relaxed" : "h-12",
+    multiligne ? "h-[140px] resize-y py-2 leading-relaxed" : "h-8",
   );
 
   return (
     <div className={multiligne ? undefined : "min-w-0"}>
       <label htmlFor={nom} className="mb-2 block text-sm font-medium">
         {libelle}
-        {facultatif && (
-          <span className="ml-1.5 font-normal text-muted-foreground">(facultatif)</span>
-        )}
+        {requis ? " *" : null}
       </label>
 
       {multiligne ? (
@@ -278,13 +256,13 @@ function Champ({
       )}
 
       {aide && !erreurs && (
-        <p id={idAide} className="mt-2 text-xs text-muted-foreground">
+        <p id={idAide} className="mt-2 text-xs">
           {aide}
         </p>
       )}
 
       {erreurs && (
-        <p id={idErreur} className="mt-2 text-xs text-destructive">
+        <p id={idErreur} className="mt-2 text-xs font-medium text-destructive">
           {erreurs[0]}
         </p>
       )}
@@ -315,12 +293,12 @@ function Liste({
         name={nom}
         defaultValue={etat.valeurs?.[nom] ?? ""}
         className={cn(
-          "h-12 w-full rounded-xl border border-input bg-background px-3.5 text-[15px]",
+          "h-9 w-full rounded-[8px] border border-input bg-white px-2.5 text-sm",
           "transition-[border-color,box-shadow] duration-150 ease-out",
           "focus-visible:border-ring focus-visible:outline-none focus-visible:ring-3 focus-visible:ring-ring/40",
         )}
       >
-        <option value="">À préciser</option>
+        <option value="">Choisir…</option>
         {options.map((option) => (
           <option key={option} value={option}>
             {option}
@@ -337,24 +315,20 @@ function Liste({
  * Elle remplace le formulaire au lieu de s'afficher au-dessus : le visiteur a
  * terminé, lui laisser le formulaire sous les yeux l'inviterait à renvoyer.
  */
-function Confirmation({ message, className }: { message?: string; className?: string }) {
+function Confirmation({ className }: { message?: string; className?: string }) {
   return (
-    <div
-      role="status"
-      className={cn(
-        "rounded-2xl border border-bleu-200 bg-bleu-50 p-8 text-center dark:border-bleu-800 dark:bg-bleu-950/40",
-        className,
-      )}
-    >
-      <span className="mx-auto grid size-12 place-items-center rounded-full bg-primary text-primary-foreground">
-        <Check className="size-6" strokeWidth={2.5} aria-hidden="true" />
-      </span>
-
-      <h2 className="mt-5 text-xl font-semibold">Demande envoyée</h2>
-
-      <p className="mx-auto mt-3 max-w-md leading-relaxed text-balance text-muted-foreground">
-        {message}
-      </p>
+    <div role="status" className={cn("flex flex-col items-center gap-5 px-4 py-16 text-center md:py-24", className)}>
+      <TuileIcone nom="tick-square" taille={28} className="rounded-[16px] p-[14px]" />
+      <h2 className="text-[32px] font-bold md:text-[40px]">Demande envoyée</h2>
+      <p className="text-base">Merci. Je vous réponds par email avec un devis.</p>
+      <div className="flex flex-wrap justify-center gap-2.5 pt-3">
+        <Link href="/realisations" className="inline-flex h-9 items-center rounded-full bg-primary px-2.5 text-sm font-medium text-primary-foreground">
+          Voir les réalisations
+        </Link>
+        <Link href="/" className="inline-flex h-9 items-center rounded-full border border-border bg-white px-2.5 text-sm font-medium">
+          Retour à l’accueil
+        </Link>
+      </div>
     </div>
   );
 }

@@ -1,14 +1,12 @@
 import type { Metadata } from "next";
-import Link from "next/link";
-import { ArrowRight } from "lucide-react";
 
-import { Apparait } from "@/components/commun/apparait";
-import { CarteAvis } from "@/components/commun/carte-avis";
-import { Etoiles } from "@/components/commun/etoiles";
-import { AppelAction } from "@/components/sections/appel-action";
-import { listerAvis, listerProjets, noteGlobale } from "@/lib/donnees";
+import { BandeauPaysage, BoutonDegrade } from "@/components/rgm/bandeau";
+import { ColonnePage } from "@/components/rgm/blocs-service";
+import { Icone } from "@/components/rgm/icones";
+import { LIENS } from "@/components/rgm/liens";
+import { TuileIcone } from "@/components/rgm/primitives";
+import { listerAvis, noteGlobale } from "@/lib/donnees";
 import { metadonnees } from "@/lib/seo";
-import { cn } from "@/lib/utils";
 
 export const metadata: Metadata = metadonnees({
   titre: "Avis clients",
@@ -17,109 +15,82 @@ export const metadata: Metadata = metadonnees({
   chemin: "/avis",
 });
 
-export default async function PageAvis() {
-  const [avis, note, projets] = await Promise.all([
-    listerAvis(),
-    noteGlobale(),
-    listerProjets(),
-  ]);
+export const revalidate = 300;
 
-  const slugParProjet = new Map(projets.map((projet) => [projet.id, projet.slug]));
+const CARTE = "flex flex-col items-start gap-4 rounded-[16px] border border-border p-7";
+
+function Etoiles({ note }: { note: number }) {
+  return (
+    <span className="flex text-primary" aria-label={`${note} sur 5`}>
+      {[1, 2, 3, 4, 5].map((i) => (
+        <Icone key={i} nom="star" taille={16} className={i <= Math.round(note) ? "fill-current" : ""} />
+      ))}
+    </span>
+  );
+}
+
+export default async function PageAvis() {
+  const [avis, note] = await Promise.all([listerAvis(), noteGlobale()]);
 
   return (
     <>
-      <section className="relative overflow-hidden">
-        <div
-          aria-hidden="true"
-          className="halo-bleu pointer-events-none absolute inset-x-0 top-0 h-80"
-        />
+      <BandeauPaysage paysage="sommet-enneige" decalage={-135} hauteur={350} hauteurMobile={290}>
+        <h1 className="font-titre text-[44px] leading-[1.05] font-bold tracking-[-1.76px] text-white md:text-[96px] md:tracking-[-3.84px]">
+          Avis <span className="font-marqueur font-normal tracking-normal">clients</span>
+        </h1>
+      </BandeauPaysage>
 
-        <div className="conteneur relative pt-14 sm:pt-20">
-          <div className="mx-auto max-w-2xl text-center">
-            <h1 className="text-4xl font-semibold sm:text-5xl">Avis clients</h1>
-            <p className="mt-5 text-lg leading-relaxed text-balance text-muted-foreground">
-              Chaque avis publié ici a été déposé par le client lui-même, depuis son
-              espace, une fois son projet livré. Je n&apos;en écris aucun, et je n&apos;en
-              supprime aucun.
-            </p>
+      <ColonnePage>
+        <section className="flex flex-col gap-6 md:flex-row md:items-start">
+          <div className={`${CARTE} bg-muted md:flex-1`}>
+            <TuileIcone nom="star" />
+            <h2 className="text-[24px] font-bold">Note globale</h2>
+            {note ? (
+              <span className="flex items-center gap-2 text-[18px] font-semibold">
+                {note.moyenne.toLocaleString("fr-FR")} / 5 <Etoiles note={note.moyenne} />
+              </span>
+            ) : (
+              <span className="text-[18px] font-semibold">Pas encore de note</span>
+            )}
+            <span className="text-sm">
+              {avis.length} avis publié{avis.length > 1 ? "s" : ""}
+            </span>
+          </div>
 
-            {note && (
-              <div className="mt-8 inline-flex items-center gap-3 rounded-full border border-border bg-card px-5 py-2.5">
-                <Etoiles note={note.moyenne} taille="lg" />
-                <span className="text-sm">
-                  <span className="font-semibold tabular-nums">
-                    {note.moyenne.toLocaleString("fr-FR", { minimumFractionDigits: 1 })}
-                  </span>
-                  <span className="text-muted-foreground">
-                    {" "}
-                    sur 5 — {note.nombre} avis
-                  </span>
-                </span>
-              </div>
+          <div className={`${CARTE} bg-white md:flex-1`}>
+            {avis.length === 0 ? (
+              <>
+                <Icone nom="citation" taille={28} className="text-primary" />
+                <h2 className="text-[24px] font-bold">Aucun avis publié pour l’instant</h2>
+                <p className="text-base">Les avis apparaîtront ici après publication.</p>
+              </>
+            ) : (
+              <ul className="flex w-full flex-col divide-y divide-border">
+                {avis.map((a) => (
+                  <li key={a.id} className="flex flex-col gap-2 py-4 first:pt-0 last:pb-0">
+                    <Etoiles note={a.note} />
+                    <p className="text-base">{a.contenu}</p>
+                    <span className="text-sm font-semibold">
+                      {a.auteur_nom}
+                      {a.auteur_entreprise ? ` · ${a.auteur_entreprise}` : ""}
+                    </span>
+                  </li>
+                ))}
+              </ul>
             )}
           </div>
-        </div>
-      </section>
+        </section>
 
-      <section className="conteneur py-16 sm:py-20">
-        {avis.length > 0 ? (
-          <div className="grid gap-5 md:grid-cols-2 lg:grid-cols-3">
-            {avis.map((un, index) => (
-              <Apparait key={un.id} delai={(index % 3) * 70} className="h-full">
-                <CarteAvis
-                  avis={un}
-                  projetSlug={un.projet_id ? slugParProjet.get(un.projet_id) : null}
-                />
-              </Apparait>
-            ))}
-          </div>
-        ) : (
-          <Apparait className="mx-auto max-w-xl rounded-2xl border border-dashed border-border bg-secondary/30 p-10 text-center">
-            <h2 className="text-xl font-semibold">Aucun avis publié pour l&apos;instant</h2>
-            <p className="mt-3.5 leading-relaxed text-muted-foreground">
-              Les premiers projets viennent d&apos;être livrés et les témoignages ne sont
-              pas encore rentrés. Plutôt que de remplir cette page avec des phrases
-              inventées, elle reste vide — c&apos;est plus honnête, et vous saurez que
-              ceux qui y figureront un jour sont vrais.
-            </p>
-
-            <Link
-              href="/realisations"
-              className={cn(
-                "group mt-7 inline-flex h-11 items-center gap-2 rounded-xl bg-primary px-5",
-                "text-sm font-medium text-primary-foreground",
-                "transition-[background-color,scale] duration-150 ease-out",
-                "hover:bg-bleu-700 active:scale-96 dark:hover:bg-bleu-400",
-              )}
-            >
-              Juger sur le travail
-              <ArrowRight
-                className="size-4 transition-[translate] duration-150 ease-out group-hover:translate-x-0.5"
-                strokeWidth={2}
-                aria-hidden="true"
-              />
-            </Link>
-          </Apparait>
-        )}
-      </section>
-
-      <section className="conteneur pb-16">
-        <div className="mx-auto max-w-2xl rounded-2xl border border-border bg-secondary/30 p-7 text-center">
-          <h2 className="text-lg font-semibold">Vous avez travaillé avec moi ?</h2>
-          <p className="mt-2.5 text-sm leading-relaxed text-muted-foreground">
-            Connectez-vous à votre espace client pour déposer votre avis. Il sera publié
-            tel quel, sans retouche.
-          </p>
-          <Link
-            href="/compte"
-            className="mt-5 inline-flex h-10 items-center rounded-lg border border-border bg-background px-4 text-sm font-medium transition-[background-color,scale] duration-150 ease-out hover:bg-secondary active:scale-96"
-          >
-            Accéder à mon espace
-          </Link>
-        </div>
-      </section>
-
-      <AppelAction />
+        <section className="flex flex-col items-start gap-3 rounded-[16px] border border-border bg-muted p-7">
+          <h2 className="flex items-center gap-[5px] text-[26px] leading-[1.4] font-bold md:text-[34px]">
+            {/* eslint-disable-next-line @next/next/no-img-element */}
+            <img src="/figma/logos/rgm-dev.svg" alt="" width={16} height={16} className="size-4" />
+            Vous avez travaillé avec RGM Dev ?
+          </h2>
+          <p className="text-base">Déposez votre avis depuis votre espace client après la livraison.</p>
+          <BoutonDegrade href={`${LIENS.espaceClient}/avis`}>Accéder à mon espace client</BoutonDegrade>
+        </section>
+      </ColonnePage>
     </>
   );
 }
