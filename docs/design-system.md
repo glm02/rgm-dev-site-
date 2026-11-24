@@ -44,7 +44,8 @@ Charte commune : skill `charte-rgm`. Kit de code : skill `ui-rgm`.
 
 ## Interaction (grille taste-skill, appliquée le 2026-11-23)
 - En mobile, tout lien ou bouton hors texte courant fait au moins 44 px de haut (`max-md:min-h-11`), champs de formulaire compris. 16 à 28 cibles par page étaient trop petites. (2026-11-23)
-- Le contenu du héros entre une fois au chargement (`rgm-entree`, 300 ms), rien d'autre n'apparaît au défilement. Une page doit vivre sans s'animer partout. (2026-11-23)
+- Le contenu du héros entre une fois au chargement (`rgm-entree`, 300 ms, en CSS pour démarrer avant le JavaScript et ne pas clignoter). (2026-11-23)
+- Transitions GSAP (`components/rgm/transitions.tsx`, monté par `app/(site)/template.tsx`) : fondu de 250 ms à chaque navigation interne, rien au premier chargement ; titres et cartes situés sous l'écran apparaissent en cascade une seule fois (0,5 s, décalage 70 ms, 24 px). Ce qui est visible à l'arrivée ne bouge pas, le contenu reste dans le HTML pour le référencement, tout est coupé avec « réduire les animations ». Demande de Rafaël, qui remplace la règle « rien n'apparaît au défilement » de la veille. (2026-11-24)
 - Boutons : léger enfoncement au clic (`active:scale-[0.97]`). Cartes cliquables : soulevées de 2 px au survol, photo agrandie à 1,02. Lien fléché : la flèche avance de 2 px. Tout s'arrête avec « réduire les animations ». (2026-11-23)
 
 ## En attente de décision (taste-skill)
