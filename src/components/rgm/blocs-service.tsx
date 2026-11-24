@@ -206,7 +206,7 @@ export function AppelProjet({ texte = "Décrivez votre besoin pour obtenir un de
         backgroundSize: "100px 100px, auto, auto",
       }}
     >
-      <h2 className="text-[26px] leading-[1.4] font-bold md:text-[34px]">
+      <h2 className="text-[26px] leading-[1.4] font-bold md:text-[34px] [text-shadow:0_2px_24px_rgba(4,14,64,0.55)]">
         Parlons de votre <Marqueur>projet</Marqueur>
       </h2>
       <p className="text-base leading-[1.4]">{texte}</p>
