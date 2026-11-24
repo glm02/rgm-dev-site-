@@ -41,6 +41,7 @@ Charte commune : skill `charte-rgm`. Kit de code : skill `ui-rgm`.
 ## Mobile
 - Les titres de héros sont centrés et passent à la ligne en restant centrés. Un titre aligné à gauche a été vu sur Contact. (2026-11-23)
 - Texte blanc sur photo de nuages : ombre `0 2px 14px rgba(4,14,64,.5)`. Le blanc disparaissait sur un nuage blanc. (2026-11-23)
+- Tout titre `h1` blanc d'un bandeau photo porte une ombre `0 2px 24px rgba(4,14,64,.55)` (posée par `Bandeau` et `BandeauPaysage`, et en effet sur le texte dans Figma). Le « et » du héros d'accueil disparaissait sur un nuage. (2026-11-24)
 
 ## Interaction (grille taste-skill, appliquée le 2026-11-23)
 - En mobile, tout lien ou bouton hors texte courant fait au moins 44 px de haut (`max-md:min-h-11`), champs de formulaire compris. 16 à 28 cibles par page étaient trop petites. (2026-11-23)

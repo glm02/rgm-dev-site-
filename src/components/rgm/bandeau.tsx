@@ -32,7 +32,7 @@ export function Bandeau({
     <div className="px-2 pt-2 md:px-3 md:pt-3">
       <header
         className={cn(
-          "relative flex flex-col items-center overflow-hidden rounded-[20px] px-4 pt-4 pb-6 md:rounded-[24px] md:px-8 md:pt-6 md:pb-12",
+          "relative flex flex-col items-center overflow-hidden rounded-[20px] px-4 pt-4 pb-6 md:rounded-[24px] md:px-8 md:pt-6 md:pb-12 [&_h1]:[text-shadow:0_2px_24px_rgba(4,14,64,0.55)]",
           hauteur === "accueil"
             ? "min-h-[680px] md:min-h-[760px]"
             : "min-h-[290px] md:min-h-[350px]",
@@ -179,7 +179,7 @@ export function BandeauPaysage({
   return (
     <div className="px-2 pt-2 md:px-3 md:pt-3">
       <header
-        className="relative flex flex-col items-center overflow-hidden rounded-[20px] bg-[#040e40] px-4 pt-4 md:rounded-[24px] md:px-8 md:pt-6"
+        className="relative flex flex-col items-center overflow-hidden rounded-[20px] bg-[#040e40] px-4 pt-4 md:rounded-[24px] md:px-8 md:pt-6 [&_h1]:[text-shadow:0_2px_24px_rgba(4,14,64,0.55)]"
         style={{
           ["--h-d" as string]: `${hauteur}px`,
           ["--h-m" as string]: `${hauteurMobile}px`,
